@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\VosVideo.Communication\VosVideo.Communication.vcxproj">
+      <Project>{cb254df4-87c7-49b1-8d6d-a35a74ab6706}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\VosVideo.Data\VosVideo.Data.vcxproj">
+      <Project>{6f129e1b-51ba-4372-8d91-1d123cb18b15}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\VosVideo.WebRtc\VosVideo.WebRtc.vcxproj">
+      <Project>{9e392771-bdb7-4244-b83b-b0e9654a0930}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{56E341D6-68A9-4298-AE0A-C315F4B0EFAD}</ProjectGuid>
+    <RootNamespace>VosVideoWebRtcTest</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(THIRDPARTY_ROOT)\gtest-1.6.0\include;$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(THIRDPARTY_ROOT)\boost_1_53_0;$(THIRDPARTY_ROOT)\poco-1.4.6\Foundation\include;$(THIRDPARTY_ROOT)\libjingle\trunk;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\jsoncpp\source\include;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc\modules\video_capture\include;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc\system_wrappers\interface;$(VOSVIDEO_ROOT)\vosvideovp8;$(VOSVIDEO_ROOT)\vosvideocommon;..\..\;..\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>JSONCPP_RELATIVE_PATH;WIN32;_CRT_SECURE_NO_WARNINGS;_VARIADIC_MAX=10;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(THIRDPARTY_ROOT)\gtest-1.6.0\lib\Debug;$(THIRDPARTY_ROOT)\casablanca\SDK\lib\x86\Debug;$(THIRDPARTY_ROOT)\boost_1_53_0\stage\lib;$(VOSVIDEO_ROOT)\vosvideocommon\Debug;$(THIRDPARTY_ROOT)\libjingle\lib\Debug;$(THIRDPARTY_ROOT)\websocketpp\lib\Debug;$(THIRDPARTY_ROOT)\poco-1.4.6\lib\Debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>usrsctplib.lib;crnss.lib;crnspr.lib;nss_static.lib;crssl.lib;amstrmid.lib;acm2.lib;audio_coding_module.lib;audio_conference_mixer.lib;audio_device.lib;audio_processing.lib;audio_processing_sse2.lib;audioproc_debug_proto.lib;bitrate_controller.lib;NetEq4.lib;cpprest110d_1_2.lib;CNG.lib;common_audio.lib;common_audio_sse2.lib;common_video.lib;crypt32.lib;dbghelp.lib;directshow_baseclasses.lib;dmoguids.lib;dnsapi.lib;expat.lib;G711.lib;G722.lib;icui18n.lib;icuuc.lib;iLBC.lib;iphlpapi.lib;iSAC.lib;iSACFix.lib;jsoncpp.lib;libjingle.lib;libjingle_media.lib;libjingle_p2p.lib;libjingle_peerconnection.lib;libjingle_sound.lib;libjpeg.lib;libsrtp.lib;libvpx.lib;libvpx_asm_offsets_vp8.lib;libvpx_intrinsics_mmx.lib;libvpx_intrinsics_sse2.lib;libvpx_intrinsics_ssse3.lib;libyuv.lib;media_file.lib;Mf.lib;Mfplat.lib;Mfuuid.lib;msdmo.lib;msimg32.lib;NetEq.lib;opus.lib;paced_sender.lib;PCM16B.lib;Propsys.lib;protobuf_lite.lib;psapi.lib;remote_bitrate_estimator.lib;rbe_components.lib;rtp_rtcp.lib;sqlite3.lib;secur32.lib;shlwapi.lib;system_wrappers.lib;usp10.lib;version.lib;video_capture_module.lib;video_coding_utility.lib;video_engine_core.lib;video_processing.lib;video_processing_sse2.lib;video_render_module.lib;voice_engine.lib;VosVideoCommon.lib;webrtc_i420.lib;webrtc_opus.lib;webrtc_utility.lib;webrtc_video_coding.lib;webrtc_vp8.lib;websocketpp.lib;wininet.lib;winmm.lib;wmcodecdspuuid.lib;ws2_32.lib;gtestd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(THIRDPARTY_ROOT)\gtest-1.6.0\include;$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(THIRDPARTY_ROOT)\boost_1_53_0;$(THIRDPARTY_ROOT)\poco-1.4.6\Foundation\include;$(THIRDPARTY_ROOT)\libjingle\trunk;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\jsoncpp\source\include;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc\modules\video_capture\include;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc\system_wrappers\interface;$(VOSVIDEO_ROOT)\vosvideovp8;$(VOSVIDEO_ROOT)\vosvideocommon;..\..\;..\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>JSONCPP_RELATIVE_PATH;WIN32;_CRT_SECURE_NO_WARNINGS;_VARIADIC_MAX=10;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(THIRDPARTY_ROOT)\gtest-1.6.0\lib\Release;$(THIRDPARTY_ROOT)\casablanca\SDK\lib\x86\Release;$(THIRDPARTY_ROOT)\boost_1_53_0\stage\lib;$(VOSVIDEO_ROOT)\vosvideocommon\Release;$(THIRDPARTY_ROOT)\libjingle\lib\Release;$(THIRDPARTY_ROOT)\websocketpp\lib\Release;$(THIRDPARTY_ROOT)\poco-1.4.6\lib\Release</AdditionalLibraryDirectories>
+      <AdditionalDependencies>usrsctplib.lib;crnss.lib;crnspr.lib;nss_static.lib;crssl.lib;amstrmid.lib;acm2.lib;audio_coding_module.lib;audio_conference_mixer.lib;audio_device.lib;audio_processing.lib;audio_processing_sse2.lib;audioproc_debug_proto.lib;bitrate_controller.lib;NetEq4.lib;cpprest110_1_2.lib;CNG.lib;common_video.lib;crypt32.lib;dbghelp.lib;directshow_baseclasses.lib;dmoguids.lib;dnsapi.lib;expat.lib;G711.lib;G722.lib;iLBC.lib;iphlpapi.lib;iSAC.lib;iSACFix.lib;jsoncpp.lib;libjingle.lib;common_audio.lib;common_audio_sse2.lib;icui18n.lib;icuuc.lib;libjingle_media.lib;libjingle_p2p.lib;libjingle_peerconnection.lib;libjingle_sound.lib;libjpeg.lib;libsrtp.lib;libvpx.lib;libvpx_asm_offsets_vp8.lib;libvpx_intrinsics_mmx.lib;libvpx_intrinsics_sse2.lib;libvpx_intrinsics_ssse3.lib;libyuv.lib;media_file.lib;Mf.lib;Mfplat.lib;Mfuuid.lib;msdmo.lib;msimg32.lib;NetEq.lib;opus.lib;paced_sender.lib;PCM16B.lib;Propsys.lib;protobuf_lite.lib;psapi.lib;remote_bitrate_estimator.lib;rbe_components.lib;rtp_rtcp.lib;sqlite3.lib;secur32.lib;shlwapi.lib;system_wrappers.lib;usp10.lib;version.lib;video_capture_module.lib;video_coding_utility.lib;video_engine_core.lib;video_processing.lib;video_processing_sse2.lib;video_render_module.lib;voice_engine.lib;VosVideoCommon.lib;webrtc_i420.lib;webrtc_opus.lib;webrtc_utility.lib;webrtc_video_coding.lib;webrtc_vp8.lib;websocketpp.lib;wininet.lib;winmm.lib;wmcodecdspuuid.lib;ws2_32.lib;gtest.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

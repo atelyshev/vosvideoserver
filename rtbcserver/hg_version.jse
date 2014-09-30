@@ -1,0 +1,27 @@
+var fso   = new ActiveXObject("Scripting.FileSystemObject");
+var shell = new ActiveXObject("WScript.Shell");
+ 
+var outFile = fso.CreateTextFile("hg_version.h", true);
+ 
+var hgRevNum               = shell.Exec("hg identify --num");
+var rev                    = hgRevNum.StdOut.ReadAll();
+var hg_revision            = String(rev).replace(/\n/g,"").replace(/\+/g,"");
+var hg_local_modifications = 0
+if( String(rev).replace(/\n/g, "").indexOf("+") != -1 )
+{
+   hg_local_modifications = 1;
+}
+outFile.WriteLine( "#define HG_REVISION               " + hg_revision );
+outFile.WriteLine( "#define HG_LOCAL_MODIFICATIONS    " + hg_local_modifications );
+ 
+var hgChangeset  = shell.Exec("hg parents --template \"{node}\"");
+var changeset    = hgChangeset.StdOut.ReadAll();
+var hg_changeset = "Vos Video RTBC media server";
+outFile.WriteLine( "#define HG_CHANGESET              \"" + hg_changeset +"\"" );
+ 
+var hgChangesetShort    = shell.Exec("hg parents --template \"{node|short}\"");
+var changeset_short     = hgChangesetShort.StdOut.ReadAll();
+var hg_changeset_short  = "#define HG_CHANGESET_SHORT        \"" + String(changeset_short).replace(/\n/g,"") + "\"";
+outFile.WriteLine( hg_changeset_short );
+ 
+outFile.Close();

@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{06702349-08E5-4027-9AA6-9EE22B322B12}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>VosVideoIpCam</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;HAVE_WEBRTC_VIDEO;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(THIRDPARTY_ROOT);$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(THIRDPARTY_ROOT)\boost_1_53_0;$(THIRDPARTY_ROOT)\poco-1.4.6\Net\include;$(THIRDPARTY_ROOT)\poco-1.4.6\Foundation\include;$(THIRDPARTY_ROOT)\libjingle\trunk;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\jsoncpp\source\include;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc\modules\video_capture\include;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\libvpx\source\libvpx;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc\system_wrappers\interface;$(VOSVIDEO_ROOT)\vosvideovp8;$(VOSVIDEO_ROOT)\vosvideocommon;..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(THIRDPARTY_ROOT)\boost_1_53_0\stage\lib;$(VOSVIDEO_ROOT)\vosvideocommon\Debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>VosVideoCommon.lib</AdditionalDependencies>
+    </Lib>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>Disabled</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;HAVE_WEBRTC_VIDEO;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(THIRDPARTY_ROOT);$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(THIRDPARTY_ROOT)\boost_1_53_0;$(THIRDPARTY_ROOT)\poco-1.4.6\Net\include;$(THIRDPARTY_ROOT)\poco-1.4.6\Foundation\include;$(THIRDPARTY_ROOT)\libjingle\trunk;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\jsoncpp\source\include;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc\modules\video_capture\include;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\libvpx\source\libvpx;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc\system_wrappers\interface;$(VOSVIDEO_ROOT)\vosvideovp8;$(VOSVIDEO_ROOT)\vosvideocommon;..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zm138 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(THIRDPARTY_ROOT)\boost_1_53_0\stage\lib;$(VOSVIDEO_ROOT)\vosvideocommon\Release</AdditionalLibraryDirectories>
+      <AdditionalDependencies>VosVideoCommon.lib</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="CameraDeviceManager.h" />
+    <ClInclude Include="CameraException.h" />
+    <ClInclude Include="CameraPlayer.h" />
+    <ClInclude Include="CameraPlayerProcess.h" />
+    <ClInclude Include="CameraTopology.h" />
+    <ClInclude Include="CameraVideoCaptureImpl.h" />
+    <ClInclude Include="CameraVideoCapturer.h" />
+    <ClInclude Include="CredentialOp.h" />
+    <ClInclude Include="IpCameraTopology.h" />
+    <ClInclude Include="MfTopologyHelper.h" />
+    <ClInclude Include="NetCredentialManager.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="WebCameraHelper.h" />
+    <ClInclude Include="WebCameraTopology.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CameraDeviceManager.cpp" />
+    <ClCompile Include="CameraPlayer.cpp" />
+    <ClCompile Include="CameraPlayerProcess.cpp" />
+    <ClCompile Include="CameraTopology.cpp" />
+    <ClCompile Include="CameraVideoCaptureImpl.cpp" />
+    <ClCompile Include="CameraVideoCapturer.cpp" />
+    <ClCompile Include="CredentialOp.cpp" />
+    <ClCompile Include="IpCameraTopology.cpp" />
+    <ClCompile Include="MfTopologyHelper.cpp" />
+    <ClCompile Include="NetCredentialManager.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="WebCameraHelper.cpp" />
+    <ClCompile Include="WebCameraTopology.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\VosVideo.Data\VosVideo.Data.vcxproj">
+      <Project>{6f129e1b-51ba-4372-8d91-1d123cb18b15}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\VosVideo.DeviceManagement\VosVideo.DeviceManagement.vcxproj">
+      <Project>{a7ca82e4-092e-40e8-a92c-38f12f2385b9}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
