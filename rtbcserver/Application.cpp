@@ -130,12 +130,6 @@ Application::~Application()
 		return; // Nothing to stop
 	}
 
-	LOG_TRACE("Shutdown peer connections manager.");
-	//if (webRtcManager_)
-	//{
-	//	webRtcManager_->Shutdown();
-	//}
-
 	LOG_TRACE("Shutdown runnig devices");
 	if (ipDevManager_)
 	{

@@ -20,7 +20,7 @@ DeviceWorkerApp::DeviceWorkerApp(const wstring& wqueueName, bool isLogging)
 
 	std::shared_ptr<PubSubService> communicationPubSub(new PubSubService());
 	std::shared_ptr<InterprocessQueueEngine> queueEngine(new InterprocessQueueEngine(communicationPubSub, wqueueName));
-	devBroker_.reset(new WebRtcDeviceBroker(communicationPubSub, queueEngine));
+	devBroker_.reset(new WebRtcManager(communicationPubSub, queueEngine));
 	interprocCommManager_.reset(new InterprocessComm(queueEngine));
 
 	HRESULT hr = S_OK;

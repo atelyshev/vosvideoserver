@@ -1,15 +1,15 @@
 #include "stdafx.h"
 #include <boost/format.hpp>
-#include <vosvideocommon/SeverityLoggerMacros.h>
-#include <vosvideocommon/StringUtil.h>
 #include <talk/base/ssladapter.h>
-
 #include "VosVideo.Communication/TypeInfoWrapper.h"
 #include "VosVideo.Data/WebRtcIceCandidateMsg.h"
 #include "VosVideo.Data/DeletePeerConnectionRequestMsg.h"
 #include "VosVideo.Data/WebsocketConnectionClosedMsg.h"
+#include "VosVideo.Data/LiveVideoOfferMsg.h"
 #include "VosVideo.Data/CameraConfMsg.h"
+#include "VosVideo.Data/ShutdownCameraProcessRequestMsg.h"
 #include "VosVideo.Camera/CameraPlayer.h"
+
 #include "VosVideo.Camera/CameraException.h"
 #include "WebRtcManager.h"
 #include "WebRtcException.h"
@@ -24,18 +24,16 @@ using namespace vosvideo::camera;
 using boost::format;
 using boost::wformat;
 
-WebRtcManager::WebRtcManager(std::shared_ptr<vosvideo::communication::CommunicationManager> communicationManager, 
-							 std::shared_ptr<vosvideo::camera::CameraDeviceManager> deviceManager,
-							 shared_ptr<vosvideo::communication::PubSubService> pubsubService) :
-    communicationManager_(communicationManager), 
-	pubSubService_(pubsubService), 
-	deviceManager_(deviceManager)
+WebRtcManager::WebRtcManager(std::shared_ptr<vosvideo::communication::PubSubService> pubsubService, 
+									   std::shared_ptr<vosvideo::communication::InterprocessQueueEngine> queueEng) :
+pubSubService_(pubsubService), queueEng_(queueEng), inShutdown_(false)
 {
-	// First check if peer conn can be created
-	CreatePeerConnectionFactory();
 	vector<TypeInfoWrapper> interestedTypes;
 
-	TypeInfoWrapper typeInfo = typeid(WebRtcIceCandidateMsg);	
+	TypeInfoWrapper typeInfo = typeid(CameraConfMsg);	
+	interestedTypes.push_back(typeInfo);
+
+	typeInfo = typeid(WebRtcIceCandidateMsg);	
 	interestedTypes.push_back(typeInfo);
 
 	typeInfo = typeid(LiveVideoOfferMsg);
@@ -47,8 +45,13 @@ WebRtcManager::WebRtcManager(std::shared_ptr<vosvideo::communication::Communicat
 	typeInfo = typeid(WebsocketConnectionClosedMsg);
 	interestedTypes.push_back(typeInfo);
 
+	typeInfo = typeid(ShutdownCameraProcessRequestMsg);
+	interestedTypes.push_back(typeInfo);
+
 	pubSubService_->Subscribe(interestedTypes, *this);
 
+	// First check if peer conn can be created
+	CreatePeerConnectionFactory();
 	physicalSocketServer_ = new talk_base::PhysicalSocketServer();
 	mainThread_ = new talk_base::AutoThread(physicalSocketServer_);
 	mainThread_->Start();
@@ -58,52 +61,67 @@ WebRtcManager::~WebRtcManager()
 {
 }
 
-void WebRtcManager::Shutdown()
-{
-	// Signal all opened peer connections
-	WebRtcPeerConnectionMap::iterator iter;
-	for (iter = peer_connections_.begin(); iter != peer_connections_.end(); ++iter)
-	{
-		// command close active streams and remove from collection after
-		iter->second->Close();
-		finishing_peer_connections_.push_back(iter->second);
-	}
-	peer_connections_.clear();
-
-	// Quite inefficient way but it is only happens on exit
-	LOG_TRACE("Closing all peer connections");
-	int count = 10;
-	while (CheckFinishingPeerConnections())
-	{
-		LOG_TRACE("Not all peer connection in FINISHED state. Waiting for 1 sec.");
-		Sleep(1000);
-		if (--count)
-			break;
-	}
-
-	// Now we can stop the rest SAFELY!!!
-	mainThread_->Stop();
-	peer_connection_factory_ = nullptr;
-}
-
-
 void WebRtcManager::OnMessageReceived(const shared_ptr<ReceivedData> receivedMessage)
 {	
+	// Dont accept any connections if in Shutdown
+	if (inShutdown_)
+	{
+		return;
+	}
+
 	wstring srvPeer;
 	wstring clientPeer;
 	receivedMessage->GetFromPeer(clientPeer);
 	receivedMessage->GetToPeer(srvPeer);
-	WebRtcPeerConnectionMap::iterator iter;
 
 	// We cant make sure that SDP comes first, just create entry and then init is 
 	// once something comes (SDP or ICE). Generally speaking SDP is not interesting for us
 	lock_guard<std::mutex> lock(mutex_);
-	talk_base::scoped_refptr<WebRtcPeerConnection> conn;
 
-	// Get peer_connection all the time it asked BUT!!! create only when SDP came
-	int devId = -1;
-	wstring clientPeerKey;
-	CreateClientPeerKey(receivedMessage, clientPeerKey, devId);
+	// Time to stop camera and close all connections
+	if(dynamic_pointer_cast<ShutdownCameraProcessRequestMsg>(receivedMessage))
+	{
+		inShutdown_ = true;
+		DeleteAllPeerConnections();
+		// Wait no more then 10 seconds
+		for (int i = 0; i < 10; i++)
+		{
+			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+			if (CheckFinishingPeerConnections() == 0)
+			{
+				break;
+			}
+		}
+
+		player_->Stop();
+		player_->Shutdown();
+		player_->Release();
+		queueEng_->StopReceive();
+		return;
+	}
+
+	if(dynamic_pointer_cast<CameraConfMsg>(receivedMessage))
+	{
+		shared_ptr<CameraConfMsg> cameraDto = dynamic_pointer_cast<CameraConfMsg>(receivedMessage);
+		cameraDto->GetCameraIds(activeDeviseId_, deviceName_);
+		if(dynamic_pointer_cast<CameraConfMsg>(receivedMessage))
+		{
+			shared_ptr<CameraConfMsg> cameraConf = dynamic_pointer_cast<CameraConfMsg>(receivedMessage);			
+			// COM pointer can not use shared_ptr
+			player_ = new CameraPlayer();
+			HRESULT hr = player_->OpenURL(*cameraConf.get());		
+
+			if (hr != S_OK)
+			{
+				LOG_CRITICAL("Failed to create camera");
+			}
+		}
+		return;
+	}
+
+	wstring clientPeerKey = str(wformat(L"%1%-%2%") % clientPeer % activeDeviseId_);
+	talk_base::scoped_refptr<WebRtcPeerConnection> conn;
+	WebRtcPeerConnectionMap::iterator iter;
 
 	if ((iter = peer_connections_.find(clientPeerKey)) != peer_connections_.end())
 	{
@@ -113,52 +131,55 @@ void WebRtcManager::OnMessageReceived(const shared_ptr<ReceivedData> receivedMes
 
 	if(dynamic_pointer_cast<LiveVideoOfferMsg>(receivedMessage))
 	{
-		if (deviceManager_->IsVideoCaptureDeviceExists(devId))
-		{
-			shared_ptr<SendData> lastErr;
-			if (!deviceManager_->IsVideoCaptureDeviceReady(devId, lastErr))
-			{
-				if (lastErr)
-				{
-					string respRtbc;
-					CommunicationManager::CreateWebsocketMessageString(srvPeer, clientPeer, lastErr, respRtbc);
-					communicationManager_->WebsocketSend(respRtbc);
-					wstring wlastErr;
-					lastErr->GetOutMsgText(wlastErr);
-					LOG_TRACE("Will open empty peer connection, reason: " << wlastErr);
-				}
-				return;
-			}
+		shared_ptr<LiveVideoOfferMsg> liveVideoDto = dynamic_pointer_cast<LiveVideoOfferMsg>(receivedMessage);
 
-			LOG_TRACE("Create new peer connection with key:" << clientPeerKey);
-			conn = new talk_base::RefCountedObject<WebRtcPeerConnection>(clientPeer, srvPeer, nullptr, peer_connection_factory_, nullptr);
-			conn->SetCurrentThread(mainThread_);
-			conn->SetDeviceManager(deviceManager_, devId, true);
-			// Check if peer with camera id doesnt exists. 
-			// If exists current should be moved to deleted collection
-			if (peer_connections_.find(clientPeerKey) != peer_connections_.end())
-			{
-				DeletePeerConnection(clientPeerKey);
-			}
-			peer_connections_.insert(make_pair(clientPeerKey, conn));
-			// Process connection
-			shared_ptr<SdpOffer> sdpOffer = dynamic_pointer_cast<SdpOffer>(receivedMessage);
-			conn->InitSdp(sdpOffer);
-		}
-		else
+		LOG_TRACE("Create new peer connection with key:" << clientPeerKey);
+		conn = new talk_base::RefCountedObject<WebRtcPeerConnection>(clientPeer, srvPeer, player_, peer_connection_factory_, queueEng_);
+		conn->SetCurrentThread(mainThread_);
+		//		conn->SetDeviceManager(deviceManager_, activeDeviseId_, true);
+
+		// Check if peer with camera id doesnt exists. 
+		// If exists current should be moved to deleted collection
+		if (peer_connections_.find(clientPeerKey) != peer_connections_.end())
 		{
-			LOG_ERROR("Camera failed to start and was not added as part of pool of capturing devices.");
+			DeletePeerConnection(clientPeerKey);
 		}
+		// Add SDP
+		peer_connections_.insert(make_pair(clientPeerKey, conn));
+		// Process connection
+		shared_ptr<SdpOffer> sdpOffer = dynamic_pointer_cast<SdpOffer>(receivedMessage);
+		conn->InitSdp(sdpOffer);
 	}
 	else if (dynamic_pointer_cast<WebRtcIceCandidateMsg>(receivedMessage))
 	{
-		if (conn != nullptr)
+		WebRtcDeferredIceMap::iterator iter;
+
+		if (conn == nullptr)
 		{
-			conn->InitIce(dynamic_pointer_cast<WebRtcIceCandidateMsg>(receivedMessage));
+			LOG_DEBUG("Ice candidate doesnt have corresponding SDP. Add to deferred ICE container.");
+			if ((iter = deferredIce_.find(clientPeerKey)) == deferredIce_.end())
+			{
+				vector<shared_ptr<ReceivedData> > data;
+				data.push_back(receivedMessage);
+				deferredIce_.insert(make_pair(clientPeerKey, data));
+			}
+			else
+			{
+				iter->second.push_back(receivedMessage);
+			}
 		}
 		else
 		{
-			LOG_ERROR("Peer Connection object is NULL. ICE candidate has no matching SDP. Ignoring ICE candidate");
+			conn->InitIce(dynamic_pointer_cast<WebRtcIceCandidateMsg>(receivedMessage));
+			if ((iter = deferredIce_.find(clientPeerKey)) != deferredIce_.end())
+			{
+				for (int i = 0; i < iter->second.size(); ++i)
+				{
+					shared_ptr<ReceivedData> savedMessage = iter->second[i];
+					conn->InitIce(dynamic_pointer_cast<WebRtcIceCandidateMsg>(savedMessage));
+				}
+				deferredIce_.erase(iter);
+			}
 		}
 	}
 	else if(dynamic_pointer_cast<WebsocketConnectionClosedMsg>(receivedMessage))
@@ -177,35 +198,19 @@ void WebRtcManager::OnMessageReceived(const shared_ptr<ReceivedData> receivedMes
 	}
 }
 
-void WebRtcManager::CreateClientPeerKey(const shared_ptr<ReceivedData> receivedMessage, wstring& clientPeerKey, int& devId)
+void WebRtcManager::DeleteAllPeerConnections()
 {
-	shared_ptr<MediaInfo> mediaInfo = dynamic_pointer_cast<MediaInfo>(receivedMessage);
-	if (!mediaInfo)
-		return;
+	LOG_TRACE("Query for deletion all peer connections");
+	WebRtcPeerConnectionMap::iterator iter = peer_connections_.begin();
 
-	wstring clientPeer;
-	receivedMessage->GetFromPeer(clientPeer);
-
-	web::json::value jCamConf;
-	mediaInfo->GetMediaInfo(jCamConf);
-
-	CameraDeviceManager::GetDeviceIdFromJson(devId, jCamConf);
-
-	clientPeerKey = str(wformat(L"%1%-%2%") % clientPeer % devId);
-}
-
-void WebRtcManager::CreatePeerConnectionFactory()
-{
-	if (!talk_base::InitializeSSL() || !talk_base::InitializeSSLThread())
+	while (iter != peer_connections_.end())
 	{
-		throw WebRtcException("Failed to initialize SSL");
-	}
-
-	peer_connection_factory_  = webrtc::CreatePeerConnectionFactory();
-
-	if (!peer_connection_factory_.get()) 
-	{
-		throw WebRtcException("Failed to initialize PeerConnectionFactory");
+		// command close active streams and remove from collection after
+		iter->second->Close();
+		LOG_TRACE("Query for deletion peer connection with key:" << iter->second);
+		finishing_peer_connections_.push_back(iter->second);
+		iter = peer_connections_.erase(iter);
+		++iter;
 	}
 }
 
@@ -252,4 +257,19 @@ int WebRtcManager::CheckFinishingPeerConnections()
 	}
 
 	return finishing_peer_connections_.size();
+}
+
+void WebRtcManager::CreatePeerConnectionFactory()
+{
+	if (!talk_base::InitializeSSL() || !talk_base::InitializeSSLThread())
+	{
+		throw WebRtcException("Failed to initialize SSL");
+	}
+
+	peer_connection_factory_  = webrtc::CreatePeerConnectionFactory();
+
+	if (!peer_connection_factory_.get()) 
+	{
+		throw WebRtcException("Failed to initialize PeerConnectionFactory");
+	}
 }

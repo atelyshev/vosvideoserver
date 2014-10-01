@@ -1,5 +1,4 @@
 #pragma once
-#include "VosVideo.WebRtc/WebRtcManager.h"
 #include "VosVideo.Camera/CameraDeviceManager.h"
 #include "VosVideo.UserManagement/UserManager.h"
 #include "VosVideo.VideoArchiveManagement/ArchiveManager.h"
@@ -25,7 +24,6 @@ private:
 	void KillProcessByName(const std::wstring& filename);
 
 	std::shared_ptr<loggers::SeverityLogger> log_;
-	std::shared_ptr<vosvideo::vvwebrtc::WebRtcManager> webRtcManager_;
 	std::shared_ptr<vosvideo::camera::CameraDeviceManager> ipDevManager_;
 	std::shared_ptr<vosvideo::archive::ArchiveManager> archiveManager_;
 

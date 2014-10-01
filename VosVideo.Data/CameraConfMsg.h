@@ -45,8 +45,8 @@ namespace vosvideo
 			void SetCameraIds(int cameraId, const std::wstring& cameraName);
 			void GetCameraIds(int& cameraId, std::wstring& cameraName) const;
 
-			void SetFileSinkParameters(const std::wstring& outFolder, int recordLen, CameraVideoRecording recordingType);
-			void GetFileSinkParameters(std::wstring& outFolder, int& recordLen, CameraVideoRecording& recordingType) const;
+			void SetFileSinkParameters(const std::wstring& outFolder, uint32_t recordLen, CameraVideoRecording recordingType);
+			void GetFileSinkParameters(std::wstring& outFolder, uint32_t& recordLen, CameraVideoRecording& recordingType) const;
 
 			void SetUris(const std::wstring& audiouri, const std::wstring& videouri);
 			void GetUris(std::wstring& audiouri, std::wstring& videouri) const;
@@ -73,7 +73,7 @@ namespace vosvideo
 			int cameraId_; 
 			std::wstring cameraName_;
 			std::wstring outFolder_;
-			int recordLen_; 
+			int32_t recordLen_; 
 			// Camera can have multiple modes and conditions when recording to the file is started
 			CameraVideoRecording recordingType_; 
 			std::wstring videouri_;

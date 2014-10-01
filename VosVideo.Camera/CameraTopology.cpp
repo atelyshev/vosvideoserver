@@ -164,7 +164,7 @@ HRESULT CameraTopology::SetFileSinkParameters(CameraConfMsg& conf)
 {
 	HRESULT hr = S_OK;
 	wstring outFolder;
-	int recordLen;
+	uint32_t recordLen;
 	CameraVideoRecording recordingType;
 	conf.GetFileSinkParameters(outFolder, recordLen, recordingType);
 

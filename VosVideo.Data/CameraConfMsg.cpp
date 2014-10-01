@@ -144,14 +144,14 @@ void CameraConfMsg::GetCameraIds(int& cameraId, wstring& cameraName) const
 	cameraName = cameraName_;
 }
 
-void CameraConfMsg::SetFileSinkParameters(const wstring& outFolder, int recordLen, CameraVideoRecording recordingType)
+void CameraConfMsg::SetFileSinkParameters(const wstring& outFolder, uint32_t recordLen, CameraVideoRecording recordingType)
 {
 	outFolder_ = outFolder;
 	recordLen_ = recordLen;
 	recordingType_ = recordingType;
 }
 
-void CameraConfMsg::GetFileSinkParameters(wstring& outFolder, int& recordLen, CameraVideoRecording& recordingType) const
+void CameraConfMsg::GetFileSinkParameters(wstring& outFolder, uint32_t& recordLen, CameraVideoRecording& recordingType) const
 {
 	outFolder = outFolder_;
 	recordLen = recordLen_;
@@ -201,7 +201,7 @@ void CameraConfMsg::ToJsonValue(web::json::value& jObj) const
 	jObj[L"cameraId"] = web::json::value::number(cameraId_);
 	jObj[L"cameraName"] = web::json::value::string(cameraName_);
 	jObj[L"outFolder"] = web::json::value::string(outFolder_);
-	jObj[L"recordLen_"] = web::json::value::number(recordLen_);
+	jObj[L"recordLen"] = web::json::value::number(recordLen_);
 	jObj[L"recordingType"] = web::json::value::number(static_cast<int>(recordingType_));
 	jObj[L"videouri"] = web::json::value::string(videouri_);
 	jObj[L"audiouri"] = web::json::value::string(audiouri_);

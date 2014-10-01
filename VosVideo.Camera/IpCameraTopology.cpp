@@ -202,7 +202,7 @@ HRESULT IpCameraTopology::Invoke(IMFAsyncResult* pAsyncResult)
 		BREAK_ON_FAIL(hr);
 
 		wstring outFolder;
-		int recordLen;
+		uint32_t recordLen;
 		CameraVideoRecording recordingType;
 		conf_.GetFileSinkParameters(outFolder, recordLen, recordingType);
 
