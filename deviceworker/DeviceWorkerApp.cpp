@@ -15,7 +15,8 @@ DeviceWorkerApp::DeviceWorkerApp(const wstring& wqueueName, bool isLogging)
 {
 	if (isLogging)
 	{
-		log_.reset(new SeverityLogger(L".", wqueueName));
+		wstring prefix = L"deviceworker_" + wqueueName;
+		log_.reset(new SeverityLogger(L".", prefix));
 	}
 
 	std::shared_ptr<PubSubService> communicationPubSub(new PubSubService());

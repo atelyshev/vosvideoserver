@@ -484,7 +484,7 @@ void CameraDeviceManager::CreatePlayerProcess(CameraConfMsg& conf)
 		return;
 	}
 
-	std::shared_ptr<CameraPlayerProcess> cp(new CameraPlayerProcess(pubSubService_, conf));
+	std::shared_ptr<CameraPlayerProcess> cp(new CameraPlayerProcess(pubSubService_, conf, configMgr_->IsLoggerOn()));
 	cameraProcess_.insert(make_pair( cameraId, cp));
 }
 

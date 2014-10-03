@@ -10,7 +10,7 @@ namespace vosvideo
 		class CameraPlayerProcess
 		{
 		public:
-			CameraPlayerProcess(std::shared_ptr<vosvideo::communication::PubSubService> pubsubService, vosvideo::data::CameraConfMsg& conf);
+			CameraPlayerProcess(std::shared_ptr<vosvideo::communication::PubSubService> pubsubService, vosvideo::data::CameraConfMsg& conf, bool isLoggerOn);
 			~CameraPlayerProcess();
 
 			void Reconnect();
@@ -29,6 +29,7 @@ namespace vosvideo
 			std::shared_ptr<vosvideo::communication::InterprocessComm> duplexChannel_;
 			vosvideo::data::CameraConfMsg conf_;
 			int32_t pid_;
+			bool isLoggerOn_;
 		};
 	}
 }

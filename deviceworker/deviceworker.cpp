@@ -47,7 +47,7 @@ int _tmain(int argc, wchar_t* argv[])
 		}
 		else if (argVect[i].substr(0, logging_.length()) == logging_)
 		{
-			(argVect[i].substr(logging_.length(), argVect[i].length()) == L"true") ?  isLogging = true : isLogging = false;
+			(argVect[i].substr(logging_.length() + 1, argVect[i].length()) == L"true") ?  isLogging = true : isLogging = false;
 		}
 		else if (argVect[i].substr(0, debug_.length()) == debug_)
 		{

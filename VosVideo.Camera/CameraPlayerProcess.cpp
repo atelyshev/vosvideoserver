@@ -9,8 +9,8 @@ using namespace std;
 using namespace vosvideo::camera;
 using namespace vosvideo::communication;
 
-CameraPlayerProcess::CameraPlayerProcess(std::shared_ptr<PubSubService> pubSubService, vosvideo::data::CameraConfMsg& conf) : 
-	conf_(conf), pubSubService_(pubSubService)
+CameraPlayerProcess::CameraPlayerProcess(std::shared_ptr<PubSubService> pubSubService, vosvideo::data::CameraConfMsg& conf, bool isLoggerOn) : 
+	conf_(conf), pubSubService_(pubSubService), isLoggerOn_(isLoggerOn)
 {
 	Init();
 }
@@ -37,6 +37,10 @@ void CameraPlayerProcess::Init()
 	Poco::Process::Args args;
 	args.push_back("-deviceid=" + to_string(cameraId));
 //	args.push_back("-debug");
+	if (isLoggerOn_)
+	{
+		args.push_back("-logging=true");
+	}
 	Poco::ProcessHandle ph = Poco::Process::launch("deviceworker.exe", args);
 	pid_ = ph.id();
 	LOG_TRACE("Camera player process for camera: " << cameraId << " started. Process Id: " << pid_);

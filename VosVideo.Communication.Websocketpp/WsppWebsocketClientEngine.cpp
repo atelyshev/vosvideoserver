@@ -65,12 +65,8 @@ void WsppWebsocketClientEngine::OnWebsocketMessage(boost::intrusive_ptr<websocke
 {
 	string payload = message->get_payload();
 	shared_ptr<WebSocketMessageParser> msgParser(new WebSocketMessageParser(payload));
+	LOG_TRACE("Received message with payload:" << payload);
 
-	// Don't log LiveVideoOfferMsg it has password information
-	if (msgParser->GetMessageType() != MsgType::LiveVideoOfferMsg)
-	{
-		LOG_TRACE("Received message with payload:" << payload);
-	}
 	auto dto = dtoFactory_.Create(msgParser->GetMessageType());
 	dto->Init(msgParser);
 	pubSubService_->Publish(dto);
