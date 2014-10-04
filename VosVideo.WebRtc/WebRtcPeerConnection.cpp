@@ -5,6 +5,8 @@
 
 #include "VosVideo.Camera/CameraVideoCapturer.h"
 #include "VosVideo.Data/CameraConfMsg.h"
+#include "VosVideo.Data/SdpAnswerMsg.h"
+#include "VosVideo.Data/IceCandidateResponseMsg.h"
 #include "VosVideo.Communication/CommunicationManager.h"
 #include "WebRtcException.h"
 #include "WebRtcPeerConnection.h"
@@ -223,8 +225,12 @@ void WebRtcPeerConnection::OnSuccess_r(webrtc::SessionDescriptionInterface* desc
 	jmessage[kSessionDescriptionSdpName] = sdp;
 	sdp = writer.write(jmessage);
 
+	wstring wsdp;
+	StringUtil::ToWstring(sdp, wsdp);
+	SdpAnswerMsg sdpAnswer(srvPeer_, clientPeer_, wsdp, player_->GetDeviceId());
+	wstring wrespSdp = sdpAnswer.ToString();
 	string respSdp;
-	CommunicationManager::CreateWebsocketMessageString(srvPeer_, clientPeer_, MsgType::SdpAnswerMsg, sdp, respSdp);
+	StringUtil::ToString(wrespSdp , respSdp);
 
 	queueEng_->Send(respSdp);
 }
@@ -253,9 +259,14 @@ void WebRtcPeerConnection::OnIceCandidate_r(webrtc::IceCandidateInterface* iceca
 	jmessage[kCandidateSdpName] = candidateStr;
 	candidateStr = writer.write(jmessage);
 
-	string messageToSend;
-	CommunicationManager::CreateWebsocketMessageString(srvPeer_, clientPeer_, MsgType::IceCandidateAnswerMsg, candidateStr, messageToSend);
-	queueEng_->Send(messageToSend);
+	wstring wice;
+	StringUtil::ToWstring(candidateStr, wice);
+	IceCandidateResponseMsg iceAnswer(srvPeer_, clientPeer_, wice, player_->GetDeviceId());
+	wstring wrespIce = iceAnswer.ToString();
+	string respIce;
+	StringUtil::ToString(wrespIce , respIce);
+
+	queueEng_->Send(respIce);
 }
 
 void WebRtcPeerConnection::OnSignalingChange(webrtc::PeerConnectionInterface::SignalingState new_state)
