@@ -136,6 +136,7 @@ Application::~Application()
 		ipDevManager_->Shutdown();
 	}
 
+	CloseHandle(hHandle_);
 	// Stop Media foundation
 	LOG_TRACE("Shutdown Media Foundation");
 	MFShutdown();
@@ -175,7 +176,7 @@ void Application::UnInstall()
 bool Application::Start()
 {
 	// Prevent multiple copies of server to run
-	HANDLE hHandle = CreateMutex( NULL, TRUE, strMutexName_.c_str());
+	hHandle_ = CreateMutex( NULL, TRUE, strMutexName_.c_str());
 	if( ERROR_ALREADY_EXISTS == GetLastError() )
 	{
 		wstring werr = L"RTBC server already running. Only one instance of server is allowed";
@@ -354,7 +355,7 @@ bool Application::CreateLoginRequest(LogInRequest& logInRequest)
 		LogInRequest tmpLogInRequest(userName, userPass);
 		logInRequest = tmpLogInRequest;
 	}
-	catch(CredentialsException ex)
+	catch(CredentialsException& ex)
 	{
 		string err = ex.what();
 		wstring werr;

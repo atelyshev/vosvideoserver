@@ -439,7 +439,7 @@ void CameraDeviceManager::OnCameraUpdate(web::json::value& camArr)
 				NotifyAllUsers(confIter->second.first, e);
 			}
 		}
-		confIter++;
+		++confIter;
 	}
 
 	// STEMP 4: Remove unknown cameras
@@ -559,7 +559,6 @@ bool CameraDeviceManager::GetDefaultVideoCaptureDevice(Device* device)
 	bool ret = false;
 	// If there are multiple capture devices, we want the first USB one.
 	// This avoids issues with defaulting to virtual cameras or grabber cards.
-	std::vector<Device> devices;
 	if (!cameraPlayers_.empty())
 	{
 		CameraPlayersMap::iterator iter = cameraPlayers_.begin();

@@ -95,20 +95,15 @@
     <ClInclude Include="WebRtcManager.h" />
     <ClInclude Include="WebRtcMessageWrapper.h" />
     <ClInclude Include="WebRtcPeerConnection.h" />
-    <ClInclude Include="WsClientHandler.h" />
-    <ClInclude Include="WsPeerConnectionClient.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="defaults.cpp" />
-    <ClCompile Include="PeerConnectionClientBase.cpp" />
-    <ClCompile Include="PeerConnectionClientManager.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="WebRtcManager.cpp" />
     <ClCompile Include="WebRtcPeerConnection.cpp" />
-    <ClCompile Include="WsClientHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VosVideo.Communication\VosVideo.Communication.vcxproj">

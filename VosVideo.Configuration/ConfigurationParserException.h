@@ -8,7 +8,7 @@ namespace vosvideo
 		class ConfigurationParserException : public std::runtime_error
 		{
 		public:
-			ConfigurationParserException(const std::string msg) : runtime_error(msg){}
+			ConfigurationParserException(const std::string& msg) : runtime_error(msg){}
 			virtual ~ConfigurationParserException(){}
 		};
 	}

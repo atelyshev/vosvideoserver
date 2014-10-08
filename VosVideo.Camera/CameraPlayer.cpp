@@ -1,3 +1,4 @@
+id_
 #include "stdafx.h"
 #include <mfapi.h>
 #include <mferror.h>
@@ -20,7 +21,8 @@ using namespace vosvideo::camera;
 CameraPlayer::CameraPlayer() : 
 	pSession_(NULL),
 	state_(PlayerState::Closed),
-	nRefCount_(1)
+	nRefCount_(1),
+	devId_(0)
 {
 	// create an event that will be fired when the asynchronous IMFMediaSession::Close() 
 	// operation is complete
@@ -43,7 +45,6 @@ CameraPlayer::~CameraPlayer()
 HRESULT CameraPlayer::OpenURL(CameraConfMsg& conf )
 {
 	HRESULT hr = S_OK;
-	DWORD extensionStart = 0;
 	wstring devName;
 	conf.GetCameraIds(devId_, devName);
 
@@ -200,7 +201,6 @@ HRESULT CameraPlayer::CreateSession()
 {
 	// Close the old session, if any.
 	HRESULT hr = S_OK;
-	HRESULT hr2 = S_OK;
 	MF_TOPOSTATUS topoStatus = MF_TOPOSTATUS_INVALID;
 	CComQIPtr<IMFMediaEvent> mfEvent;
 
@@ -406,11 +406,8 @@ HRESULT CameraPlayer::StartPlayback()
 //
 HRESULT CameraPlayer::OnTopologyReady()
 {
-	HRESULT hr = S_OK;
-
 	// since the topology is ready, start playback
-	hr = StartPlayback();
-
+	HRESULT hr = StartPlayback();
 	pPresentationClock_ = nullptr;
 	pSession_->GetClock(&pPresentationClock_);
 
@@ -467,8 +464,6 @@ HRESULT CameraPlayer::Shutdown()
 HRESULT CameraPlayer::CloseSession()
 {
 	HRESULT hr = S_OK;
-	DWORD dwWaitResult = 0;
-
 	//	state_ = PlayerState::Closing;
 
 	// Call the asynchronous Close() method and then wait for the close
@@ -483,7 +478,7 @@ HRESULT CameraPlayer::CloseSession()
 			// Begin waiting for the Win32 close event, fired in CPlayer::Invoke(). The 
 			// close event will indicate that the close operation is finished, and the 
 			// session can be shut down.
-			dwWaitResult = WaitForSingleObject(closeCompleteEvent_, 15000);
+			DWORD dwWaitResult = WaitForSingleObject(closeCompleteEvent_, 15000);
 			if (dwWaitResult == WAIT_TIMEOUT)
 			{
 				assert(FALSE);

@@ -40,13 +40,14 @@ ArchiveManager::ArchiveManager(std::shared_ptr<vosvideo::configuration::Configur
 
 	pubSubService_->Subscribe(interestedTypes, *this);	
 //	directoryWatcher_.reset(new std::thread(&ArchiveManager::DoMonitorArchiveDirectory, this ));
-	CreateThread(NULL, 0, &LocalDirectoryMonitorStarter, this, 0, nullptr);
+	thrHandle_ = CreateThread(NULL, 0, &LocalDirectoryMonitorStarter, this, 0, nullptr);
 }
 
 ArchiveManager::~ArchiveManager()
 {
 	SetEvent(endLocalDirectoryEvent_);
 	CloseHandle(endLocalDirectoryEvent_);
+	CloseHandle(thrHandle_);
 }
 
 void ArchiveManager::OnMessageReceived(const std::shared_ptr<vosvideo::data::ReceivedData> receivedMessage)

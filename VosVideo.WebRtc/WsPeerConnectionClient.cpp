@@ -116,7 +116,6 @@ bool WsPeerConnectionClient::SendToPeer(int peer_id, const std::string& message)
 	}
 
 	std::string type;
-	std::string sdp;
 	std::string candidate;
 	GetStringFromJsonObject(jmessageR, kType, &type);
 	GetStringFromJsonObject(jmessageR, kCandidate, &candidate);

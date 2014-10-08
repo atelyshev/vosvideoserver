@@ -24,7 +24,6 @@ IpCameraTopology::~IpCameraTopology()
 
 HRESULT IpCameraTopology::RenderUrlAsync(const CameraConfMsg& conf, boost::signal<void(HRESULT, shared_ptr<SendData>)>::slot_function_type subscriber)
 {
-	HRESULT hr = S_OK;
 	conf_ = conf;
 	openCompletedSignal_.connect(subscriber);
 
@@ -35,7 +34,7 @@ HRESULT IpCameraTopology::RenderUrlAsync(const CameraConfMsg& conf, boost::signa
 	wstring username, pass;
 	conf_.GetCredentials(username, pass);
 
-	hr = CreateMediaSource(videouri, username, pass);
+	HRESULT hr = CreateMediaSource(videouri, username, pass);
 
 	return hr;
 }
@@ -324,7 +323,6 @@ HRESULT IpCameraTopology::CreateTopology(CameraVideoRecording recordingType)
 		// Create the topology Tee node
 		CComPtr<IMFTopologyNode> pTeeNode;
 		hr = MFCreateTopologyNode(MF_TOPOLOGY_TEE_NODE, &pTeeNode);
-		UINT32 unDiscardableOutput = 0;
 		BREAK_ON_FAIL(hr);
 		pTopology_->AddNode(pTeeNode);
 

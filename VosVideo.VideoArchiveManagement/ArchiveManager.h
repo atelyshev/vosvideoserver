@@ -36,6 +36,7 @@ namespace vosvideo
 			std::shared_ptr<std::thread> directoryWatcher_;
 			CReadDirectoryChanges changes_;
 			HANDLE endLocalDirectoryEvent_; 
+			HANDLE thrHandle_;
 			static const uint64_t reservedDiskSpace_ = 10737418240;
 			bool inRemovingState;
 		};

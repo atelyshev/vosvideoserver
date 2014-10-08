@@ -9,7 +9,7 @@ namespace vosvideo
 		class CameraException : public std::runtime_error
 		{
 		public:
-			CameraException(const std::string msg) : runtime_error(msg)
+			CameraException(const std::string& msg) : runtime_error(msg)
 			{
 				LOG_ERROR(msg);
 			}

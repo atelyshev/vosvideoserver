@@ -41,5 +41,6 @@ private:
 	// Wakeup timer
 	Concurrency::timer<Application*>* wakeupTimer_; 
 	const static int wakeupTimeout_ = 60000;
+	HANDLE hHandle_;
 };
 

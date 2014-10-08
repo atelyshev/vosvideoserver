@@ -30,12 +30,6 @@
     <ClInclude Include="PeerConnectionObserver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="WsClientHandler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="WsPeerConnectionClient.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="defaults.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -57,15 +51,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PeerConnectionClientBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PeerConnectionClientManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="WsClientHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="defaults.cpp">

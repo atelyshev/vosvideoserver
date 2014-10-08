@@ -112,7 +112,7 @@ void RtbcService::OnStart(DWORD dwArgc, LPWSTR *lpszArgv)
 			ServiceCredentialsManager credMgr;
 			credMgr.SetCredentials(userName, userPass);	
 		}
-		catch(CredentialsException ex)
+		catch(CredentialsException& ex)
 		{
 			string err = ex.what();
 			wstring werr;

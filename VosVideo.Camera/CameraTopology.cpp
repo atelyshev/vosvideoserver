@@ -60,7 +60,9 @@ void CameraTopology::VP8BufCallback(std::vector<unsigned char>& vFrame, std::vec
 }
 
 CameraTopology::CameraTopology() : 
-	newFrameCallback_(NULL), nRefCount_(1)
+	newFrameCallback_(nullptr), 
+	fireCancelTimer_(nullptr),
+	nRefCount_(1)
 {
 	invokeCompleteEvent_ = CreateEvent(NULL, FALSE, FALSE, NULL);
 }

@@ -9,7 +9,7 @@ namespace vosvideo
 		class WebRtcException : public std::runtime_error
 		{
 		public:
-			WebRtcException(const std::string msg) : runtime_error(msg)
+			WebRtcException(const std::string& msg) : runtime_error(msg)
 			{
 				LOG_ERROR(msg);
 			}

@@ -37,6 +37,8 @@ WebRtcPeerConnection::WebRtcPeerConnection(wstring clientPeer,
 										   std::shared_ptr<vosvideo::communication::InterprocessQueueEngine> queueEng): 
 	clientPeer_(clientPeer),
 	srvPeer_(srvPeer),
+	commandThr_(nullptr),
+	videoCapturer_(nullptr),
 	player_(player),
 	peer_connection_factory_(peer_connection_factory),
 	queueEng_(queueEng),
