@@ -1,4 +1,3 @@
-id_
 #include "stdafx.h"
 #include <mfapi.h>
 #include <mferror.h>

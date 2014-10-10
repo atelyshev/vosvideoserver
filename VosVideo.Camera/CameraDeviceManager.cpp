@@ -167,14 +167,6 @@ void CameraDeviceManager::Shutdown()
 	}
 	);
 
-	//for_each (cameraPlayers_.begin(), cameraPlayers_.end(), [](pair<int, CameraPlayer*>p)
-	//{
-	//	p.second->Shutdown();
-	//	// Destroy via COM facility
-	//	p.second->Release();
-	//}
-	//);
-
 	if (initialized())
 	{
 		Terminate();
