@@ -71,7 +71,6 @@ CameraTopology::CameraTopology() :
 CameraTopology::~CameraTopology()
 {
 	// have to stop because destructor can be called while timer waiting
-
 	if (fireCancelTimer_ != nullptr)
 	{
 		fireCancelTimer_->stop();
@@ -158,6 +157,7 @@ HRESULT CameraTopology::ShutdownSource()
 		hr = pSource_->Shutdown();
 	}
 
+	LOG_TRACE("Returning error code: " << hr);
 	return hr;
 }
 
@@ -170,8 +170,13 @@ HRESULT CameraTopology::SetFileSinkParameters(CameraConfMsg& conf)
 	CameraVideoRecording recordingType;
 	conf.GetFileSinkParameters(outFolder, recordLen, recordingType);
 
+	int cameraId;
+	wstring cameraName;
+	conf.GetCameraIds(cameraId, cameraName);
+
 	if (recordingType == CameraVideoRecording::DISABLED)
 	{
+		LOG_TRACE("Exit because recording desabled for " << cameraName);
 		return hr;
 	}
 
@@ -181,10 +186,6 @@ HRESULT CameraTopology::SetFileSinkParameters(CameraConfMsg& conf)
 		HRESULT hr = pVP8FileSink_->QueryInterface(IID_IVP8FileSinkConfiguration, (void**)&pVP8FileSinkConf);
 		BREAK_ON_FAIL(hr);
 
-		int cameraId;
-		wstring cameraName;
-		conf.GetCameraIds(cameraId, cameraName);
-
 		string scameraName, soutFolder;
 		StringUtil::ToString(cameraName, scameraName);
 		StringUtil::ToString(outFolder, soutFolder);
@@ -193,6 +194,7 @@ HRESULT CameraTopology::SetFileSinkParameters(CameraConfMsg& conf)
 	}
 	while(false);
 
+	LOG_TRACE("Returning error code: " << hr);
 	return hr;
 }
 
@@ -200,18 +202,21 @@ void CameraTopology::RemoveExternalCapturer(webrtc::VideoCaptureExternal* captur
 {
 	lock_guard<std::mutex> lock(mutex_);
 	captureObservers_.erase(reinterpret_cast<uint32_t>(captureObserver));
+	LOG_TRACE("External capturer removed.");
 }
 
 void CameraTopology::RemoveExternalCapturers()
 {
 	lock_guard<std::mutex> lock(mutex_);
 	captureObservers_.clear();
+	LOG_TRACE("All external capturers removed.");
 }
 
 void CameraTopology::SetExternalCapturer(webrtc::VideoCaptureExternal* captureObserver)
 {
 	lock_guard<std::mutex> lock(mutex_);
 	captureObservers_.insert(make_pair(reinterpret_cast<uint32_t>(captureObserver), captureObserver));
+	LOG_TRACE("External capturer added.");
 }
 
 HRESULT CameraTopology::SetFrameCallback()
@@ -223,6 +228,7 @@ HRESULT CameraTopology::SetFrameCallback()
 		if (pVP8CallbackSink_ == nullptr)
 		{
 			hr = S_FALSE;
+			LOG_TRACE("Callback pointer is NULL. Exiting.");
 			break;
 		}
 
@@ -239,5 +245,6 @@ HRESULT CameraTopology::SetFrameCallback()
 	}
 	while(false);
 
+	LOG_TRACE("Returning error code: " << hr);
 	return hr;
 }

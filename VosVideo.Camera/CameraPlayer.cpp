@@ -91,6 +91,8 @@ HRESULT CameraPlayer::OpenURL(CameraConfMsg& conf )
 		state_ = PlayerState::Closed;
 	}
 
+	LOG_TRACE("Player state: " << static_cast<int>(state_));
+	LOG_TRACE("Returning error code: " << hr);
 	return hr;
 }
 
@@ -120,6 +122,7 @@ void CameraPlayer::OnRenderUrlComplete(HRESULT hr, shared_ptr<SendData> errMsg)
 		if(pTopology != nullptr)
 		{
 			hr = pSession_->SetTopology(0, pTopology);
+			LOG_TRACE("Set topology returned: " << hr);
 			BREAK_ON_FAIL(hr);
 		}
 	}
@@ -129,6 +132,7 @@ void CameraPlayer::OnRenderUrlComplete(HRESULT hr, shared_ptr<SendData> errMsg)
 	{
 		state_ = PlayerState::Closed;
 	}
+	LOG_TRACE("Player state: " << static_cast<int>(state_));
 }
 
 PlayerState CameraPlayer::GetState(shared_ptr<SendData>& lastErrMsg) const 
@@ -160,10 +164,12 @@ HRESULT CameraPlayer::Invoke(IMFAsyncResult* pAsyncResult)
 	{
 		// Get the event from the event queue.
 		hr = pSession_->EndGetEvent(pAsyncResult, &pEvent);
+		LOG_TRACE("EndGetEvent returned: " << hr);
 		BREAK_ON_FAIL(hr);
 
 		// Get the event type.
 		hr = pEvent->GetType(&eventType);
+		LOG_TRACE("GetType returned event type: " << eventType << " and error code: " << hr);
 		BREAK_ON_FAIL(hr);
 
 		// MESessionClosed event is guaranteed to be the last event fired by the session. 
@@ -185,12 +191,17 @@ HRESULT CameraPlayer::Invoke(IMFAsyncResult* pAsyncResult)
 		// function.  Otherwise, if we are in the closing state, do nothing with the event.
 		if (state_ != PlayerState::Closing)
 		{
-			ProcessEvent(pEvent);
+			hr = ProcessEvent(pEvent);
+			if (hr != S_OK)
+			{
+				Stop();
+			}
 		}
 	}
 	while(false);
 
-	return S_OK;
+	LOG_TRACE("Returning error code: " << hr);
+	return hr;
 }
 
 //
@@ -213,6 +224,7 @@ HRESULT CameraPlayer::CreateSession()
 
 		// Create the media session.
 		hr = MFCreateMediaSession(NULL, &pSession_);
+		LOG_TRACE("MFCreateMediaSession returned: " << hr);
 		BREAK_ON_FAIL(hr);
 
 		state_ = PlayerState::Ready;
@@ -220,10 +232,12 @@ HRESULT CameraPlayer::CreateSession()
 		// designate this class as the one that will be handling events from the media 
 		// session
 		hr = pSession_->BeginGetEvent((IMFAsyncCallback*)this, NULL);
+		LOG_TRACE("BeginGetEvent returned: " << hr);
 		BREAK_ON_FAIL(hr);
 	}
 	while(false);
 
+	LOG_TRACE("Returning error code: " << hr);
 	return hr;
 }
 
@@ -245,11 +259,13 @@ HRESULT CameraPlayer::ProcessEvent(CComPtr<IMFMediaEvent>& mediaEvent)
 
 		// Get the event type.
 		hr = mediaEvent->GetType(&eventType);
+		LOG_TRACE("GetType returned: " << hr);
 		BREAK_ON_FAIL(hr);
 
 		// Get the event status. If the operation that triggered the event did
 		// not succeed, the status is a failure code.
 		hr = mediaEvent->GetStatus(&hrStatus);
+		LOG_TRACE("GetStatus returned status : " << hrStatus << " and error code: " << hr);
 		BREAK_ON_FAIL(hr);
 
 		// Check if the async operation succeeded.
@@ -372,6 +388,7 @@ HRESULT CameraPlayer::Pause()
 		state_ = PlayerState::Paused;
 	}
 
+	LOG_TRACE("Returning error code: " << hr);
 	return hr;
 }
 
@@ -381,10 +398,8 @@ HRESULT CameraPlayer::Pause()
 HRESULT CameraPlayer::StartPlayback()
 {
 	assert(pSession_ != nullptr);
-
 	PROPVARIANT varStart;
 	PropVariantInit(&varStart);
-
 	varStart.vt = VT_EMPTY;
 
 	// If Start fails later, we will get an MESessionStarted event with an error code, 
@@ -393,10 +408,13 @@ HRESULT CameraPlayer::StartPlayback()
 	HRESULT hr = pSession_->Start(&GUID_NULL, &varStart);
 	if (SUCCEEDED(hr))
 	{
+		LOG_TRACE("Session started playback: " << hr);
 		state_ = PlayerState::Started;
 	}
 
 	PropVariantClear(&varStart);
+
+	LOG_TRACE("Returning error code: " << hr);
 	return hr;
 }
 
@@ -410,6 +428,7 @@ HRESULT CameraPlayer::OnTopologyReady()
 	pPresentationClock_ = nullptr;
 	pSession_->GetClock(&pPresentationClock_);
 
+	LOG_TRACE("Returning error code: " << hr);
 	return hr;
 }
 
@@ -421,6 +440,7 @@ HRESULT CameraPlayer::OnPresentationEnded()
 {
 	// The session puts itself into the stopped state automatically.
 	state_ = PlayerState::Stopped;
+	LOG_TRACE("Change presentation state to Stopped");
 	return S_OK;
 }
 
@@ -442,6 +462,8 @@ HRESULT CameraPlayer::Stop()
 	{
 		state_ = PlayerState::Stopped;
 	}
+
+	LOG_TRACE("Returning error code: " << hr);
 	return hr;
 }
 
@@ -450,6 +472,8 @@ HRESULT CameraPlayer::Shutdown()
 {
 	// Close the session
 	HRESULT hr = CloseSession();
+
+	LOG_TRACE("Returning error code: " << hr);
 	return hr;
 }
 
@@ -477,9 +501,11 @@ HRESULT CameraPlayer::CloseSession()
 			// Begin waiting for the Win32 close event, fired in CPlayer::Invoke(). The 
 			// close event will indicate that the close operation is finished, and the 
 			// session can be shut down.
+			LOG_TRACE("Begin wait for close event.");
 			DWORD dwWaitResult = WaitForSingleObject(closeCompleteEvent_, 15000);
 			if (dwWaitResult == WAIT_TIMEOUT)
 			{
+				LOG_ERROR("Close event timed out.");
 				assert(FALSE);
 			}
 		}
@@ -501,6 +527,7 @@ HRESULT CameraPlayer::CloseSession()
 
 	state_ = PlayerState::Closed;
 
+	LOG_TRACE("Returning error code: " << hr);
 	return hr;
 }
 

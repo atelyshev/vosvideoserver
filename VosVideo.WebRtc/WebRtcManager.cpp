@@ -16,6 +16,7 @@
 
 using namespace std;
 using namespace util;
+using namespace concurrency;
 using namespace vosvideo::vvwebrtc;
 using namespace vosvideo::communication;
 using namespace vosvideo::data;
@@ -50,6 +51,16 @@ pubSubService_(pubsubService), queueEng_(queueEng), inShutdown_(false)
 
 	pubSubService_->Subscribe(interestedTypes, *this);
 
+	// Prepare timer
+	auto callback = new call<WebRtcManager*>([this](WebRtcManager*)
+	{
+		if (this->player_->GetState() == PlayerState::Stopped)
+		{
+			Shutdown();
+		}
+	});
+	isaliveTimer_ = new Concurrency::timer<WebRtcManager*>(isaliveTimeout_, 0, callback, true);
+
 	// First check if peer conn can be created
 	CreatePeerConnectionFactory();
 	physicalSocketServer_ = new talk_base::PhysicalSocketServer();
@@ -81,22 +92,7 @@ void WebRtcManager::OnMessageReceived(const shared_ptr<ReceivedData> receivedMes
 	// Time to stop camera and close all connections
 	if(dynamic_pointer_cast<ShutdownCameraProcessRequestMsg>(receivedMessage))
 	{
-		inShutdown_ = true;
-		DeleteAllPeerConnections();
-		// Wait no more then 10 seconds
-		for (int i = 0; i < 10; i++)
-		{
-			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-			if (CheckFinishingPeerConnections() == 0)
-			{
-				break;
-			}
-		}
-
-		player_->Stop();
-		player_->Shutdown();
-		player_->Release();
-		queueEng_->StopReceive();
+		Shutdown();
 		return;
 	}
 
@@ -115,6 +111,7 @@ void WebRtcManager::OnMessageReceived(const shared_ptr<ReceivedData> receivedMes
 			{
 				LOG_CRITICAL("Failed to create camera");
 			}
+			isaliveTimer_->start();
 		}
 		return;
 	}
@@ -198,20 +195,41 @@ void WebRtcManager::OnMessageReceived(const shared_ptr<ReceivedData> receivedMes
 	}
 }
 
+void WebRtcManager::Shutdown()
+{
+	inShutdown_ = true;
+	isaliveTimer_->stop();
+	DeleteAllPeerConnections();
+
+	// Wait no more then 10 seconds
+	for (int i = 0; i < 10; i++)
+	{
+		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+		if (CheckFinishingPeerConnections() == 0)
+		{
+			break;
+		}
+	}
+
+	player_->Stop();
+	player_->Shutdown();
+	player_->Release();
+	queueEng_->StopReceive();
+}
+
 void WebRtcManager::DeleteAllPeerConnections()
 {
-	LOG_TRACE("Query for deletion all peer connections");
-	WebRtcPeerConnectionMap::iterator iter = peer_connections_.begin();
+	LOG_TRACE("Query for deletion all peer connections");	
 
-	while (iter != peer_connections_.end())
+	for (auto iter = peer_connections_.begin(); iter != peer_connections_.end(); ++iter)
 	{
 		// command close active streams and remove from collection after
 		iter->second->Close();
 		LOG_TRACE("Query for deletion peer connection with key:" << iter->second);
 		finishing_peer_connections_.push_back(iter->second);
-		iter = peer_connections_.erase(iter);
-		++iter;
 	}
+
+	peer_connections_.clear();
 }
 
 void WebRtcManager::DeletePeerConnection(const wstring& fromPeer)

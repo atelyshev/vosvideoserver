@@ -98,7 +98,8 @@ HRESULT IpCameraTopology::CreateMediaSource(wstring& sURL, wstring& username, ws
 				conf_.GetCameraIds(cameraId, cameraName);
 				wstring errMsg = str(wformat(L"Timeout %1% ms for camera %2%. Cancel connection creation.") % openConnTimeout_ % cameraName); 
 				LOG_ERROR(errMsg);
-				this->pSourceResolver_->CancelObjectCreation(this->pCancelCookie_);
+				HRESULT hr = this->pSourceResolver_->CancelObjectCreation(this->pCancelCookie_);
+				LOG_DEBUG("CancelObjectCreation returned HR=" << hr);
 			}
 		});
 		// Connect the timer to the callback and start the timer.
