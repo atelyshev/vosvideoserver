@@ -3,7 +3,7 @@
 #include <Tlhelp32.h>
 #include <ppltasks.h>
 #include <boost/bind.hpp>
-#include <boost/signal.hpp>
+#include <boost/signals2.hpp>
 #include <talk/base/win32socketinit.h>
 #include <talk/base/win32socketserver.h>
 #include <vosvideocommon/StringUtil.h>
@@ -181,7 +181,7 @@ bool Application::Start()
 	{
 		wstring werr = L"RTBC server already running. Only one instance of server is allowed";
 		EventLogLogger::WriteError(werr);
-		LOG_ERROR(werr);
+		LOG_ERROR(StringUtil::ToString(werr));
 		return false;
 	}
 
@@ -245,8 +245,7 @@ bool Application::Main()
 	{
 		string err = "Rest Service URI not found in configuration file";
 		LOG_CRITICAL(err);
-		wstring werr;
-		StringUtil::ToWstring(err, werr);
+		wstring werr = StringUtil::ToWstring(err);
 		EventLogLogger::WriteError(werr);
 		std::cin.get();
 		return false;
@@ -280,8 +279,7 @@ bool Application::Main()
 	catch(exception& e)
 	{
 		LOG_CRITICAL(e.what());
-		wstring werr;
-		StringUtil::ToWstring(e.what(), werr);
+		wstring werr = StringUtil::ToWstring(e.what());
 		EventLogLogger::WriteError(werr);
 		std::cin.get();
 		return false;
@@ -302,8 +300,7 @@ bool Application::CreateConfigurationManager(std::shared_ptr<ConfigurationManage
 	catch(ConfigurationParserException& e)
 	{
 		LOG_CRITICAL(e.what());
-		wstring werr;
-		StringUtil::ToWstring(e.what(), werr);
+		wstring werr = StringUtil::ToWstring(e.what());
 		EventLogLogger::WriteError(werr);
 		std::cin.get();
 		return false;
@@ -335,8 +332,7 @@ bool Application::WebSocketServerLogin(shared_ptr<CommunicationManager> commMana
 	catch(exception& e)
 	{
 		LOG_CRITICAL(e.what());
-		wstring werr;
-		StringUtil::ToWstring(e.what(), werr);
+		wstring werr = StringUtil::ToWstring(e.what());
 		EventLogLogger::WriteError(werr);
 		std::cin.get();
 		return false;
@@ -358,8 +354,7 @@ bool Application::CreateLoginRequest(LogInRequest& logInRequest)
 	catch(CredentialsException& ex)
 	{
 		string err = ex.what();
-		wstring werr;
-		StringUtil::ToWstring(err, werr);
+		wstring werr = StringUtil::ToWstring(err);
 		EventLogLogger::WriteInformation(werr);
 		std::cin.get();
 		return false;

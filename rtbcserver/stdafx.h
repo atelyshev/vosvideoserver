@@ -28,8 +28,7 @@
 #include <iostream>
 
 #include <boost/math/tools/rational.hpp>
-#include <boost/signal.hpp>
-#include <boost/signals.hpp>
+#include <boost/signals2.hpp>
 #include <boost/filesystem.hpp>
 
 #include <vosvideocommon/EventLogLogger.h>

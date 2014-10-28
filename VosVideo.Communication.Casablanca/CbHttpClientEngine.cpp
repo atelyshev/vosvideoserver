@@ -59,8 +59,7 @@ web::json::value CbHttpClientEngine::ExecuteRequest(pplx::task<http_response>& r
 
 	if (resp.status_code() != 200)
 	{
-		string str;
-		StringUtil::ToString(resp.reason_phrase(), str);
+		string str = StringUtil::ToString(resp.reason_phrase());
 		throw HttpClientException(str.c_str());
 	}
 	else 

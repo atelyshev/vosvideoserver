@@ -2,6 +2,7 @@
 #include <boost/format.hpp>
 #include <vosvideocommon/NativeErrorsManager.h>
 #include <vosvideocommon/ComHelper.h>
+#include <vosvideocommon/StringUtil.h>
 #include "MfTopologyHelper.h"
 #include "WebCameraTopology.h"
 
@@ -21,7 +22,7 @@ WebCameraTopology::~WebCameraTopology()
 {
 }
 
-HRESULT WebCameraTopology::RenderUrlAsync(const CameraConfMsg& conf, boost::signal<void(HRESULT, shared_ptr<SendData>)>::slot_function_type subscriber)
+HRESULT WebCameraTopology::RenderUrlAsync(const CameraConfMsg& conf, boost::signals2::signal<void(HRESULT, shared_ptr<SendData>)>::slot_function_type subscriber)
 {
 	HRESULT hr = S_OK;
 	conf_ = conf;
@@ -164,7 +165,7 @@ HRESULT WebCameraTopology::Invoke(IMFAsyncResult* pAsyncResult)
 
 		if (hr == S_OK)
 		{
-			LOG_TRACE("Successfully created Media Foundation topology for Web Camera: " << cameraName);
+			LOG_TRACE("Successfully created Media Foundation topology for Web Camera: " << StringUtil::ToString(cameraName));
 		}
 		// Notify player that we are done
 		openCompletedSignal_(hr, errMsg);
@@ -178,7 +179,7 @@ HRESULT WebCameraTopology::Invoke(IMFAsyncResult* pAsyncResult)
 		wstring nativeErrMsg = NativeErrorsManager::ToString(hr);
 		wstring msg = str(wformat(L"Failed to create media source for camera named: %1%. %2% %3%") % cameraName % failedComponent % nativeErrMsg); 
 		errMsg.reset(new RtbcDeviceErrorOutMsg(cameraId, msg, hr));
-		LOG_ERROR(msg);
+		LOG_ERROR(StringUtil::ToString(msg));
 	}
 
 	return hr;

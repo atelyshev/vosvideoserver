@@ -1,11 +1,11 @@
 echo on
 IF NOT EXIST %1Release mkdir %1Release
-IF NOT EXIST %1Release\boost_date_time-vc110-mt-1_??.dll copy %THIRDPARTY_ROOT%\boost_1_53_0\stage\lib\boost_date_time-vc110-mt-1_??.dll %1Release
-IF NOT EXIST %1Release\boost_filesystem-vc110-mt-1_??.dll copy %THIRDPARTY_ROOT%\boost_1_53_0\stage\lib\boost_filesystem-vc110-mt-1_??.dll %1Release
-IF NOT EXIST %1Release\boost_log-vc110-mt-1_??.dll copy %THIRDPARTY_ROOT%\boost_1_53_0\stage\lib\boost_log-vc110-mt-1_??.dll %1Release
-IF NOT EXIST %1Release\boost_signals-vc110-mt-1_??.dll copy %THIRDPARTY_ROOT%\boost_1_53_0\stage\lib\boost_signals-vc110-mt-1_??.dll %1Release
-IF NOT EXIST %1Release\boost_system-vc110-mt-1_??.dll copy %THIRDPARTY_ROOT%\boost_1_53_0\stage\lib\boost_system-vc110-mt-1_??.dll %1Release
-IF NOT EXIST %1Release\boost_thread-vc110-mt-1_??.dll copy %THIRDPARTY_ROOT%\boost_1_53_0\stage\lib\boost_thread-vc110-mt-1_??.dll %1Release
+IF NOT EXIST %1Release\boost_date_time-vc110-mt-1_??.dll copy %THIRDPARTY_ROOT%\boost_1_56_0\stage\lib\boost_date_time-vc110-mt-1_??.dll %1Release
+IF NOT EXIST %1Release\boost_filesystem-vc110-mt-1_??.dll copy %THIRDPARTY_ROOT%\boost_1_56_0\stage\lib\boost_filesystem-vc110-mt-1_??.dll %1Release
+IF NOT EXIST %1Release\boost_log-vc110-mt-1_??.dll copy %THIRDPARTY_ROOT%\boost_1_56_0\stage\lib\boost_log-vc110-mt-1_??.dll %1Release
+IF NOT EXIST %1Release\boost_signals-vc110-mt-1_??.dll copy %THIRDPARTY_ROOT%\boost_1_56_0\stage\lib\boost_signals-vc110-mt-1_??.dll %1Release
+IF NOT EXIST %1Release\boost_system-vc110-mt-1_??.dll copy %THIRDPARTY_ROOT%\boost_1_56_0\stage\lib\boost_system-vc110-mt-1_??.dll %1Release
+IF NOT EXIST %1Release\boost_thread-vc110-mt-1_??.dll copy %THIRDPARTY_ROOT%\boost_1_56_0\stage\lib\boost_thread-vc110-mt-1_??.dll %1Release
 IF NOT EXIST %1Release\cpprest110_1_?.dll copy %THIRDPARTY_ROOT%\casablanca\SDK\bin\x86\Release\cpprest110_1_?.dll %1Release
 IF NOT EXIST %1Release\PocoFoundation.dll copy %THIRDPARTY_ROOT%\poco-1.4.6\lib\Release\PocoFoundation.dll %1Release
 

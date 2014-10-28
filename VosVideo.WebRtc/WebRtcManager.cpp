@@ -122,7 +122,7 @@ void WebRtcManager::OnMessageReceived(const shared_ptr<ReceivedData> receivedMes
 
 	if ((iter = peer_connections_.find(clientPeerKey)) != peer_connections_.end())
 	{
-		LOG_TRACE("Found peer connection with key:" << clientPeerKey);
+		LOG_TRACE("Found peer connection with key:" << StringUtil::ToString(clientPeerKey));
 		conn = iter->second;
 	}
 
@@ -130,10 +130,9 @@ void WebRtcManager::OnMessageReceived(const shared_ptr<ReceivedData> receivedMes
 	{
 		shared_ptr<LiveVideoOfferMsg> liveVideoDto = dynamic_pointer_cast<LiveVideoOfferMsg>(receivedMessage);
 
-		LOG_TRACE("Create new peer connection with key:" << clientPeerKey);
+		LOG_TRACE("Create new peer connection with key:" << StringUtil::ToString(clientPeerKey));
 		conn = new talk_base::RefCountedObject<WebRtcPeerConnection>(clientPeer, srvPeer, player_, peer_connection_factory_, queueEng_);
 		conn->SetCurrentThread(mainThread_);
-		//		conn->SetDeviceManager(deviceManager_, activeDeviseId_, true);
 
 		// Check if peer with camera id doesnt exists. 
 		// If exists current should be moved to deleted collection
@@ -225,7 +224,7 @@ void WebRtcManager::DeleteAllPeerConnections()
 	{
 		// command close active streams and remove from collection after
 		iter->second->Close();
-		LOG_TRACE("Query for deletion peer connection with key:" << iter->second);
+		LOG_TRACE("Query for deletion peer connection with key:" << StringUtil::ToString(iter->first));
 		finishing_peer_connections_.push_back(iter->second);
 	}
 
@@ -243,7 +242,7 @@ void WebRtcManager::DeletePeerConnection(const wstring& fromPeer)
 		{
 			// command close active streams and remove from collection after
 			iter->second->Close();
-			LOG_TRACE("Query for deletion peer connection with key:" << iter->second);
+			LOG_TRACE("Query for deletion peer connection with key:" << StringUtil::ToString(iter->first));
 			finishing_peer_connections_.push_back(iter->second);
 			iter = peer_connections_.erase(iter);
 		}

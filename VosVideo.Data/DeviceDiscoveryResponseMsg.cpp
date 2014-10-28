@@ -22,5 +22,5 @@ void DeviceDiscoveryResponseMsg::GetAsJsonString(std::wstring& jsonStr)
 {
 	stringstream stream;
 	jobjVect_.serialize(stream);
-	StringUtil::ToWstring(stream.str(), jsonStr);
+	jsonStr = StringUtil::ToWstring(stream.str());
 }

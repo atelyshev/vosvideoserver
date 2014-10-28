@@ -2,7 +2,7 @@
 // Media Foundation headers
 #include <mfapi.h>
 #include <modules/video_capture/include/video_capture_defines.h>
-#include <boost/signal.hpp>
+#include <boost/signals2.hpp>
 #include <ppltasks.h>
 #include <agents.h>
 #include <VP8CallbackSink/VP8CallbackSink.h>
@@ -29,7 +29,7 @@ namespace vosvideo
 			CameraTopology();
 			~CameraTopology();
 
-			virtual HRESULT RenderUrlAsync(const vosvideo::data::CameraConfMsg& conf, boost::signal<void(HRESULT, std::shared_ptr<vosvideo::data::SendData>)>::slot_function_type subscriber) = 0;
+			virtual HRESULT RenderUrlAsync(const vosvideo::data::CameraConfMsg& conf, boost::signals2::signal<void(HRESULT, std::shared_ptr<vosvideo::data::SendData>)>::slot_function_type subscriber) = 0;
 			IMFTopology* GetTopology();
 
 			void GetWebRtcCapability(webrtc::VideoCaptureCapability& webRtcCapability);
@@ -81,7 +81,7 @@ namespace vosvideo
 			FrameCallback            * newFrameCallback_;
 			vosvideo::data::CameraConfMsg              conf_;
 			// Signal to complete build player
-			boost::signal<void (HRESULT, std::shared_ptr<vosvideo::data::SendData>)> openCompletedSignal_;
+			boost::signals2::signal<void (HRESULT, std::shared_ptr<vosvideo::data::SendData>)> openCompletedSignal_;
 			Concurrency::timer<CameraTopology*>* fireCancelTimer_; 
 			HANDLE           invokeCompleteEvent_;
 			static const int openConnTimeout_ = 20000;

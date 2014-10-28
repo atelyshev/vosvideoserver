@@ -123,8 +123,7 @@ void WebRtcPeerConnection::InitSdp(shared_ptr<SdpOffer> sdp)
 {
 	wstring wpayload;
 	sdp->GetSdpOffer(wpayload);
-	string sdpPayload;
-	StringUtil::ToString(wpayload, sdpPayload);
+	string sdpPayload = StringUtil::ToString(wpayload);
 	commandThr_->Post(this, static_cast<uint32>(PeerConnectionMessages::DoInitSdp), 
 		new talk_base::TypedMessageData<string>(sdpPayload));
 }
@@ -155,8 +154,7 @@ void WebRtcPeerConnection::InitIce(const std::shared_ptr<vosvideo::data::WebRtcI
 {
 	wstring wpayload;
 	iceMsg->GetIceCandidate(wpayload);
-	string payload;
-	StringUtil::ToString(wpayload, payload);
+	string payload = StringUtil::ToString(wpayload);
 
 	Json::Reader reader;
 	Json::Value jmessage;
@@ -227,12 +225,10 @@ void WebRtcPeerConnection::OnSuccess_r(webrtc::SessionDescriptionInterface* desc
 	jmessage[kSessionDescriptionSdpName] = sdp;
 	sdp = writer.write(jmessage);
 
-	wstring wsdp;
-	StringUtil::ToWstring(sdp, wsdp);
+	wstring wsdp = StringUtil::ToWstring(sdp);
 	SdpAnswerMsg sdpAnswer(srvPeer_, clientPeer_, wsdp, player_->GetDeviceId());
 	wstring wrespSdp = sdpAnswer.ToString();
-	string respSdp;
-	StringUtil::ToString(wrespSdp , respSdp);
+	string respSdp = StringUtil::ToString(wrespSdp);
 
 	queueEng_->Send(respSdp);
 }
@@ -261,12 +257,10 @@ void WebRtcPeerConnection::OnIceCandidate_r(webrtc::IceCandidateInterface* iceca
 	jmessage[kCandidateSdpName] = candidateStr;
 	candidateStr = writer.write(jmessage);
 
-	wstring wice;
-	StringUtil::ToWstring(candidateStr, wice);
+	wstring wice = StringUtil::ToWstring(candidateStr);
 	IceCandidateResponseMsg iceAnswer(srvPeer_, clientPeer_, wice, player_->GetDeviceId());
 	wstring wrespIce = iceAnswer.ToString();
-	string respIce;
-	StringUtil::ToString(wrespIce , respIce);
+	string respIce = StringUtil::ToString(wrespIce);
 
 	queueEng_->Send(respIce);
 }

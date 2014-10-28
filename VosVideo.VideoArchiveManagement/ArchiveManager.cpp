@@ -2,11 +2,13 @@
 #include <windows.h>
 #include <boost/filesystem.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <vosvideocommon/StringUtil.h>
 #include "VosVideo.Communication/TypeInfoWrapper.h"
 #include "VosVideo.Data/ArchiveCatalogRequestMsg.h"
 #include "ArchiveManager.h"
 
 using namespace std;
+using namespace util;
 using namespace vosvideo::communication;
 using namespace vosvideo::archive;
 using namespace vosvideo::data;
@@ -146,7 +148,7 @@ void ArchiveManager::AdjustDiskSpace(const wstring& wstrDir)
 		return;
 	}
 
-	LOG_TRACE("Created new file in video archive: " << wstrDir);
+	LOG_TRACE("Created new file in video archive: " << StringUtil::ToString(wstrDir));
 
 	boost::filesystem::path p(wstrDir);
 	if (!p.empty())

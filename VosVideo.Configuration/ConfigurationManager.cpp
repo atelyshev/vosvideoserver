@@ -38,8 +38,9 @@ ConfigurationManager::ConfigurationManager()
 	{
 		wstring wconfFilePath;
 		GetConfigurationFilePath(wconfFilePath);
-		StringUtil::ToString(wconfFilePath, confFilePath);
-		LOG_TRACE("Open configuration file: " <<confFilePath);
+		confFilePath = StringUtil::ToString(wconfFilePath);
+
+		LOG_TRACE("Open configuration file: " << confFilePath);
 		read_xml(confFilePath, pt);
 	}
 	catch(xml_parser_error& err)
@@ -58,8 +59,7 @@ ConfigurationManager::ConfigurationManager()
 			vector <wstring> tmpPair;
 			BOOST_FOREACH(const ptree::value_type &v, attributes)
 			{
-				wstring wString;
-				StringUtil::ToWstring(v.second.data(), wString);
+				wstring wString = StringUtil::ToWstring(v.second.data());
 				tmpPair.push_back(wString);
 				LOG_DEBUG("First: " << v.first.data() << " Second: " << v.second.data());
 			}

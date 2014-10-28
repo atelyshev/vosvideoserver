@@ -139,8 +139,7 @@ void CameraDeviceManager::OnMessageReceived(const shared_ptr<ReceivedData> recei
 	else if(dynamic_pointer_cast<SdpAnswerMsg>(receivedMessage) ||
 		    dynamic_pointer_cast<IceCandidateResponseMsg>(receivedMessage))
 	{
-		string smsg;
-		StringUtil::ToString(receivedMessage->ToString(), smsg);
+		string smsg = StringUtil::ToString(receivedMessage->ToString());
 		commManager_->WebsocketSend(smsg);
 	}
 }
@@ -458,8 +457,7 @@ void CameraDeviceManager::NotifyAllUsers(const CameraConfMsg& conf, const Camera
 	wstring cameraName;
 	conf.GetCameraIds(cameraId, cameraName);
 	string errMsg(e.what());
-	wstring werrMsg;
-	StringUtil::ToWstring(errMsg, werrMsg);
+	wstring werrMsg = StringUtil::ToWstring(errMsg);
 	shared_ptr<RtbcDeviceErrorOutMsg> camErr(new RtbcDeviceErrorOutMsg(cameraId, werrMsg));
 	userMgr_->NotifyAllUsers(camErr);
 }
@@ -472,7 +470,7 @@ void CameraDeviceManager::CreatePlayerProcess(CameraConfMsg& conf)
 
 	if (conf.GetIsActive() == false)
 	{
-		LOG_TRACE("Camera " << cameraName << " is not an active. Skipped creation.");
+		LOG_TRACE("Camera " << StringUtil::ToString(cameraName)<< " is not an active. Skipped creation.");
 		return;
 	}
 

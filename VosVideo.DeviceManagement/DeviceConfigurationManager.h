@@ -1,6 +1,6 @@
 #pragma once
 #include <ppltasks.h>
-#include <boost/signal.hpp>
+#include <boost/signals2.hpp>
 #include <boost/bind.hpp>
 #include "VosVideo.Communication/CommunicationManager.h"
 #include "DeviceConfigurationRequest.h"
@@ -33,16 +33,16 @@ namespace vosvideo
 			void RunDeviceDiscoveryAsync(const std::shared_ptr<vosvideo::data::ReceivedData> msg);
 
 			// Signals
-			boost::signals::connection ConnectToDeviceUpdateSignal(boost::signal<void (web::json::value& confs)>::slot_function_type subscriber);
-			boost::signals::connection ConnectToDeviceStartTestSignal(boost::signal<void (web::json::value& confs)>::slot_function_type subscriber);
-			boost::signals::connection ConnectToDeviceStopTestSignal(boost::signal<void (web::json::value& confs)>::slot_function_type subscriber);
+			boost::signals2::connection ConnectToDeviceUpdateSignal(boost::signals2::signal<void (web::json::value& confs)>::slot_function_type subscriber);
+			boost::signals2::connection ConnectToDeviceStartTestSignal(boost::signals2::signal<void (web::json::value& confs)>::slot_function_type subscriber);
+			boost::signals2::connection ConnectToDeviceStopTestSignal(boost::signals2::signal<void (web::json::value& confs)>::slot_function_type subscriber);
 
 		protected:
 			void ParseDeviceConfiguration(web::json::value& resp);
 
 		private:
 			// Updates real camera configuration
-			boost::signal<void (web::json::value& confs)> deviceUpdateSignal_;
+			boost::signals2::signal<void (web::json::value& confs)> deviceUpdateSignal_;
 
 			std::shared_ptr<vosvideo::communication::PubSubService> pubSubService_;
 			std::shared_ptr<vosvideo::communication::CommunicationManager> communicationManager_;

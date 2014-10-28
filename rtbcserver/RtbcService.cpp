@@ -115,8 +115,7 @@ void RtbcService::OnStart(DWORD dwArgc, LPWSTR *lpszArgv)
 		catch(CredentialsException& ex)
 		{
 			string err = ex.what();
-			wstring werr;
-			StringUtil::ToWstring(err, werr);
+			wstring werr = StringUtil::ToWstring(err);
 			EventLogLogger::WriteInformation(werr);
 			Stop();
 			return;

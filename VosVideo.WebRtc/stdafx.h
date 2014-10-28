@@ -14,8 +14,7 @@
 #include <string>
 
 #include <boost/math/tools/rational.hpp>
-#include <boost/signal.hpp>
-#include <boost/signals.hpp>
+#include <boost/signals2.hpp>
 
 #include <vosvideocommon/SeverityLoggerMacros.h>
 #include <vosvideocommon/StringUtil.h>

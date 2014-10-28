@@ -10,8 +10,7 @@ using namespace vosvideo::data;
 WebSocketMessageParser::WebSocketMessageParser(const string& msg)
 {
 	// Now it is time to use json parser
-	wstring wmsg;
-	StringUtil::ToWstring(msg, wmsg);	
+	wstring wmsg = StringUtil::ToWstring(msg);	
 	originalMsg_ = wmsg;
 	web::json::value jpayload = web::json::value::parse(wmsg);
 	messageType_ = GetMessageType(jpayload);

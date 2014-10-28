@@ -13,7 +13,7 @@ namespace vosvideo
 			~PeerConnectionClientManager();
 
 		protected:
-			boost::shared_ptr<PeerConnectionClientBase> client_;
+			std::shared_ptr<PeerConnectionClientBase> client_;
 		};
 	}
 }

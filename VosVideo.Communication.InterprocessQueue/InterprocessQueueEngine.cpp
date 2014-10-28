@@ -22,7 +22,7 @@ string InterprocessQueueEngine::stopMsg_ = "stop";
 InterprocessQueueEngine::InterprocessQueueEngine(std::shared_ptr<PubSubService> pubsubService, const std::wstring& queueNamePrefix) : 
 	InterprocessCommEngine(pubsubService), openAsParent_(true), isReceiveThr_(false)
 {
-	StringUtil::ToString(queueNamePrefix, queueToParentName_);
+	queueToParentName_ = StringUtil::ToString(queueNamePrefix);
 	queueFromParentName_ = queueToParentName_;
 	queueToParentName_ += "_to_parent";
 	queueFromParentName_ += "_from_parent";
@@ -100,8 +100,7 @@ void InterprocessQueueEngine::Send(const std::string& smsg)
 
 void InterprocessQueueEngine::Send(const std::wstring& wmsg)
 {
-	string smsg;
-	StringUtil::ToString(wmsg, smsg);
+	string smsg = StringUtil::ToString(wmsg);
 	Send(smsg);
 }
 
@@ -186,16 +185,9 @@ void InterprocessQueueEngine::Close()
 	if (openAsParent_)
 	{
 		LOG_TRACE("In parent process remove interprocess queues: " << queueFromParentName_ << " and " << queueToParentName_);
-		try
-		{
-			message_queue::remove(queueFromParentName_.c_str());
-			LOG_TRACE("Removed queue: " <<  queueFromParentName_);
-			message_queue::remove(queueToParentName_.c_str());
-			LOG_TRACE("Removed queue: " <<  queueToParentName_);
-		}
-		catch(interprocess_exception &ex)
-		{
-			LOG_CRITICAL(ex.what());
-		}
+		message_queue::remove(queueFromParentName_.c_str());
+		LOG_TRACE("Removed queue: " <<  queueFromParentName_);
+		message_queue::remove(queueToParentName_.c_str());
+		LOG_TRACE("Removed queue: " <<  queueToParentName_);
 	}
 }

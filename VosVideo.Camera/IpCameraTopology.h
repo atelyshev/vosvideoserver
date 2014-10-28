@@ -11,7 +11,7 @@ namespace vosvideo
 			IpCameraTopology();
 			~IpCameraTopology();
 
-			virtual HRESULT RenderUrlAsync(const vosvideo::data::CameraConfMsg& conf, boost::signal<void(HRESULT, std::shared_ptr<vosvideo::data::SendData>)>::slot_function_type subscriber);
+			virtual HRESULT RenderUrlAsync(const vosvideo::data::CameraConfMsg& conf, boost::signals2::signal<void(HRESULT, std::shared_ptr<vosvideo::data::SendData>)>::slot_function_type subscriber);
 			virtual HRESULT CreateMediaSource(std::wstring& sURL, std::wstring& username, std::wstring& pass);
 			virtual HRESULT CreateTopology(vosvideo::data::CameraVideoRecording recordingType);
 

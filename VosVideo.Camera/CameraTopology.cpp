@@ -176,7 +176,7 @@ HRESULT CameraTopology::SetFileSinkParameters(CameraConfMsg& conf)
 
 	if (recordingType == CameraVideoRecording::DISABLED)
 	{
-		LOG_TRACE("Exit because recording desabled for " << cameraName);
+		LOG_TRACE("Exit because recording desabled for " << StringUtil::ToString(cameraName));
 		return hr;
 	}
 
@@ -186,9 +186,8 @@ HRESULT CameraTopology::SetFileSinkParameters(CameraConfMsg& conf)
 		HRESULT hr = pVP8FileSink_->QueryInterface(IID_IVP8FileSinkConfiguration, (void**)&pVP8FileSinkConf);
 		BREAK_ON_FAIL(hr);
 
-		string scameraName, soutFolder;
-		StringUtil::ToString(cameraName, scameraName);
-		StringUtil::ToString(outFolder, soutFolder);
+		string scameraName = StringUtil::ToString(cameraName);
+		string soutFolder = StringUtil::ToString(outFolder);
 
 		pVP8FileSinkConf->SetFileSinkParameters(soutFolder, scameraName, recordLen);
 	}

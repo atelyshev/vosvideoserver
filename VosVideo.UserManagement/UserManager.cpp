@@ -76,7 +76,7 @@ concurrency::task<LogInResponse> UserManager::LogInAsync(LogInRequest const& log
 		LOG_DEBUG(L"Peer token received: " + logInResponse_);
 
 		wstring connUri = str(wformat(L"%1%?t=%2%&ct=1&s=%3%") % websocketServerUri % token.GetPeerId() % configurationManager_->GetSiteId()); 
-		LOG_DEBUG(L"Reply with connection string: " + connUri);
+		LOG_DEBUG(L"Reply with connection string: " << StringUtil::ToString(connUri));
 		communicationManager_->WebsocketConnect(connUri);
 	}
 	);
@@ -152,7 +152,7 @@ std::wstring UserManager::GetByKeyFromJson(web::json::value& jval, wstring key)
 			return scnd;
 		}
 	}
-	LOG_CRITICAL("No " << key << " was found in response.");
+	LOG_CRITICAL("No " << StringUtil::ToString(key) << " was found in response.");
 	return L"";
 }
 

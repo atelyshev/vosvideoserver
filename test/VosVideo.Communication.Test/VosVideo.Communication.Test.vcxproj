@@ -52,12 +52,12 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_VARIADIC_MAX=10;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(THIRDPARTY_ROOT)\gtest-1.6.0\include;$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(THIRDPARTY_ROOT)\boost_1_53_0;..\..\;..\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(THIRDPARTY_ROOT)\gtest-1.6.0\include;$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(THIRDPARTY_ROOT)\boost_1_56_0;..\..\;..\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(THIRDPARTY_ROOT)\gtest-1.6.0\lib\Debug;$(THIRDPARTY_ROOT)\casablanca\SDK\lib\x86\Debug;$(THIRDPARTY_ROOT)\boost_1_53_0\stage\lib;$(VOSVIDEO_ROOT)\vosvideocommon\Debug</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(THIRDPARTY_ROOT)\gtest-1.6.0\lib\Debug;$(THIRDPARTY_ROOT)\casablanca\SDK\lib\x86\Debug;$(THIRDPARTY_ROOT)\boost_1_56_0\stage\lib;$(VOSVIDEO_ROOT)\vosvideocommon\Debug</AdditionalLibraryDirectories>
       <AdditionalDependencies>gtestd.lib;cpprest110d_1_2.lib;VosVideoCommon.lib;%(AdditionalDependencies);</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -70,14 +70,14 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_VARIADIC_MAX=10;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(THIRDPARTY_ROOT)\gtest-1.6.0\include;$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(THIRDPARTY_ROOT)\boost_1_53_0;..\..\;..\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(THIRDPARTY_ROOT)\gtest-1.6.0\include;$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(THIRDPARTY_ROOT)\boost_1_56_0;..\..\;..\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(THIRDPARTY_ROOT)\gtest-1.6.0\lib\Release;$(THIRDPARTY_ROOT)\casablanca\SDK\lib\x86\Release;$(THIRDPARTY_ROOT)\boost_1_53_0\stage\lib;$(VOSVIDEO_ROOT)\vosvideocommon\Release</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(THIRDPARTY_ROOT)\gtest-1.6.0\lib\Release;$(THIRDPARTY_ROOT)\casablanca\SDK\lib\x86\Release;$(THIRDPARTY_ROOT)\boost_1_56_0\stage\lib;$(VOSVIDEO_ROOT)\vosvideocommon\Release</AdditionalLibraryDirectories>
       <AdditionalDependencies>gtest.lib;cpprest110_1_2.lib;VosVideoCommon.lib;%(AdditionalDependencies);</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

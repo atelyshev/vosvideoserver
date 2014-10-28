@@ -59,12 +59,11 @@ void CommunicationManager::CreateWebsocketMessageString(const std::wstring& from
 														shared_ptr<SendData> outMsg, 
 														std::string& returnedMessage)
 {
-	string sfromPeer, stoPeer, body;
-	StringUtil::ToString(fromPeer, sfromPeer);
-	StringUtil::ToString(toPeer, stoPeer);
+	string sfromPeer = StringUtil::ToString(fromPeer);
+	string stoPeer = StringUtil::ToString(toPeer);
 	wstring wbody;
 	outMsg->GetAsJsonString(wbody);
-	StringUtil::ToString(wbody, body);
+	string body = StringUtil::ToString(wbody);
 	MsgType msgType = outMsg->GetMsgType();
 
 	returnedMessage = boost::str(format(msgFormat_) % sfromPeer % stoPeer % static_cast<int>(msgType) % body);
@@ -75,10 +74,9 @@ void CommunicationManager::CreateWebsocketMessageString(const std::wstring& from
 													  vosvideo::data::MsgType msgType, 
 													  const std::string& body, 
 													  std::string& returnedMessage)
-{
-	string sfromPeer, stoPeer;
-	StringUtil::ToString(fromPeer, sfromPeer);
-	StringUtil::ToString(toPeer, stoPeer);
+{	
+	string sfromPeer = StringUtil::ToString(fromPeer);
+	string stoPeer = StringUtil::ToString(toPeer);
 
 	returnedMessage = boost::str(format(msgFormat_) % sfromPeer % stoPeer % static_cast<int>(msgType) % body);
 }

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include <boost/format.hpp>
 #include <vosvideocommon/ComHelper.h>
+#include <vosvideocommon/StringUtil.h>
 #include <vosvideocommon/NativeErrorsManager.h>
 #include <Codecapi.h>
 #include "NetCredentialManager.h"
@@ -8,9 +9,9 @@
 #include "IpCameraTopology.h"
 
 using namespace std;
+using namespace util;
 using namespace concurrency;
 using boost::wformat;
-using namespace util;
 using namespace vosvideo::camera;
 using namespace vosvideo::data;
 
@@ -22,7 +23,7 @@ IpCameraTopology::~IpCameraTopology()
 {
 }
 
-HRESULT IpCameraTopology::RenderUrlAsync(const CameraConfMsg& conf, boost::signal<void(HRESULT, shared_ptr<SendData>)>::slot_function_type subscriber)
+HRESULT IpCameraTopology::RenderUrlAsync(const CameraConfMsg& conf, boost::signals2::signal<void(HRESULT, shared_ptr<SendData>)>::slot_function_type subscriber)
 {
 	conf_ = conf;
 	openCompletedSignal_.connect(subscriber);
@@ -73,7 +74,7 @@ HRESULT IpCameraTopology::CreateMediaSource(wstring& sURL, wstring& username, ws
 		}
 
 		CComPtr<IUnknown> pCancelCookie;
-		LOG_TRACE("Try to open URL: " << sURL);
+		LOG_TRACE("Try to open URL: " << StringUtil::ToString(sURL));
 
 		hr = pSourceResolver_->BeginCreateObjectFromURL(
 			sURL.c_str(),               // URL of the source.
@@ -97,7 +98,7 @@ HRESULT IpCameraTopology::CreateMediaSource(wstring& sURL, wstring& username, ws
 				wstring cameraName;
 				conf_.GetCameraIds(cameraId, cameraName);
 				wstring errMsg = str(wformat(L"Timeout %1% ms for camera %2%. Cancel connection creation.") % openConnTimeout_ % cameraName); 
-				LOG_ERROR(errMsg);
+				LOG_ERROR(StringUtil::ToString(errMsg));
 				HRESULT hr = this->pSourceResolver_->CancelObjectCreation(this->pCancelCookie_);
 				LOG_DEBUG("CancelObjectCreation returned HR=" << hr);
 			}
@@ -236,7 +237,7 @@ HRESULT IpCameraTopology::Invoke(IMFAsyncResult* pAsyncResult)
 
 		if (hr == S_OK)
 		{
-			LOG_TRACE("Successfully created Media Foundation topology for IP Camera: " << cameraName);
+			LOG_TRACE("Successfully created Media Foundation topology for IP Camera: " << StringUtil::ToString(cameraName));
 		}
 	}
 	while(false);
@@ -246,7 +247,7 @@ HRESULT IpCameraTopology::Invoke(IMFAsyncResult* pAsyncResult)
 		wstring nativeErrMsg = NativeErrorsManager::ToString(hr);
 		wstring msg = str(wformat(L"Failed to create media source for camera named: %1%. %2% %3%") % cameraName % failedComponent % nativeErrMsg); 
 		errMsg.reset(new RtbcDeviceErrorOutMsg(cameraId, msg, hr));
-		LOG_ERROR(msg);
+		LOG_ERROR(StringUtil::ToString(msg));
 	}
 
 	// Notify player that we are done

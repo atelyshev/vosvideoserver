@@ -21,18 +21,12 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="WsppClientHandler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="WsppWebsocketClientEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="WsppClientHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WsppWebsocketClientEngine.cpp">

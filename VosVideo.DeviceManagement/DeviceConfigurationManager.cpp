@@ -53,10 +53,9 @@ void DeviceConfigurationManager::OnMessageReceived(const shared_ptr<vosvideo::da
 	{
 		RunDeviceDiscoveryAsync(receivedMessage);
 	}
-
 }
 
-boost::signals::connection DeviceConfigurationManager::ConnectToDeviceUpdateSignal(boost::signal<void (web::json::value& confs)>::slot_function_type subscriber)
+boost::signals2::connection DeviceConfigurationManager::ConnectToDeviceUpdateSignal(boost::signals2::signal<void (web::json::value& confs)>::slot_function_type subscriber)
 {
 	return deviceUpdateSignal_.connect(subscriber);
 }
