@@ -8,7 +8,6 @@
 #include <talk/base/win32socketserver.h>
 #include <vosvideocommon/StringUtil.h>
 
-#include "VosVideo.Camera/CameraPlayer.h"
 #include "VosVideo.WebRtc/PeerConnectionClientManager.h"
 #include "VosVideo.Configuration/ConfigurationManager.h"
 #include "VosVideo.Communication/HttpClientException.h"
@@ -137,9 +136,6 @@ Application::~Application()
 	}
 
 	CloseHandle(hHandle_);
-	// Stop Media foundation
-	LOG_TRACE("Shutdown Media Foundation");
-	MFShutdown();
 	LOG_TRACE("Logging finished");
 	// Finishing with COM
 	CoUninitialize();
@@ -223,9 +219,6 @@ bool Application::Main()
 		LOG_DEBUG("Rtbc server failed to start, CoInitializeEx returned: " << hr);
 		return false;
 	}
-
-	// Start up Media Foundation platform.
-	MFStartup(MF_VERSION);
 
 	std::shared_ptr<ConfigurationManager> configManager;
 

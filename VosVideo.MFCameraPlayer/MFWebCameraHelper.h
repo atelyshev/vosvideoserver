@@ -1,31 +1,20 @@
 #pragma once
 #include <mfapi.h>
 #include <mfidl.h>
+#pragma once
 #include <boost/variant.hpp>
+#include "VosVideo.CameraPlayer/WebCameraHelperBase.h"
 
 namespace vosvideo
 {
-	namespace camera
+	namespace cameraplayer
 	{
-		class WebCameraDescription
+		class MFWebCameraHelper : public vosvideo::cameraplayer::WebCameraHelperBase
 		{
 		public:
-			std::wstring symLink_;
-			std::wstring friendlyName_;
-			IMFMediaSource* mediaSource_;
-		};
+			MFWebCameraHelper();
+			~MFWebCameraHelper();
 
-		class WebCameraHelper
-		{
-		public:
-			WebCameraHelper();
-			~WebCameraHelper();
-
-			typedef std::vector<WebCameraDescription> WebCamsList;
-			typedef boost::variant<int, ULONG, ULARGE_INTEGER, DOUBLE, std::wstring, std::pair<unsigned int, unsigned int>> VariantAttr;
-			typedef std::unordered_map <std::wstring, VariantAttr> AttrList;
-			typedef std::pair<unsigned int, unsigned int> PairedAttr;
-			typedef std::vector<AttrList> CaptureFormats;
 			// Enumerates all video devices an returns pair Device_link/VideoSource
 			HRESULT CreateVideoCaptureDevices(WebCamsList& webCams);
 			// Uses device link found in CreateVideoCaptureDevices before and creates VideoSource

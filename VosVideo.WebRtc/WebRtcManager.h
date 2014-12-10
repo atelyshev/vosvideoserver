@@ -6,6 +6,7 @@
 #include "VosVideo.Communication/InterprocessComm.h"
 #include "VosVideo.Communication.InterprocessQueue/InterprocessQueueEngine.h"
 #include "VosVideo.Camera/CameraDeviceManager.h"
+#include "VosVideo.CameraPlayer/CameraPlayerBase.h"
 #include "VosVideo.Data/DtoFactory.h"
 #include "WebRtcPeerConnection.h"
 
@@ -43,7 +44,7 @@ namespace vosvideo
 			WebRtcDeferredIceMap deferredIce_;
 			talk_base::scoped_refptr<webrtc::PeerConnectionFactoryInterface> peer_connection_factory_;
 			std::shared_ptr<vosvideo::communication::InterprocessQueueEngine> queueEng_;
-			vosvideo::camera::CameraPlayer* player_;
+			vosvideo::cameraplayer::CameraPlayerBase* player_;
 			std::mutex mutex_;
 			bool inShutdown_;
 			Concurrency::timer<WebRtcManager*>* isaliveTimer_; 

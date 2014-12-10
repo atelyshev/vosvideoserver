@@ -7,17 +7,17 @@
 #include <VosVideoCommon/ComHelper.h>
 #include "IpCameraTopology.h"
 #include "WebCameraTopology.h"
-#include "CameraPlayer.h"
+#include "MFCameraPlayer.h"
 
 using namespace std;
 using namespace util;
 using namespace vosvideo::data;
-using namespace vosvideo::camera;
+using namespace vosvideo::cameraplayer;
 
 //
 //  CPlayer constructor - instantiates internal objects and initializes MF
 //
-CameraPlayer::CameraPlayer() : 
+MFCameraPlayer::MFCameraPlayer() : 
 	pSession_(NULL),
 	state_(PlayerState::Closed),
 	nRefCount_(1),
@@ -29,7 +29,7 @@ CameraPlayer::CameraPlayer() :
 }
 
 
-CameraPlayer::~CameraPlayer()
+MFCameraPlayer::~MFCameraPlayer()
 {
 	assert(pSession_ == nullptr);  
 	Shutdown();
@@ -41,7 +41,7 @@ CameraPlayer::~CameraPlayer()
 // OpenURL is the main initialization function that triggers bulding of the core
 // MF components.
 //
-HRESULT CameraPlayer::OpenURL(CameraConfMsg& conf )
+HRESULT MFCameraPlayer::OpenURL(CameraConfMsg& conf )
 {
 	HRESULT hr = S_OK;
 	wstring devName;
@@ -74,7 +74,7 @@ HRESULT CameraPlayer::OpenURL(CameraConfMsg& conf )
 		BREAK_ON_FAIL(hr);
 
 		// Step 2: build the topology.  Here we are using the TopoBuilder helper class.
-		hr = camTopology_->RenderUrlAsync(conf, boost::bind(&CameraPlayer::OnRenderUrlComplete, this, _1, _2));
+		hr = camTopology_->RenderUrlAsync(conf, boost::bind(&MFCameraPlayer::OnRenderUrlComplete, this, _1, _2));
 		BREAK_ON_FAIL(hr);
 
 		// If we've just initialized a brand new topology in step 1, set the player state 
@@ -96,12 +96,12 @@ HRESULT CameraPlayer::OpenURL(CameraConfMsg& conf )
 	return hr;
 }
 
-uint32_t CameraPlayer::GetDeviceId() const
+uint32_t MFCameraPlayer::GetDeviceId() const
 {
 	return devId_;
 }
 
-void CameraPlayer::OnRenderUrlComplete(HRESULT hr, shared_ptr<SendData> errMsg)
+void MFCameraPlayer::OnRenderUrlComplete(HRESULT hr, shared_ptr<SendData> errMsg)
 {
 	if (hr != S_OK)
 	{
@@ -135,13 +135,13 @@ void CameraPlayer::OnRenderUrlComplete(HRESULT hr, shared_ptr<SendData> errMsg)
 	LOG_TRACE("Player state: " << static_cast<int>(state_));
 }
 
-PlayerState CameraPlayer::GetState(shared_ptr<SendData>& lastErrMsg) const 
+PlayerState MFCameraPlayer::GetState(shared_ptr<SendData>& lastErrMsg) const 
 {
 	lastErrMsg = lastErrMsg_;
 	return state_; 
 }
 
-PlayerState CameraPlayer::GetState() const 
+PlayerState MFCameraPlayer::GetState() const 
 {
 	return state_; 
 }
@@ -154,7 +154,7 @@ PlayerState CameraPlayer::GetState() const
 // itself in the IMFMediaEventGenerator's event queue.  (The media session is the object
 // that implements the IMFMediaEventGenerator interface.)
 //
-HRESULT CameraPlayer::Invoke(IMFAsyncResult* pAsyncResult)
+HRESULT MFCameraPlayer::Invoke(IMFAsyncResult* pAsyncResult)
 {
 	CComPtr<IMFMediaEvent> pEvent;
 	HRESULT hr = S_OK;
@@ -207,7 +207,7 @@ HRESULT CameraPlayer::Invoke(IMFAsyncResult* pAsyncResult)
 //
 //  Creates a new instance of the media session.
 //
-HRESULT CameraPlayer::CreateSession()
+HRESULT MFCameraPlayer::CreateSession()
 {
 	// Close the old session, if any.
 	HRESULT hr = S_OK;
@@ -246,7 +246,7 @@ HRESULT CameraPlayer::CreateSession()
 //  Called by Invoke() to do the actual event processing, and determine what, if anything
 //  needs to be done.
 //
-HRESULT CameraPlayer::ProcessEvent(CComPtr<IMFMediaEvent>& mediaEvent)
+HRESULT MFCameraPlayer::ProcessEvent(CComPtr<IMFMediaEvent>& mediaEvent)
 {
 	HRESULT hrStatus = S_OK;            // Event status
 	HRESULT hr = S_OK;
@@ -306,7 +306,7 @@ HRESULT CameraPlayer::ProcessEvent(CComPtr<IMFMediaEvent>& mediaEvent)
 //
 // IUnknown methods
 //
-HRESULT CameraPlayer::QueryInterface(REFIID riid, void** ppv)
+HRESULT MFCameraPlayer::QueryInterface(REFIID riid, void** ppv)
 {
 	HRESULT hr = S_OK;
 
@@ -337,12 +337,12 @@ HRESULT CameraPlayer::QueryInterface(REFIID riid, void** ppv)
 	return hr;
 }
 
-ULONG CameraPlayer::AddRef()
+ULONG MFCameraPlayer::AddRef()
 {
 	return ++nRefCount_;
 }
 
-ULONG CameraPlayer::Release()
+ULONG MFCameraPlayer::Release()
 {
 	ULONG uCount = --nRefCount_;
 	if (uCount == 0)
@@ -355,7 +355,7 @@ ULONG CameraPlayer::Release()
 //
 //  Starts playback from paused or stopped state.
 //
-HRESULT CameraPlayer::Play()
+HRESULT MFCameraPlayer::Play()
 {
 	if (state_ != PlayerState::Paused && state_ != PlayerState::Stopped)
 	{
@@ -371,7 +371,7 @@ HRESULT CameraPlayer::Play()
 }
 
 //  Pause playback.
-HRESULT CameraPlayer::Pause()    
+HRESULT MFCameraPlayer::Pause()    
 {
 	if (state_ != PlayerState::Started)
 	{
@@ -395,7 +395,7 @@ HRESULT CameraPlayer::Pause()
 //
 //  Starts playback from the current position.
 //
-HRESULT CameraPlayer::StartPlayback()
+HRESULT MFCameraPlayer::StartPlayback()
 {
 	assert(pSession_ != nullptr);
 	PROPVARIANT varStart;
@@ -421,7 +421,7 @@ HRESULT CameraPlayer::StartPlayback()
 //
 // Handler for MESessionTopologyReady event - starts session playback.
 //
-HRESULT CameraPlayer::OnTopologyReady()
+HRESULT MFCameraPlayer::OnTopologyReady()
 {
 	// since the topology is ready, start playback
 	HRESULT hr = StartPlayback();
@@ -436,7 +436,7 @@ HRESULT CameraPlayer::OnTopologyReady()
 //
 //  Handler for MEEndOfPresentation event, fired when playback has stopped.
 //
-HRESULT CameraPlayer::OnPresentationEnded()
+HRESULT MFCameraPlayer::OnPresentationEnded()
 {
 	// The session puts itself into the stopped state automatically.
 	state_ = PlayerState::Stopped;
@@ -444,7 +444,7 @@ HRESULT CameraPlayer::OnPresentationEnded()
 	return S_OK;
 }
 
-HRESULT CameraPlayer::Stop()
+HRESULT MFCameraPlayer::Stop()
 {
 	if (state_ != PlayerState::Started && state_ != PlayerState::Paused)
 	{
@@ -468,7 +468,7 @@ HRESULT CameraPlayer::Stop()
 }
 
 //  Release all resources held by this object.
-HRESULT CameraPlayer::Shutdown()
+HRESULT MFCameraPlayer::Shutdown()
 {
 	// Close the session
 	HRESULT hr = CloseSession();
@@ -484,7 +484,7 @@ HRESULT CameraPlayer::Shutdown()
 //  method waits for the MESessionClosed event. The MESessionClosed event is 
 //  guaranteed to be the last event that the media session fires.
 //
-HRESULT CameraPlayer::CloseSession()
+HRESULT MFCameraPlayer::CloseSession()
 {
 	HRESULT hr = S_OK;
 	//	state_ = PlayerState::Closing;
@@ -531,22 +531,22 @@ HRESULT CameraPlayer::CloseSession()
 	return hr;
 }
 
-void CameraPlayer::GetWebRtcCapability(webrtc::VideoCaptureCapability& webRtcCapability)
+void MFCameraPlayer::GetWebRtcCapability(webrtc::VideoCaptureCapability& webRtcCapability)
 {
 	camTopology_->GetWebRtcCapability(webRtcCapability);
 }
 
-void CameraPlayer::SetExternalCapturer(webrtc::VideoCaptureExternal* captureObserver)
+void MFCameraPlayer::SetExternalCapturer(webrtc::VideoCaptureExternal* captureObserver)
 {
 	camTopology_->SetExternalCapturer(captureObserver);
 }
 
-void CameraPlayer::RemoveExternalCapturer(webrtc::VideoCaptureExternal* captureObserver)
+void MFCameraPlayer::RemoveExternalCapturer(webrtc::VideoCaptureExternal* captureObserver)
 {
 	camTopology_->RemoveExternalCapturer(captureObserver);
 }
 
-void CameraPlayer::RemoveExternalCapturers()
+void MFCameraPlayer::RemoveExternalCapturers()
 {
 	camTopology_->RemoveExternalCapturers();
 }

@@ -6,14 +6,12 @@
 #include "VosVideo.Data/WebSocketMessageParser.h"
 #include "VosVideo.Data/DtoFactory.h"
 #include "VosVideo.Data/CameraConfMsg.h"
-#include <VosVideo.Camera/CameraPlayer.h>
 #include "InterprocessQueueEngine.h"
 
 using namespace std;
 using namespace util;
 using namespace boost::interprocess;
 using namespace vosvideo::data;
-using namespace vosvideo::camera;
 using namespace vosvideo::communication;
 
 string InterprocessQueueEngine::stopMsg_ = "stop";

@@ -34,6 +34,7 @@
 #include "VosVideo.Data/WebsocketConnectionClosedMsg.h"
 #include "VosVideo.Data/LiveVideoOfferMsg.h"
 #include "VosVideo.Data/SdpAnswerMsg.h"
+#include "VosVideo.Data/RtbcDeviceErrorOutMsg.h"
 #include "VosVideo.Data/IceCandidateResponseMsg.h"
 #include "CameraDeviceManager.h"
 #include "CameraVideoCapturer.h"
@@ -46,6 +47,7 @@ using boost::bad_lexical_cast;
 using namespace concurrency;
 using namespace boost::assign;
 using namespace vosvideo::camera;
+using namespace vosvideo::cameraplayer;
 using namespace vosvideo::devicemanagement;
 using namespace vosvideo::data;
 using namespace vosvideo::communication;
@@ -334,10 +336,11 @@ void CameraDeviceManager::CreateCameraConfFromJson(int& camId, CameraConfMsg& co
 		{
 			videoUri = L"/" + videoUri;
 		}
-
 		// VosVideo uses own uri schema for rtsp protocol which is MPEG4 and H264 cameras
+
+		//TODO: The Httpx and Rtspx correction should be done in MFCameraPlayer
 		// should be RTSPX instead RTSP, make needed correction
-		videoUri = str(wformat(L"%1%://%2%:%3%%4%") % (uriType == CameraVideoFormat::MJPEG ? L"httpx" : L"rtspx") % camIpAddr % camPort % videoUri);
+		videoUri = str(wformat(L"%1%://%2%:%3%%4%") % (uriType == CameraVideoFormat::MJPEG ? L"http" : L"rtsp") % camIpAddr % camPort % videoUri);
 	}
 
 	conf = CameraConfMsg(modelType, uriType);
@@ -580,7 +583,7 @@ bool CameraDeviceManager::GetVideoCaptureDevices(std::vector<Device>* devices)
 	devices->clear();
 	if (!cameraPlayers_.empty())
 	{
-		for_each (cameraPlayers_.begin(), cameraPlayers_.end(), [devices](pair<int, CameraPlayer*>p)
+		for_each (cameraPlayers_.begin(), cameraPlayers_.end(), [devices](pair<int, CameraPlayerBase*>p)
 		{
 			string camId;
 			try

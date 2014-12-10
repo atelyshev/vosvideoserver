@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include <boost/format.hpp>
 #include <talk/base/ssladapter.h>
+#include <Unknwn.h>
 #include "VosVideo.Communication/TypeInfoWrapper.h"
 #include "VosVideo.Data/WebRtcIceCandidateMsg.h"
 #include "VosVideo.Data/DeletePeerConnectionRequestMsg.h"
@@ -8,11 +9,13 @@
 #include "VosVideo.Data/LiveVideoOfferMsg.h"
 #include "VosVideo.Data/CameraConfMsg.h"
 #include "VosVideo.Data/ShutdownCameraProcessRequestMsg.h"
-#include "VosVideo.Camera/CameraPlayer.h"
+#include "VosVideo.CameraPlayer/CameraPlayerBase.h"
+#include "VosVideo.Camera/CameraPlayerFactory.h"
 
 #include "VosVideo.Camera/CameraException.h"
 #include "WebRtcManager.h"
 #include "WebRtcException.h"
+
 
 using namespace std;
 using namespace util;
@@ -21,6 +24,8 @@ using namespace vosvideo::vvwebrtc;
 using namespace vosvideo::communication;
 using namespace vosvideo::data;
 using namespace vosvideo::camera;
+using namespace vosvideo::cameraplayer;
+
 
 using boost::format;
 using boost::wformat;
@@ -104,7 +109,7 @@ void WebRtcManager::OnMessageReceived(const shared_ptr<ReceivedData> receivedMes
 		{
 			shared_ptr<CameraConfMsg> cameraConf = dynamic_pointer_cast<CameraConfMsg>(receivedMessage);			
 			// COM pointer can not use shared_ptr
-			player_ = new CameraPlayer();
+			player_ = CameraPlayerFactory::CreateCameraPlayer();
 			HRESULT hr = player_->OpenURL(*cameraConf.get());		
 
 			if (hr != S_OK)
@@ -212,7 +217,12 @@ void WebRtcManager::Shutdown()
 
 	player_->Stop();
 	player_->Shutdown();
-	player_->Release();
+
+		//Check if it derives from IUnknown
+	IUnknown* iUnknownPlayer = dynamic_cast<IUnknown*>(player_);
+	if(iUnknownPlayer)
+		iUnknownPlayer->Release();
+
 	queueEng_->StopReceive();
 }
 

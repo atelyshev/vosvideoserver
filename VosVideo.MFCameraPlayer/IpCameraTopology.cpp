@@ -1,30 +1,30 @@
 #include "stdafx.h"
 #include <boost/format.hpp>
-#include <vosvideocommon/NativeErrorsManager.h>
 #include <vosvideocommon/ComHelper.h>
 #include <vosvideocommon/StringUtil.h>
+#include <vosvideocommon/NativeErrorsManager.h>
+#include <Codecapi.h>
+#include "NetCredentialManager.h"
 #include "MfTopologyHelper.h"
-#include "WebCameraTopology.h"
+#include "IpCameraTopology.h"
 
 using namespace std;
-using boost::wformat;
 using namespace util;
-using namespace vosvideo::camera;
+using namespace concurrency;
+using boost::wformat;
+using namespace vosvideo::cameraplayer;
 using namespace vosvideo::data;
 
-
-WebCameraTopology::WebCameraTopology()
+IpCameraTopology::IpCameraTopology()
 {
 }
 
-
-WebCameraTopology::~WebCameraTopology()
+IpCameraTopology::~IpCameraTopology()
 {
 }
 
-HRESULT WebCameraTopology::RenderUrlAsync(const CameraConfMsg& conf, boost::signals2::signal<void(HRESULT, shared_ptr<SendData>)>::slot_function_type subscriber)
+HRESULT IpCameraTopology::RenderUrlAsync(const CameraConfMsg& conf, boost::signals2::signal<void(HRESULT, shared_ptr<SendData>)>::slot_function_type subscriber)
 {
-	HRESULT hr = S_OK;
 	conf_ = conf;
 	openCompletedSignal_.connect(subscriber);
 
@@ -33,28 +33,91 @@ HRESULT WebCameraTopology::RenderUrlAsync(const CameraConfMsg& conf, boost::sign
 	conf_.GetUris(audiouri, videouri);
 
 	wstring username, pass;
-	hr = CreateMediaSource(videouri, username, pass);
+	conf_.GetCredentials(username, pass);
+
+	HRESULT hr = CreateMediaSource(videouri, username, pass);
 
 	return hr;
 }
 
-HRESULT WebCameraTopology::CreateMediaSource(wstring& sURL, wstring& username, wstring& pass)
+HRESULT IpCameraTopology::CreateMediaSource(wstring& sURL, wstring& username, wstring& pass)
 {
-	BeginCreateMediaSource(sURL, this, nullptr);
-	return S_OK;
+	HRESULT hr = S_OK;
+	MF_OBJECT_TYPE objectType = MF_OBJECT_INVALID;
+
+	do
+	{
+		// Create the source resolver.
+		if (pSourceResolver_ == nullptr)
+		{
+			hr = MFCreateSourceResolver(&pSourceResolver_);
+			BREAK_ON_FAIL(hr);
+		}
+
+		CComPtr<IPropertyStore> pPropStore;
+		NetCredentialManager *pCredentials = new (std::nothrow) NetCredentialManager(username, pass);
+		// Configure the property store.
+		hr = PSCreateMemoryPropertyStore(IID_PPV_ARGS(&pPropStore));
+		if (SUCCEEDED(hr))
+		{
+			PROPERTYKEY key;
+			key.fmtid =  MFNETSOURCE_CREDENTIAL_MANAGER;
+			key.pid = 0;
+
+			PROPVARIANT var;
+			var.vt = VT_UNKNOWN;
+			pCredentials->QueryInterface(IID_PPV_ARGS(&var.punkVal));
+
+			hr = pPropStore->SetValue(key, var);
+
+			PropVariantClear(&var);
+		}
+
+		CComPtr<IUnknown> pCancelCookie;
+		LOG_TRACE("Try to open URL: " << StringUtil::ToString(sURL));
+
+		hr = pSourceResolver_->BeginCreateObjectFromURL(
+			sURL.c_str(),               // URL of the source.
+			MF_RESOLUTION_MEDIASOURCE | 
+			MF_RESOLUTION_CONTENT_DOES_NOT_HAVE_TO_MATCH_EXTENSION_OR_MIME_TYPE,  
+			pPropStore,                 // Optional property store for extra parameters
+			&pCancelCookie,
+			this,
+			NULL);
+		BREAK_ON_FAIL(hr);
+
+		pCancelCookie_ = pCancelCookie.Detach();
+
+		// Open source cancellation, PPL async timer executes Cancel routine after timeout
+		auto callback = new call<CameraTopology*>([this](CameraTopology*)
+		{
+			// If after 5 sec camera source was not created cancel it
+			if (this->pSource_ == nullptr) 
+			{
+				int cameraId = -1;
+				wstring cameraName;
+				conf_.GetCameraIds(cameraId, cameraName);
+				wstring errMsg = str(wformat(L"Timeout %1% ms for camera %2%. Cancel connection creation.") % openConnTimeout_ % cameraName); 
+				LOG_ERROR(StringUtil::ToString(errMsg));
+				HRESULT hr = this->pSourceResolver_->CancelObjectCreation(this->pCancelCookie_);
+				LOG_DEBUG("CancelObjectCreation returned HR=" << hr);
+			}
+		});
+		// Connect the timer to the callback and start the timer.
+		fireCancelTimer_ = new Concurrency::timer<CameraTopology*>(openConnTimeout_, 0, nullptr, false);
+		fireCancelTimer_->link_target(callback);
+		fireCancelTimer_->start();
+	}
+	while(false);
+
+	return hr;
 }
 
-HRESULT WebCameraTopology::BeginCreateMediaSource(wstring& sURL, IMFAsyncCallback *pCB, IUnknown *pState)
+HRESULT IpCameraTopology::Invoke(IMFAsyncResult* pAsyncResult)
 {
-	sURL_ = sURL;
-	CComPtr<IMFAsyncResult> pResult;
-	return MFPutWorkItem(MFASYNC_CALLBACK_QUEUE_STANDARD, this, pResult);
-}
-
-HRESULT WebCameraTopology::Invoke(IMFAsyncResult* pAsyncResult)
-{	 
 	HRESULT hr = S_OK;
 	shared_ptr<RtbcDeviceErrorOutMsg> errMsg;
+	MF_OBJECT_TYPE objType;
 
 	// In case error will use this info
 	int cameraId;
@@ -62,52 +125,68 @@ HRESULT WebCameraTopology::Invoke(IMFAsyncResult* pAsyncResult)
 	wstring failedComponent;
 	conf_.GetCameraIds(cameraId, cameraName);
 
-	do 
+	do
 	{
-		hr = webCamHelper.CreateVideoCaptureDeviceFromLink(sURL_, &pSource_);
-		BREAK_ON_FAIL(hr);
+		CComPtr<IUnknown> pSource;
+		hr = pSourceResolver_->EndCreateObjectFromURL(pAsyncResult, &objType, &pSource);
+		// Get the IMFMediaSource interface from the media source.
+		pSource_ = pSource.Detach();
 
-		WebCameraHelper::CaptureFormats cFormats;
-		webCamHelper.EnumerateCaptureFormats(pSource_, cFormats);
-
-		// WebCam has many supported formats
-		// Find bes one, we prefer YUY2/640x480/15 frames
-		int32_t preferedFormat = -1;
-
-		for (unsigned int i = 0; i < cFormats.size(); i++)
+		if (hr != S_OK || pSource_ == nullptr)
 		{
-			WebCameraHelper::AttrList aList = cFormats.at(i);
-			wstring strGuid;
-			webCamHelper.GetGUIDName(MF_MT_SUBTYPE, strGuid);
-			WebCameraHelper::AttrList::const_iterator attr;
-
-			if ((attr = aList.find(strGuid)) != aList.end())
+			// Too generic, here is timeout I know for sure
+			if (hr == E_ABORT)
 			{
-				wstring str = boost::get<wstring>(attr->second);
-				if (str == L"MFVideoFormat_YUY2" )
-				{
-					webCamHelper.GetGUIDName(MF_MT_FRAME_SIZE, strGuid);
-					if ((attr = aList.find(strGuid)) != aList.end())
-					{
-						WebCameraHelper::PairedAttr frameSize = boost::get<WebCameraHelper::PairedAttr>(attr->second);
-						if (frameSize.first == preferedWidth && frameSize.second == preferedHeight)
-						{
-							preferedFormat = i;
-							break;
-						}
-					}
-				}
+				hr = WAIT_TIMEOUT;
 			}
+			break;
 		}
 
-		if (preferedFormat == -1)
+		if (conf_.GetVideoFormat() == CameraVideoFormat::MPEG4)
 		{
-			hr = MF_E_UNSUPPORTED_FORMAT;
+			hr = MfTopologyHelper::CreateMpeg4Decoder(&pDecoder_);
+			if (hr != S_OK)
+			{
+				failedComponent = L"Failed to create Mpeg4 decoder.";
+			}
+			BREAK_ON_FAIL(hr);
 		}
+		else if (conf_.GetVideoFormat() == CameraVideoFormat::MJPEG)
+		{
+			hr = MfTopologyHelper::CreateMjpegDecoder(&pDecoder_);
+			if (hr != S_OK)
+			{
+				failedComponent = L"Failed to create MJPEG decoder.";
+			}
+			BREAK_ON_FAIL(hr);
+		}
+		else if (conf_.GetVideoFormat() == CameraVideoFormat::H264)
+		{
+			hr = MfTopologyHelper::CreateH264Decoder(&pDecoder_);
+			if (hr != S_OK)
+			{
+				failedComponent = L"Failed to create h264 decoder.";
+			}
+			// Make sure that acceleration is ON
+			CComPtr<IMFAttributes> attr;
+			pDecoder_->GetAttributes(&attr);
+			hr = attr->SetUINT32(CODECAPI_AVDecVideoAcceleration_H264, TRUE);
+			BREAK_ON_FAIL(hr);
+		}
+		else 
+		{
+			hr = S_FALSE;
+			break;
+		}
+
+		hr = MfTopologyHelper::NegotiateSourceToMft(pSource_, pDecoder_);
 		BREAK_ON_FAIL(hr);
-		hr = webCamHelper.SetDeviceFormat(pSource_, preferedFormat);
-		BREAK_ON_FAIL(hr);
-		hr = webCamHelper.SetFrameRate(pSource_, 0, 20);
+
+		hr = MfTopologyHelper::CreateVP8Encoder(&pVP8Encoder_);
+		if (hr != S_OK)
+		{
+			failedComponent = L"Failed to create VP8 encoder.";
+		}
 		BREAK_ON_FAIL(hr);
 
 		hr = MfTopologyHelper::CreateYuYtoI420ColorTransf(&pYuYtoI420_);
@@ -117,14 +196,7 @@ HRESULT WebCameraTopology::Invoke(IMFAsyncResult* pAsyncResult)
 		}
 		BREAK_ON_FAIL(hr);
 
-		hr = MfTopologyHelper::NegotiateSourceToMft(pSource_, pYuYtoI420_);
-		BREAK_ON_FAIL(hr);
-
-		hr = MfTopologyHelper::CreateVP8Encoder(&pVP8Encoder_);
-		if (hr != S_OK)
-		{
-			failedComponent = L"Failed to create VP8 encoder.";
-		}
+		hr = MfTopologyHelper::NegotiateYUY2ToI420(pDecoder_, pYuYtoI420_);
 		BREAK_ON_FAIL(hr);
 
 		hr = MfTopologyHelper::NegotiateMftToVP8(pYuYtoI420_, pVP8Encoder_, webRtcCapability_);
@@ -165,14 +237,10 @@ HRESULT WebCameraTopology::Invoke(IMFAsyncResult* pAsyncResult)
 
 		if (hr == S_OK)
 		{
-			LOG_TRACE("Successfully created Media Foundation topology for Web Camera: " << StringUtil::ToString(cameraName));
+			LOG_TRACE("Successfully created Media Foundation topology for IP Camera: " << StringUtil::ToString(cameraName));
 		}
-		// Notify player that we are done
-		openCompletedSignal_(hr, errMsg);
-
-		SetEvent(invokeCompleteEvent_);
-	} 
-	while (false);
+	}
+	while(false);
 
 	if (hr != S_OK)
 	{
@@ -182,10 +250,18 @@ HRESULT WebCameraTopology::Invoke(IMFAsyncResult* pAsyncResult)
 		LOG_ERROR(StringUtil::ToString(msg));
 	}
 
+	// Notify player that we are done
+	openCompletedSignal_(hr, errMsg);
+
+	SetEvent(invokeCompleteEvent_);
 	return hr;
 }
 
-HRESULT WebCameraTopology::CreateTopology(CameraVideoRecording recordingType)
+//
+//  Creates a playback topology from the media source by extracting presentation
+//  and stream descriptors from the source, and creating a sink for each of them.
+//
+HRESULT IpCameraTopology::CreateTopology(CameraVideoRecording recordingType)
 {
 	HRESULT hr = S_OK;
 	CComQIPtr<IMFPresentationDescriptor> pPresDescriptor;
@@ -219,6 +295,15 @@ HRESULT WebCameraTopology::CreateTopology(CameraVideoRecording recordingType)
 		BREAK_ON_FAIL(hr);
 		pTopology_->AddNode(pSourceNode);
 
+		// Create node for MJPEG/MPEG4/H264 decoder
+		CComPtr<IMFTopologyNode> pDecoderNode;
+		hr = MFCreateTopologyNode(MF_TOPOLOGY_TRANSFORM_NODE, &pDecoderNode);
+		BREAK_ON_FAIL(hr);
+		// set the output stream ID on the stream sink topology node
+		hr = pDecoderNode->SetObject(pDecoder_);
+		BREAK_ON_FAIL(hr);
+		pTopology_->AddNode(pDecoderNode);
+
 		// Create node for color converter
 		CComPtr<IMFTopologyNode> pYuYtoI420Node;
 		hr = MFCreateTopologyNode(MF_TOPOLOGY_TRANSFORM_NODE, &pYuYtoI420Node);
@@ -240,7 +325,6 @@ HRESULT WebCameraTopology::CreateTopology(CameraVideoRecording recordingType)
 		// Create the topology Tee node
 		CComPtr<IMFTopologyNode> pTeeNode;
 		hr = MFCreateTopologyNode(MF_TOPOLOGY_TEE_NODE, &pTeeNode);
-		UINT32 unDiscardableOutput = 0;
 		BREAK_ON_FAIL(hr);
 		pTopology_->AddNode(pTeeNode);
 
@@ -282,29 +366,25 @@ HRESULT WebCameraTopology::CreateTopology(CameraVideoRecording recordingType)
 		BREAK_ON_FAIL(hr);
 
 		// Connect components
-		hr = pSourceNode->ConnectOutput(0, pYuYtoI420Node, 0);
-		BREAK_ON_FAIL(hr);
+		// CameraSource->MJPEG/MPEG4/H264 decoder
+		pSourceNode->ConnectOutput(0, pDecoderNode, 0);
+		// MPEG4 decoder -> YuYtoI420 color converter
+		pDecoderNode->ConnectOutput(0, pYuYtoI420Node, 0);
 		// I420 image to VP8 encoder
-		hr = pYuYtoI420Node->ConnectOutput(0, pEncoderNode, 0);
-		BREAK_ON_FAIL(hr);
+		pYuYtoI420Node->ConnectOutput(0, pEncoderNode, 0);
 		// VP8 encoder -> TEE 
-		hr = pEncoderNode->ConnectOutput(0, pTeeNode, 0);
-		BREAK_ON_FAIL(hr);
-
+		pEncoderNode->ConnectOutput(0, pTeeNode, 0);
 		if (recordingType != CameraVideoRecording::DISABLED)
 		{
 			// TEE -> File sink
-			hr = pTeeNode->ConnectOutput(0, pFileOutputNode, 0);
-			BREAK_ON_FAIL(hr);
+			pTeeNode->ConnectOutput(0, pFileOutputNode, 0);
 			// TEE -> Callback sink
-			hr = pTeeNode->ConnectOutput(1, pCallbackOutputNode, 0);
-			BREAK_ON_FAIL(hr);
+			pTeeNode->ConnectOutput(1, pCallbackOutputNode, 0);
 		}
 		else
 		{
 			// TEE -> Callback sink
-			hr = pTeeNode->ConnectOutput(0, pCallbackOutputNode, 0);
-			BREAK_ON_FAIL(hr);
+			pTeeNode->ConnectOutput(0, pCallbackOutputNode, 0);
 		}
 
 		// Connect callback for remote requests
@@ -314,4 +394,3 @@ HRESULT WebCameraTopology::CreateTopology(CameraVideoRecording recordingType)
 
 	return hr;
 }
-

@@ -7,7 +7,7 @@
 #include "CredentialOp.h"
 
 using namespace std;
-using vosvideo::camera::NetCredentialManager;
+using vosvideo::cameraplayer::NetCredentialManager;
 
 NetCredentialManager::NetCredentialManager(wstring& username, wstring& pass) : 
 	m_nRef(1), 

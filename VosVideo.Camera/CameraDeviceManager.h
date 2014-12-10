@@ -3,12 +3,13 @@
 #include <talk/base/sigslot.h>
 #include <talk/base/stringencode.h>
 #include <talk/media/devices/devicemanager.h>
+#include <agents.h>
 #include "VosVideo.Configuration/ConfigurationManager.h"
 #include "VosVideo.DeviceManagement/DeviceConfigurationManager.h"
 #include "VosVideo.UserManagement/UserManager.h"
 #include "VosVideo.Data/CameraConfMsg.h"
 #include "VosVideo.Communication/CommunicationManager.h"
-#include "CameraPlayer.h"
+#include "VosVideo.CameraPlayer/CameraPlayerBase.h"
 #include "CameraPlayerProcess.h"
 #include "CameraException.h"
 
@@ -53,7 +54,7 @@ namespace vosvideo
 		private:
 			// This map contains collection of running topologies. Topology is always up, 
 			// but WebRTC can "take attention" of topology passing callback
-			typedef std::unordered_map<int, CameraPlayer* > CameraPlayersMap;
+			typedef std::unordered_map<int, vosvideo::cameraplayer::CameraPlayerBase* > CameraPlayersMap;
 			typedef std::unordered_map<int, std::shared_ptr<CameraPlayerProcess> > CameraPlayerProcessMap;
 			typedef std::unordered_map<int, std::pair<vosvideo::data::CameraConfMsg, vosvideo::devicemanagement::DeviceConfigurationFlag>> CameraConfsMap;
 

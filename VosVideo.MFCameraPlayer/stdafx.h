@@ -6,24 +6,19 @@
 #pragma once
 
 #include "targetver.h"
-// reference additional headers your program requires here
-//#include <strsafe.h>
-//#include <atlstr.h>
+
+#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+
+#include <string>
+#include <memory> 
+#include <unordered_map>
+#include <vector>
 
 #include <tchar.h>
-#include <WinSock2.h>
-#include <WS2tcpip.h>
-#include <Windows.h>
+#include <windows.h>
+#include <Strsafe.h>
+#include <mfapi.h>
 
-#include <stdio.h>
-//#include <tchar.h>
-#include <Mfapi.h>
-#include <string>
-#include <vector>
-#include <stdint.h>
-
-#include <vosvideocommon/SeverityLogger.h>
 #include <vosvideocommon/SeverityLoggerMacros.h>
-#include <vosvideocommon/StringUtil.h>
 
 // TODO: reference additional headers your program requires here

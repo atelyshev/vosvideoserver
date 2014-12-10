@@ -2,19 +2,18 @@
 
 #include <modules/video_capture/video_capture_impl.h>
 #include <modules/video_capture/include/video_capture.h>
+#include "VosVideo.CameraPlayer/CameraPlayerBase.h"
 
 namespace vosvideo
 {
 	namespace camera
 	{
-		class CameraPlayer;
-
 		class CameraVideoCaptureImpl : public webrtc::videocapturemodule::VideoCaptureImpl
 		{
 		public:
-			CameraVideoCaptureImpl(const int32_t id, CameraPlayer* player);
+			CameraVideoCaptureImpl(const int32_t id, vosvideo::cameraplayer::CameraPlayerBase* player);
 
-			static webrtc::VideoCaptureModule* Create(const int32_t id, webrtc::VideoCaptureExternal*& externalCapture, CameraPlayer* player);
+			static webrtc::VideoCaptureModule* Create(const int32_t id, webrtc::VideoCaptureExternal*& externalCapture, vosvideo::cameraplayer::CameraPlayerBase* player);
 
 			/*************************************************************************
 			 *
@@ -36,7 +35,7 @@ namespace vosvideo
 		protected:
 			virtual ~CameraVideoCaptureImpl();
 			bool startedCapture_;
-			CameraPlayer* player_;
+			vosvideo::cameraplayer::CameraPlayerBase* player_;
 			webrtc::I420VideoFrame captureFrame_;
 		};
 	}

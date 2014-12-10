@@ -7,7 +7,7 @@
 
 namespace vosvideo
 {
-	namespace camera
+	namespace cameraplayer
 	{
 		class MfTopologyHelper
 		{

@@ -6,14 +6,15 @@
 #include "VosVideo.Data/DeviceDiscoveryResponseMsg.h"
 #include "VosVideo.Data/CameraConfMsg.h"
 #include "VosVideo.Communication/TypeInfoWrapper.h"
-#include "VosVideo.Camera/WebCameraHelper.h"
+#include "VosVideo.CameraPlayer/WebCameraHelperBase.h"
+#include "VosVideo.GSCameraPlayer/GSWebCameraHelper.h"
 #include "DeviceConfigurationManager.h"
 
 using namespace std;
 using boost::wformat;
 using boost::io::group;
 using namespace vosvideo::data;
-using namespace vosvideo::camera;
+using namespace vosvideo::cameraplayer;
 using namespace vosvideo::communication;
 using namespace vosvideo::devicemanagement;
 
@@ -79,12 +80,12 @@ void DeviceConfigurationManager::RunDeviceDiscoveryAsync(const shared_ptr<vosvid
 	(
 		[this, clientPeer, srvPeer]() 
 		{ 
-			WebCameraHelper wph;
-			WebCameraHelper::WebCamsList wcl;
+			GSWebCameraHelper wph;
+			WebCameraHelperBase::WebCamsList wcl;
 			wph.CreateVideoCaptureDevices(wcl);
 			web::json::value jobjVect;
 			int i = 0;
-			for (WebCameraHelper::WebCamsList::const_iterator iter = wcl.begin(); iter != wcl.end(); ++iter)
+			for (WebCameraHelperBase::WebCamsList::const_iterator iter = wcl.begin(); iter != wcl.end(); ++iter)
 			{
 				web::json::value jObj;
 				jObj[L"modeltype"] = web::json::value::number(static_cast<int>(CameraType::WEBCAM));

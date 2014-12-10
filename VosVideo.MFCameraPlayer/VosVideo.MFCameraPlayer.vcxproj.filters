@@ -21,22 +21,31 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CameraVideoCaptureImpl.h">
+    <ClInclude Include="MFCameraPlayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CameraVideoCapturer.h">
+    <ClInclude Include="CameraTopology.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CameraDeviceManager.h">
+    <ClInclude Include="NetCredentialManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CameraException.h">
+    <ClInclude Include="MFTopologyHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CameraPlayerProcess.h">
+    <ClInclude Include="IpCameraTopology.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CameraPlayerFactory.h">
+    <ClInclude Include="WebCameraTopology.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CredentialOp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MFWebCameraHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MFCameraPlayerBootstrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -44,19 +53,31 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CameraVideoCaptureImpl.cpp">
+    <ClCompile Include="CameraTopology.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CameraVideoCapturer.cpp">
+    <ClCompile Include="MFCameraPlayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CameraDeviceManager.cpp">
+    <ClCompile Include="IpCameraTopology.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CameraPlayerProcess.cpp">
+    <ClCompile Include="WebCameraTopology.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CameraPlayerFactory.cpp">
+    <ClCompile Include="MfTopologyHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NetCredentialManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CredentialOp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MFWebCameraHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MFCameraPlayerBootstrapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

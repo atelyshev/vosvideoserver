@@ -6,7 +6,7 @@
 
 namespace vosvideo
 {
-	namespace camera
+	namespace cameraplayer
 	{
 		class NetCredentialManager : public IMFNetCredentialManager, IMFAsyncCallback 
 		{

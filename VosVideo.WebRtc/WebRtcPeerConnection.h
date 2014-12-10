@@ -17,6 +17,7 @@
 #include "VosVideo.Data/SdpOffer.h"
 #include "VosVideo.Data/WebRtcIceCandidateMsg.h"
 #include "VosVideo.Camera/CameraDeviceManager.h"
+#include "VosVideo.CameraPlayer/CameraPlayerBase.h"
 #include "PeerConnectionObserver.h"
 #include "WebRtcMessageWrapper.h"
 
@@ -68,7 +69,7 @@ namespace vosvideo
 		public:
 			WebRtcPeerConnection(std::wstring clientPeer, 
 								 std::wstring srvPeer, 
-								 vosvideo::camera::CameraPlayer* player,
+								 vosvideo::cameraplayer::CameraPlayerBase* player,
 								 talk_base::scoped_refptr<webrtc::PeerConnectionFactoryInterface> peer_connection_factory,
 								 std::shared_ptr<vosvideo::communication::InterprocessQueueEngine> queueEng);
 
@@ -145,7 +146,7 @@ namespace vosvideo
 			std::wstring srvPeer_;
 			talk_base::Thread* commandThr_;
 			cricket::VideoCapturer* videoCapturer_;
-			vosvideo::camera::CameraPlayer* player_;
+			vosvideo::cameraplayer::CameraPlayerBase* player_;
 			bool isPeerConnectionFinished_;
 			bool isShutdownOnClose_;
 		};

@@ -3,7 +3,7 @@
 #include <VosVideoCommon/ComHelper.h>
 #include "CredentialOp.h"
 
-using vosvideo::camera::CredentialOp;
+using vosvideo::cameraplayer::CredentialOp;
 
 CredentialOp::CredentialOp(IMFNetCredential *pCredential) :
 	nRef_(1), 

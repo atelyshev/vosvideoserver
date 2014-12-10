@@ -7,7 +7,9 @@
 #include "VosVideo.Data/CameraConfMsg.h"
 #include "VosVideo.Data/SdpAnswerMsg.h"
 #include "VosVideo.Data/IceCandidateResponseMsg.h"
+#include "VosVideo.Data/RtbcDeviceErrorOutMsg.h"
 #include "VosVideo.Communication/CommunicationManager.h"
+#include "VosVideo.CameraPlayer/CameraPlayerBase.h"
 #include "WebRtcException.h"
 #include "WebRtcPeerConnection.h"
 #include "defaults.h"
@@ -19,6 +21,7 @@ using vosvideo::communication::CommunicationManager;
 using namespace vosvideo::vvwebrtc;
 using namespace vosvideo::data;
 using namespace vosvideo::camera;
+using namespace vosvideo::cameraplayer;
 
 // Names used for a IceCandidate JSON object.
 const char kCandidateSdpMidName[] = "sdpMid";
@@ -32,7 +35,7 @@ const char kSessionDescriptionSdpName[] = "sdp";
 
 WebRtcPeerConnection::WebRtcPeerConnection(wstring clientPeer,
 										   wstring srvPeer,
-										   vosvideo::camera::CameraPlayer* player,
+										   CameraPlayerBase* player,
 										   talk_base::scoped_refptr<webrtc::PeerConnectionFactoryInterface> peer_connection_factory, 
 										   std::shared_ptr<vosvideo::communication::InterprocessQueueEngine> queueEng): 
 	clientPeer_(clientPeer),

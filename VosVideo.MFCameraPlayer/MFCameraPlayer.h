@@ -2,28 +2,18 @@
 #include <mfobjects.h>
 #include <mfidl.h>
 #include "CameraTopology.h"
+#include "VosVideo.CameraPlayer/CameraPlayerBase.h"
 
 namespace vosvideo
 {
-	namespace camera
+	namespace cameraplayer
 	{
-		enum class PlayerState
-		{
-			Closed,         // No session.
-			Ready,          // Session was created, ready to open a file.
-			OpenPending,    // Session is opening a file.
-			Started,        // Session is playing a file.
-			Paused,         // Session is paused.
-			Stopped,        // Session is stopped (ready to play).
-			Closing         // Application is waiting for MESessionClosed.
-		};
-
-
-		class CameraPlayer : public IMFAsyncCallback
+		class MFCameraPlayer : 
+			public vosvideo::cameraplayer::CameraPlayerBase, IMFAsyncCallback
 		{
 		public:
-			CameraPlayer();
-			~CameraPlayer();
+			MFCameraPlayer();
+			~MFCameraPlayer();
 
 			// Playback control
 			HRESULT OpenURL(vosvideo::data::CameraConfMsg&);
@@ -85,4 +75,3 @@ namespace vosvideo
 		};
 	}
 }
-

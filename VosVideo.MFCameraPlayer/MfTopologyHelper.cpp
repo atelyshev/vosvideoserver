@@ -9,7 +9,7 @@
 #include "VosVideo.Data/CameraConfMsg.h"
 #include "MfTopologyHelper.h"
 
-using namespace vosvideo::camera;
+using namespace vosvideo::cameraplayer;
 
 MfTopologyHelper::MfTopologyHelper()
 {

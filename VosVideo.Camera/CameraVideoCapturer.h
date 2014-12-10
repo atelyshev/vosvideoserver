@@ -4,14 +4,13 @@
 #include <talk/media/base/videocapturer.h>
 #include <modules/video_capture/include/video_capture.h>
 #include <talk/media/webrtc/webrtcvideoframe.h>
-#include "CameraPlayer.h"
+#include "VosVideo.CameraPlayer/CameraPlayerBase.h"
 
 
 namespace vosvideo
 {
 	namespace camera
 	{
-		class CameraPlayer;
 		// Factory to allow injection of a VCM impl into WebRtcVideoCapturer.
 		// DeviceInfos do not have a Release() and therefore need an explicit Destroy().
 		class CameraVcmFactoryInterface 
@@ -19,7 +18,7 @@ namespace vosvideo
 		public:
 			virtual ~CameraVcmFactoryInterface() {}
 			virtual webrtc::VideoCaptureModule* Create(int id, const char* device) = 0;
-			virtual webrtc::VideoCaptureModule* Create(const int32_t id, webrtc::VideoCaptureExternal*& externalCapture, CameraPlayer*) = 0;
+			virtual webrtc::VideoCaptureModule* Create(const int32_t id, webrtc::VideoCaptureExternal*& externalCapture, vosvideo::cameraplayer::CameraPlayerBase*) = 0;
 			virtual webrtc::VideoCaptureModule::DeviceInfo* CreateDeviceInfo(int id) = 0;
 			virtual void DestroyDeviceInfo(webrtc::VideoCaptureModule::DeviceInfo* info) = 0;
 		};
@@ -33,7 +32,7 @@ namespace vosvideo
 			explicit CameraVideoCapturer(CameraVcmFactoryInterface* factory);
 			virtual ~CameraVideoCapturer();
 
-			bool Init(int camId, CameraPlayer* device);
+			bool Init(int camId, vosvideo::cameraplayer::CameraPlayerBase* device);
 			bool Init(const cricket::Device& device);
 			bool Init(webrtc::VideoCaptureModule* module);
 

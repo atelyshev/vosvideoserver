@@ -19,7 +19,7 @@ using boost::bad_lexical_cast;
 using vosvideo::camera::CameraVcmFactoryInterface;
 using vosvideo::camera::CameraVideoCapturer;
 using vosvideo::camera::CameraVideoCaptureImpl;
-using vosvideo::camera::CameraPlayer;
+using vosvideo::cameraplayer::CameraPlayerBase;
 
 
 struct kVideoFourCCEntry 
@@ -105,7 +105,7 @@ namespace vosvideo
 				return webrtc::VideoCaptureFactory::Create(id, device);
 			}
 
-			virtual webrtc::VideoCaptureModule* Create(const int32_t id, webrtc::VideoCaptureExternal*& externalCapture, CameraPlayer* player) 
+			virtual webrtc::VideoCaptureModule* Create(const int32_t id, webrtc::VideoCaptureExternal*& externalCapture, vosvideo::cameraplayer::CameraPlayerBase* player) 
 			{
 				return CameraVideoCaptureImpl::Create(id, externalCapture, player);
 			}
@@ -147,7 +147,7 @@ CameraVideoCapturer::~CameraVideoCapturer()
 	}
 }
 
-bool CameraVideoCapturer::Init(int camId, CameraPlayer* device) 
+bool CameraVideoCapturer::Init(int camId, CameraPlayerBase* device) 
 {
 	if (module_) 
 	{

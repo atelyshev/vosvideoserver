@@ -3,6 +3,7 @@
 #include <VosVideoCommon/StringUtil.h>
 #include "VosVideo.Communication/PubSubService.h"
 #include "VosVideo.Communication.InterprocessQueue/InterprocessQueueEngine.h"
+#include "VosVideo.Camera/CameraPlayerFactory.h"
 #include "DeviceWorkerApp.h"
 
 using namespace std;
@@ -10,6 +11,7 @@ using namespace util;
 using namespace loggers;
 using namespace vosvideo::communication;
 using namespace vosvideo::vvwebrtc;
+using namespace vosvideo::camera;
 
 DeviceWorkerApp::DeviceWorkerApp(const wstring& wqueueName, bool isLogging)
 {
@@ -31,13 +33,13 @@ DeviceWorkerApp::DeviceWorkerApp(const wstring& wqueueName, bool isLogging)
 		LOG_CRITICAL(errMsg);
 		throw runtime_error(errMsg);
 	}
-	MFStartup(MF_VERSION);
+	CameraPlayerFactory::Init(nullptr, nullptr);
 }
 
 
 DeviceWorkerApp::~DeviceWorkerApp()
 {
-	MFShutdown();
+	CameraPlayerFactory::Shutdown();
 	CoUninitialize();
 }
 

@@ -11,7 +11,7 @@
 
 namespace vosvideo
 {
-	namespace camera
+	namespace cameraplayer
 	{
 		// This class should be able to build next topologies:
 		// 1. IP CAM MJPEG->YUY2->I420->VP8->[FILE or Callback sink] 

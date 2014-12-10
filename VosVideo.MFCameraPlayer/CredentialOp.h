@@ -10,7 +10,7 @@
 
 namespace vosvideo
 {
-	namespace camera
+	namespace cameraplayer
 	{
 		struct CredentialOp : public IUnknown
 		{

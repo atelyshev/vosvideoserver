@@ -1,21 +1,21 @@
 #include "stdafx.h"
 #include <vosvideocommon/ComHelper.h>
 #include <mferror.h>
-#include "WebCameraHelper.h"
+#include "MFWebCameraHelper.h"
 
 using namespace std;
-using namespace vosvideo::camera;
+using namespace vosvideo::cameraplayer;
 
-WebCameraHelper::WebCameraHelper()
+MFWebCameraHelper::MFWebCameraHelper()
 {
 }
 
 
-WebCameraHelper::~WebCameraHelper()
+MFWebCameraHelper::~MFWebCameraHelper()
 {
 }
 
-HRESULT WebCameraHelper::CreateVideoCaptureDevices(WebCamsList& webCams)
+HRESULT MFWebCameraHelper::CreateVideoCaptureDevices(WebCamsList& webCams)
 {
 	IMFMediaSource* pSource = NULL;
 	UINT32 count = 0;
@@ -72,7 +72,7 @@ HRESULT WebCameraHelper::CreateVideoCaptureDevices(WebCamsList& webCams)
 	return hr;
 }
 
-HRESULT WebCameraHelper::CreateVideoCaptureDeviceFromLink(wstring& symLink, IMFMediaSource **ppSource)
+HRESULT MFWebCameraHelper::CreateVideoCaptureDeviceFromLink(wstring& symLink, IMFMediaSource **ppSource)
 {
 	*ppSource = NULL;
 
@@ -105,7 +105,7 @@ HRESULT WebCameraHelper::CreateVideoCaptureDeviceFromLink(wstring& symLink, IMFM
 	return hr;    
 }
 
-HRESULT WebCameraHelper::GetDeviceSymLink(IMFActivate *pDevice, wstring& friendlyName, wstring& symLink)
+HRESULT MFWebCameraHelper::GetDeviceSymLink(IMFActivate *pDevice, wstring& friendlyName, wstring& symLink)
 {
 	HRESULT hr = S_OK;
 	WCHAR *szAttrName = NULL;
@@ -133,7 +133,7 @@ HRESULT WebCameraHelper::GetDeviceSymLink(IMFActivate *pDevice, wstring& friendl
 	return hr;
 }
 
-void WebCameraHelper::DebugShowDeviceNames(IMFActivate **ppDevices, UINT count)
+void MFWebCameraHelper::DebugShowDeviceNames(IMFActivate **ppDevices, UINT count)
 {
 	for (DWORD i = 0; i < count; i++)
 	{
@@ -156,7 +156,7 @@ void WebCameraHelper::DebugShowDeviceNames(IMFActivate **ppDevices, UINT count)
 	}
 }
 
-HRESULT WebCameraHelper::EnumerateCaptureFormats(IMFMediaSource *pSource, CaptureFormats& formats)
+HRESULT MFWebCameraHelper::EnumerateCaptureFormats(IMFMediaSource *pSource, CaptureFormats& formats)
 {
 	CComPtr<IMFPresentationDescriptor> pPD;
 	CComPtr<IMFStreamDescriptor> pSD;
@@ -198,7 +198,7 @@ HRESULT WebCameraHelper::EnumerateCaptureFormats(IMFMediaSource *pSource, Captur
 	return hr;
 }
 
-HRESULT WebCameraHelper::SetDeviceFormat(IMFMediaSource *pSource, DWORD dwFormatIndex)
+HRESULT MFWebCameraHelper::SetDeviceFormat(IMFMediaSource *pSource, DWORD dwFormatIndex)
 {
 	CComPtr<IMFPresentationDescriptor> pPD;
 	CComPtr<IMFStreamDescriptor> pSD;
@@ -228,7 +228,7 @@ HRESULT WebCameraHelper::SetDeviceFormat(IMFMediaSource *pSource, DWORD dwFormat
 	return hr;
 }
 
-HRESULT WebCameraHelper::SetFrameRate(IMFMediaSource *pSource, DWORD dwTypeIndex, unsigned int fRate)
+HRESULT MFWebCameraHelper::SetFrameRate(IMFMediaSource *pSource, DWORD dwTypeIndex, unsigned int fRate)
 {
 	CComPtr<IMFPresentationDescriptor> pPD;
 	CComPtr<IMFStreamDescriptor> pSD;
@@ -278,7 +278,7 @@ HRESULT WebCameraHelper::SetFrameRate(IMFMediaSource *pSource, DWORD dwTypeIndex
 	return hr;
 }
 
-HRESULT WebCameraHelper::LogMediaType(IMFMediaType *pType, AttrList& attrList)
+HRESULT MFWebCameraHelper::LogMediaType(IMFMediaType *pType, AttrList& attrList)
 {
 	UINT32 count = 0;
 	HRESULT hr = S_OK;
@@ -304,7 +304,7 @@ HRESULT WebCameraHelper::LogMediaType(IMFMediaType *pType, AttrList& attrList)
 	return hr;
 }
 
-HRESULT WebCameraHelper::LogAttributeValueByIndex(IMFAttributes *pAttr, AttrList& attrList, unsigned int index)
+HRESULT MFWebCameraHelper::LogAttributeValueByIndex(IMFAttributes *pAttr, AttrList& attrList, unsigned int index)
 {
 	wstring pGuidName;
 	wstring pGuidValName;
@@ -400,7 +400,7 @@ HRESULT WebCameraHelper::LogAttributeValueByIndex(IMFAttributes *pAttr, AttrList
 	return hr;
 }
 
-HRESULT WebCameraHelper::GetGUIDName(const GUID& guid, wstring& guidName)
+HRESULT MFWebCameraHelper::GetGUIDName(const GUID& guid, wstring& guidName)
 {
 	HRESULT hr = S_OK;
 	WCHAR *pName = NULL;
@@ -445,7 +445,7 @@ done:
 	return hr;
 }
 
-void WebCameraHelper::LogUINT32AsUINT64(const PROPVARIANT& var, PairedAttr& valPair)
+void MFWebCameraHelper::LogUINT32AsUINT64(const PROPVARIANT& var, PairedAttr& valPair)
 {
 	UINT32 uHigh = 0, uLow = 0;
 	Unpack2UINT32AsUINT64(var.uhVal.QuadPart, &uHigh, &uLow);
@@ -453,12 +453,12 @@ void WebCameraHelper::LogUINT32AsUINT64(const PROPVARIANT& var, PairedAttr& valP
 	DBGMSG(L"%d x %d", uHigh, uLow);
 }
 
-float WebCameraHelper::OffsetToFloat(const MFOffset& offset)
+float MFWebCameraHelper::OffsetToFloat(const MFOffset& offset)
 {
 	return offset.value + (static_cast<float>(offset.fract) / 65536.0f);
 }
 
-HRESULT WebCameraHelper::LogVideoArea(const PROPVARIANT& var)
+HRESULT MFWebCameraHelper::LogVideoArea(const PROPVARIANT& var)
 {
 	if (var.caub.cElems < sizeof(MFVideoArea))
 	{
@@ -473,7 +473,7 @@ HRESULT WebCameraHelper::LogVideoArea(const PROPVARIANT& var)
 }
 
 // Handle certain known special cases.
-HRESULT WebCameraHelper::SpecialCaseAttributeValue(GUID guid, const PROPVARIANT& var, PairedAttr& valPair)
+HRESULT MFWebCameraHelper::SpecialCaseAttributeValue(GUID guid, const PROPVARIANT& var, PairedAttr& valPair)
 {
 	if ((guid == MF_MT_FRAME_RATE) || (guid == MF_MT_FRAME_RATE_RANGE_MAX) ||
 		(guid == MF_MT_FRAME_RATE_RANGE_MIN) || (guid == MF_MT_FRAME_SIZE) ||
@@ -496,7 +496,7 @@ HRESULT WebCameraHelper::SpecialCaseAttributeValue(GUID guid, const PROPVARIANT&
 	return S_OK;
 }
 
-void WebCameraHelper::DBGMSG(PCWSTR format, ...)
+void MFWebCameraHelper::DBGMSG(PCWSTR format, ...)
 {
 	va_list args;
 	va_start(args, format);
@@ -513,7 +513,7 @@ void WebCameraHelper::DBGMSG(PCWSTR format, ...)
 #define IF_EQUAL_RETURN(param, val) if(val == param) return L#val
 #endif
 
-LPCWSTR WebCameraHelper::GetGUIDNameConst(const GUID& guid)
+LPCWSTR MFWebCameraHelper::GetGUIDNameConst(const GUID& guid)
 {
 	IF_EQUAL_RETURN(guid, MF_MT_MAJOR_TYPE);
 	IF_EQUAL_RETURN(guid, MF_MT_MAJOR_TYPE);

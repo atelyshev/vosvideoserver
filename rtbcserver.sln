@@ -51,6 +51,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "deviceworker", "deviceworke
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VosVideo.Communication.InterprocessQueue", "VosVideo.Communication.InterprocessQueue\VosVideo.Communication.InterprocessQueue.vcxproj", "{99DC47B1-653D-4173-B50F-D7D99CD8C1A9}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "camera", "camera", "{A6B850AF-1932-46DB-B3BE-8679AB8C5F4E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VosVideo.CameraPlayer", "VosVideo.CameraPlayer\VosVideo.CameraPlayer.vcxproj", "{1CA2C3A4-27F5-4804-9A8E-DD4F3D5BC74A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VosVideo.MFCameraPlayer", "VosVideo.MFCameraPlayer\VosVideo.MFCameraPlayer.vcxproj", "{54E1110A-EFCB-414F-803E-1ACDA9815477}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VosVideo.GSCameraPlayer", "VosVideo.GSCameraPlayer\VosVideo.GSCameraPlayer.vcxproj", "{B58DE50C-EB20-4565-98F2-453FEE89916D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -275,11 +283,45 @@ Global
 		{99DC47B1-653D-4173-B50F-D7D99CD8C1A9}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{99DC47B1-653D-4173-B50F-D7D99CD8C1A9}.Release|Win32.ActiveCfg = Release|Win32
 		{99DC47B1-653D-4173-B50F-D7D99CD8C1A9}.Release|Win32.Build.0 = Release|Win32
+		{1CA2C3A4-27F5-4804-9A8E-DD4F3D5BC74A}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{1CA2C3A4-27F5-4804-9A8E-DD4F3D5BC74A}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{1CA2C3A4-27F5-4804-9A8E-DD4F3D5BC74A}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{1CA2C3A4-27F5-4804-9A8E-DD4F3D5BC74A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1CA2C3A4-27F5-4804-9A8E-DD4F3D5BC74A}.Debug|Win32.Build.0 = Debug|Win32
+		{1CA2C3A4-27F5-4804-9A8E-DD4F3D5BC74A}.Release|Any CPU.ActiveCfg = Release|Win32
+		{1CA2C3A4-27F5-4804-9A8E-DD4F3D5BC74A}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{1CA2C3A4-27F5-4804-9A8E-DD4F3D5BC74A}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{1CA2C3A4-27F5-4804-9A8E-DD4F3D5BC74A}.Release|Win32.ActiveCfg = Release|Win32
+		{1CA2C3A4-27F5-4804-9A8E-DD4F3D5BC74A}.Release|Win32.Build.0 = Release|Win32
+		{54E1110A-EFCB-414F-803E-1ACDA9815477}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{54E1110A-EFCB-414F-803E-1ACDA9815477}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{54E1110A-EFCB-414F-803E-1ACDA9815477}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{54E1110A-EFCB-414F-803E-1ACDA9815477}.Debug|Win32.ActiveCfg = Debug|Win32
+		{54E1110A-EFCB-414F-803E-1ACDA9815477}.Debug|Win32.Build.0 = Debug|Win32
+		{54E1110A-EFCB-414F-803E-1ACDA9815477}.Release|Any CPU.ActiveCfg = Release|Win32
+		{54E1110A-EFCB-414F-803E-1ACDA9815477}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{54E1110A-EFCB-414F-803E-1ACDA9815477}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{54E1110A-EFCB-414F-803E-1ACDA9815477}.Release|Win32.ActiveCfg = Release|Win32
+		{54E1110A-EFCB-414F-803E-1ACDA9815477}.Release|Win32.Build.0 = Release|Win32
+		{B58DE50C-EB20-4565-98F2-453FEE89916D}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{B58DE50C-EB20-4565-98F2-453FEE89916D}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{B58DE50C-EB20-4565-98F2-453FEE89916D}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{B58DE50C-EB20-4565-98F2-453FEE89916D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B58DE50C-EB20-4565-98F2-453FEE89916D}.Debug|Win32.Build.0 = Debug|Win32
+		{B58DE50C-EB20-4565-98F2-453FEE89916D}.Release|Any CPU.ActiveCfg = Release|Win32
+		{B58DE50C-EB20-4565-98F2-453FEE89916D}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{B58DE50C-EB20-4565-98F2-453FEE89916D}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{B58DE50C-EB20-4565-98F2-453FEE89916D}.Release|Win32.ActiveCfg = Release|Win32
+		{B58DE50C-EB20-4565-98F2-453FEE89916D}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{06702349-08E5-4027-9AA6-9EE22B322B12} = {A6B850AF-1932-46DB-B3BE-8679AB8C5F4E}
+		{1CA2C3A4-27F5-4804-9A8E-DD4F3D5BC74A} = {A6B850AF-1932-46DB-B3BE-8679AB8C5F4E}
+		{54E1110A-EFCB-414F-803E-1ACDA9815477} = {A6B850AF-1932-46DB-B3BE-8679AB8C5F4E}
+		{B58DE50C-EB20-4565-98F2-453FEE89916D} = {A6B850AF-1932-46DB-B3BE-8679AB8C5F4E}
 		{164D5E97-847C-4623-9185-B9A3F5DA95B3} = {1E7B6864-7F55-4597-B86D-C8CA22355109}
 		{CB254DF4-87C7-49B1-8D6D-A35A74AB6706} = {1E7B6864-7F55-4597-B86D-C8CA22355109}
 		{52541AEF-C817-4F3C-8736-7F60A055FED8} = {1E7B6864-7F55-4597-B86D-C8CA22355109}

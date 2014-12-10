@@ -13,21 +13,8 @@ static wstring deviceId_ = L"-deviceid";
 static wstring logging_ = L"-logging";
 static wstring debug_ = L"-debug";
 
-void WaitForDebugger()
-{
-#ifdef _DEBUG
-	bool isDone = false;
-	cout << "Start debug waiting loop." << endl;
 
-	while(!isDone)
-	{
-		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-		cout << "In waiting loop" << endl;
-	}
-#endif
-}
-
-int _tmain(int argc, wchar_t* argv[])
+int _tmain(int argc, _TCHAR* argv[])
 {
 	vector<wstring> argVect;
 
@@ -48,10 +35,6 @@ int _tmain(int argc, wchar_t* argv[])
 		else if (argVect[i].substr(0, logging_.length()) == logging_)
 		{
 			(argVect[i].substr(logging_.length() + 1, argVect[i].length()) == L"true") ?  isLogging = true : isLogging = false;
-		}
-		else if (argVect[i].substr(0, debug_.length()) == debug_)
-		{
-			WaitForDebugger();
 		}
 	}
 

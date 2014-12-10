@@ -15,7 +15,7 @@
 using namespace std;
 using namespace util;
 using namespace concurrency;
-using namespace vosvideo::camera;
+using namespace vosvideo::cameraplayer;
 using namespace vosvideo::data;
 
 FrameCallback::FrameCallback(CameraTopology* topoPtr) : topoPtr_(topoPtr)
