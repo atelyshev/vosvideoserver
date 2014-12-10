@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{EC6BF23F-B645-4768-A1DD-4FD4AFF30C85}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>VosVideoIpCamTest</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_VARIADIC_MAX=10;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(THIRDPARTY_ROOT)\gtest-1.6.0\include;$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(THIRDPARTY_ROOT)\boost_1_56_0;..\..\;..\</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(THIRDPARTY_ROOT)\gtest-1.6.0\lib\Debug;$(THIRDPARTY_ROOT)\casablanca\SDK\lib\x86\Debug;$(THIRDPARTY_ROOT)\boost_1_56_0\stage\lib;$(VOSVIDEO_ROOT)\vosvideocommon\Debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>wmcodecdspuuid.lib;mfuuid.lib;Mfplat.lib;Mf.lib;gtestd.lib;cpprest110d_1_2.lib;VosVideoCommon.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;_VARIADIC_MAX=10;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(THIRDPARTY_ROOT)\gtest-1.6.0\include;$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(THIRDPARTY_ROOT)\boost_1_56_0;..\..\;..\</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(THIRDPARTY_ROOT)\gtest-1.6.0\lib\Release;$(THIRDPARTY_ROOT)\casablanca\SDK\lib\x86\Release;$(THIRDPARTY_ROOT)\boost_1_56_0\stage\lib;$(VOSVIDEO_ROOT)\vosvideocommon\Release</AdditionalLibraryDirectories>
+      <AdditionalDependencies>wmcodecdspuuid.lib;Mfplat.lib;Mf.lib;gtest.lib;cpprest110_1_2.lib;VosVideoCommon.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\VosVideo.Communication\VosVideo.Communication.vcxproj">
+      <Project>{cb254df4-87c7-49b1-8d6d-a35a74ab6706}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\VosVideo.Configuration\VosVideo.Configuration.vcxproj">
+      <Project>{80c36b66-4df9-48f5-8859-50a891263ccb}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\VosVideo.Data\VosVideo.Data.vcxproj">
+      <Project>{6f129e1b-51ba-4372-8d91-1d123cb18b15}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\VosVideo.DeviceManagement\VosVideo.DeviceManagement.vcxproj">
+      <Project>{a7ca82e4-092e-40e8-a92c-38f12f2385b9}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\VosVideo.Camera\VosVideo.Camera.vcxproj">
+      <Project>{06702349-08e5-4027-9aa6-9ee22b322b12}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\VosVideo.Test.Common\VosVideo.Test.Common.vcxproj">
+      <Project>{53ef852e-15b3-42ed-a1e5-aec49c9ec8eb}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
