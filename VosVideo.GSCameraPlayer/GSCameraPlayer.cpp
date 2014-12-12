@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "GSCameraPlayer.h"
 
+
 using namespace vosvideo::cameraplayer;
 
 void GSCameraPlayer::NewBufferHandler(GstElement *sink, GSCameraPlayer *cameraPlayer){
@@ -32,6 +33,11 @@ void GSCameraPlayer::NewBufferHandler(GstElement *sink, GSCameraPlayer *cameraPl
 
 		gst_buffer_unref (buffer);
 	}
+}
+
+void GSCameraPlayer::SourceSetupHandler(GstElement *element, GstElement *source, GSCameraPlayer *cameraPlayer){
+	using namespace util;
+	g_object_set (source, "user-id", StringUtil::ToString(cameraPlayer->_userId).c_str(), "user-pw", StringUtil::ToString(cameraPlayer->_password).c_str(),  NULL);
 }
 
 void GSCameraPlayer::PadAddedHandler(GstElement *src, GstPad *new_pad, GSCameraPlayer *cameraPlayer){
@@ -83,7 +89,7 @@ gboolean GSCameraPlayer::BusWatchHandler(GstBus *bus, GstMessage *msg, gpointer 
 
 	switch (GST_MESSAGE_TYPE (msg)) {
 		case GST_MESSAGE_ERROR:
-			_asm int 3;
+			//_asm int 3;
 			gst_message_parse_error (msg, &err, &debug_info);
 			g_printerr ("GSCameraPlayer: Error received from element %s: %s\n", GST_OBJECT_NAME (msg->src), err->message);
 			g_printerr ("GSCameraPlayer: Debugging information: %s\n", debug_info ? debug_info : "none");
@@ -91,7 +97,7 @@ gboolean GSCameraPlayer::BusWatchHandler(GstBus *bus, GstMessage *msg, gpointer 
 			g_free (debug_info);
 			break;
 		case GST_MESSAGE_EOS:
-			_asm int 3;
+			//_asm int 3;
 			g_print ("End-Of-Stream reached.\n");
 			break;
 		case GST_MESSAGE_STATE_CHANGED:
@@ -156,6 +162,8 @@ HRESULT GSCameraPlayer::OpenURL(vosvideo::data::CameraConfMsg& cameraConf){
 	std::wstring wvideoUri;
 	cameraConf.GetUris(waudioUri, wvideoUri);
 	cameraConf.GetCameraIds(this->_deviceId, this->_deviceName);
+	cameraConf.GetCredentials(this->_userId, this->_password);
+
 	
 	//Need to convert to std::string due to LOG_TRACE not working with std::wstring
 	this->_deviceVideoUri = std::string(wvideoUri.begin(), wvideoUri.end());
@@ -190,7 +198,6 @@ gboolean GSCameraPlayer::CreateGStreamerPipeline(gpointer data){
 	GstCaps *appSinkCaps;
 
 	GSCameraPlayer *cameraPlayer = (GSCameraPlayer*)data;
-
 	cameraPlayer->_uriDecodeBin = gst_element_factory_make ("uridecodebin", "uridecodebin");
 	cameraPlayer->_videoScale = gst_element_factory_make("videoscale", "videoscale");
 	cameraPlayer->_videoRate = gst_element_factory_make("videorate", "videorate");
@@ -206,7 +213,6 @@ gboolean GSCameraPlayer::CreateGStreamerPipeline(gpointer data){
 	//cameraPlayer->_autoVideoSink = gst_element_factory_make("autovideosink", "testvideosink");
 
 	cameraPlayer->_pipeline = gst_pipeline_new ("pipeline");
-
 
 	if(!cameraPlayer->_uriDecodeBin){
 		LOG_ERROR("GSCameraPlayer error: Unable to create uridecodebin source");
@@ -306,15 +312,16 @@ gboolean GSCameraPlayer::CreateGStreamerPipeline(gpointer data){
 	gst_caps_unref(rawVideoRateCaps);
 	
 	//Configure the appsink element
-	//appSinkCaps = gst_caps_from_string ("video/x-vp8");
 	appSinkCaps = gst_caps_from_string("video/x-raw-yuv");
 	g_object_set(cameraPlayer->_appSink, "emit-signals", TRUE, "caps", appSinkCaps, NULL);
 	//g_object_set(cameraPlayer->_appSink, "emit-signals", TRUE, NULL);	
 	gst_caps_unref(appSinkCaps);
 
 
-	//Connect to the pad-added signal of the source element
+	//Connect to the pad-added signal of the uridecodebin element
 	g_signal_connect (cameraPlayer->_uriDecodeBin, "pad-added", G_CALLBACK (cameraPlayer->PadAddedHandler), cameraPlayer);
+	//Connect to the source-setup signal of the uridecodebin element
+	g_signal_connect (cameraPlayer->_uriDecodeBin, "source-setup", G_CALLBACK (cameraPlayer->SourceSetupHandler), cameraPlayer);
 	//Connect to the new-buffer signal so we can retrieve samples without blocking
 	g_signal_connect (cameraPlayer->_appSink, "new-buffer", G_CALLBACK (cameraPlayer->NewBufferHandler), cameraPlayer);
 

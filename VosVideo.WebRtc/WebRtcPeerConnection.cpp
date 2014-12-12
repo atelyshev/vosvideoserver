@@ -365,7 +365,7 @@ void WebRtcPeerConnection::AddStreams_r()
 //	stream->AddTrack(audio_track);
 	stream->AddTrack(video_track);
 
-	if (!peer_connection_->AddStream(stream, NULL)) 
+	if (!peer_connection_->AddStream(stream, nullptr)) 
 	{
 		LOG_ERROR("Adding stream to PeerConnection failed");
 	}	
@@ -375,22 +375,14 @@ void WebRtcPeerConnection::AddStreams_r()
 cricket::VideoCapturer* WebRtcPeerConnection::OpenVideoCaptureDevice()
 {
 	int devId = player_->GetDeviceId();
-	cricket::Device device = cricket::Device(to_string(devId), devId);
-//	if (!deviceManager_->GetVideoCaptureDevice(devId_, dev))
-//	{
-//		LOG_ERROR("Failed to create Capture Device for camera id: " << devId_);
-//		return NULL;
-//	}
 
 	CameraVideoCapturer* capturer = new CameraVideoCapturer();
 	if (!capturer->Init(devId, player_)) 
 	{
 		delete capturer;
-		return NULL;
+		return nullptr;
 	}
 	return capturer;
-
-	return deviceManager_->CreateVideoCapturer(device);
 }
 
 // Called when a remote stream is added
