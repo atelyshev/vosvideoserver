@@ -39,6 +39,7 @@ namespace vosvideo
 			static gboolean RemoveWebRtcCapturer(gpointer data);
 			static bool ChangeElementState(GstElement *element, GstState state);
 			static void PadAddedHandler(GstElement *src, GstPad *new_pad, GSCameraPlayer *cameraPlayer);
+			static void SourceSetupHandler(GstElement *element, GstElement *source, GSCameraPlayer *cameraPlayer);
 			static void NewBufferHandler(GstElement *sink, GSCameraPlayer *cameraPlayer);
 			static gboolean BusWatchHandler(GstBus *bus, GstMessage *msg, gpointer data);
 
@@ -53,6 +54,8 @@ namespace vosvideo
 			int _deviceId;
 			std::wstring _deviceName;
 			std::string _deviceVideoUri;
+			std::wstring _userId;
+			std::wstring _password;
 
 
 			guint _busWatchId;

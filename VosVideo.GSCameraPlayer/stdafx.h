@@ -15,5 +15,6 @@
 #include <iostream>
 #include <boost/thread.hpp>
 #include <vosvideocommon/SeverityLoggerMacros.h>
+#include <vosvideocommon/StringUtil.h>
 
 // TODO: reference additional headers your program requires here
