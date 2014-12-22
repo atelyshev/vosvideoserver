@@ -10,34 +10,38 @@
 #include "PubSubTest.h"
 #include "WebsocketTest.h"
 
-std::shared_ptr<CommunicationManager> CreateCommManager();
-std::shared_ptr<CommunicationManager> CreateTest();
+using namespace std;
+
+shared_ptr<CommunicationManager> CreateCommManager();
+shared_ptr<CommunicationManager> CreateTest();
 web::json::value HttpGetTest();
 
 
-TEST(VosVideoCommunication, Create){
+TEST(VosVideoCommunication, Create)
+{
 	EXPECT_NO_THROW(CreateTest());
 }
 
-TEST(VosVideoCommunication, HttpGet){
+TEST(VosVideoCommunication, HttpGet)
+{
 	EXPECT_NO_THROW(HttpGetTest());
 }
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	::testing::InitGoogleTest(&argc, argv);
+	testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
 }
 
-
-std::shared_ptr<CommunicationManager> CreateTest(){
-	std::shared_ptr<CommunicationManager> commManager = CreateCommManager();
+shared_ptr<CommunicationManager> CreateTest()
+{	
+	shared_ptr<CommunicationManager> commManager = CreateCommManager();
 	return commManager;
 }
 
 web::json::value HttpGetTest()
 {
-	std::shared_ptr<CommunicationManager> commManager = CreateCommManager();
+	shared_ptr<CommunicationManager> commManager = CreateCommManager();
 	auto respTask = commManager->HttpGet(L"fakepath");
 	web::json::value resp = respTask.get();
 	return resp;

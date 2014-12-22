@@ -18,7 +18,7 @@ void TestRtbcErrorOutMsg()
 
 	utility::stringstream_t ss;
 	ss << jsonStr;
-	web::json::value::parse(jsonStr);
+	//web::json::value::parse(jsonStr);
 }
 
 TEST(ParseOutMsg, ParseRtbcErrorOutMsg)
@@ -28,7 +28,7 @@ TEST(ParseOutMsg, ParseRtbcErrorOutMsg)
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	::testing::InitGoogleTest(&argc, argv);
+	testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
 }
 
