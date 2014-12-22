@@ -1,6 +1,6 @@
 #pragma once
 #include <talk/app/webrtc/mediaconstraintsinterface.h>
-#include <talk/base/stringencode.h>
+#include <webrtc/base/stringencode.h>
 
 
 namespace vosvideo
@@ -45,13 +45,13 @@ namespace vosvideo
 							}
 					}
 				}
-				mandatory_.push_back(Constraint(key, talk_base::ToString<T>(value)));
+				mandatory_.push_back(Constraint(key, rtc::ToString<T>(value)));
 			}
 
 			template <class T>
 			void AddOptional(const std::string& key, const T& value) 
 			{
-				optional_.push_back(Constraint(key, talk_base::ToString<T>(value)));
+				optional_.push_back(Constraint(key, rtc::ToString<T>(value)));
 			}
 
 			void SetMandatoryMinAspectRatio(double ratio) 

@@ -26,7 +26,17 @@ void PubSubService::Publish(shared_ptr<vosvideo::data::ReceivedData> receivedDat
 								if(it->Get() == typeid(*receivedData))
 								{
 									MessageReceiver& receiver = subscription->GetMessageReceiver();
-									receiver.OnMessageReceived(receivedData);
+									try
+									{
+										receiver.OnMessageReceived(receivedData);
+									}
+									catch (int i)
+									{
+										__asm int 3;
+									}
+									catch (...){
+										__asm int 3;
+									}
 								}
 							}
 						}

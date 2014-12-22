@@ -3,13 +3,13 @@
 #include <talk/media/webrtc/webrtcvideocapturer.h>
 #undef HAVE_WEBRTC_VIDEO
 
-#include <talk/base/scoped_ref_ptr.h>
+#include <webrtc/base/scoped_ref_ptr.h>
 #include <talk/app/webrtc/peerconnectioninterface.h>
 #include <talk/app/webrtc/mediastreaminterface.h>
 #include <talk/app/webrtc/videosourceinterface.h>
-#include <talk/base/win32socketinit.h>
-#include <talk/base/win32socketserver.h>
-#include <talk/base/json.h>
+#include <webrtc/base/win32socketinit.h>
+#include <webrtc/base/win32socketserver.h>
+#include <webrtc/base/json.h>
 #include <vosvideocommon/SeverityLoggerMacros.h>
 #include "VosVideo.Data/LiveVideoOfferMsg.h"
 #include "VosVideo.Communication/CommunicationManager.h"
@@ -42,7 +42,7 @@ namespace vosvideo
 		public:
 			static DummySetSessionDescriptionObserver* Create() 
 			{
-				return new talk_base::RefCountedObject<DummySetSessionDescriptionObserver>();
+				return new rtc::RefCountedObject<DummySetSessionDescriptionObserver>();
 			}
 
 			virtual void OnSuccess() 
@@ -61,7 +61,7 @@ namespace vosvideo
 		};
 
 		class WebRtcPeerConnection : 
-			public talk_base::MessageHandler,
+			public rtc::MessageHandler,
 			public webrtc::PeerConnectionObserver,
 			public webrtc::CreateSessionDescriptionObserver,
 			public PeerConnectionClientObserver
@@ -70,7 +70,7 @@ namespace vosvideo
 			WebRtcPeerConnection(std::wstring clientPeer, 
 								 std::wstring srvPeer, 
 								 vosvideo::cameraplayer::CameraPlayerBase* player,
-								 talk_base::scoped_refptr<webrtc::PeerConnectionFactoryInterface> peer_connection_factory,
+								 rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> peer_connection_factory,
 								 std::shared_ptr<vosvideo::communication::InterprocessQueueEngine> queueEng);
 
 			virtual ~WebRtcPeerConnection();
@@ -78,7 +78,7 @@ namespace vosvideo
 			bool IsPeerConnectionFinished();
 			void InitSdp(const std::shared_ptr<vosvideo::data::SdpOffer> sdp);
 			void InitIce(const std::shared_ptr<vosvideo::data::WebRtcIceCandidateMsg> ice);
-			void SetCurrentThread(talk_base::Thread* commandThr);
+			void SetCurrentThread(rtc::Thread* commandThr);
 			void SetDeviceManager(std::shared_ptr<vosvideo::camera::CameraDeviceManager> deviceManager, int devId, bool isShutdownOnClose);
 			void Close();
 
@@ -92,6 +92,8 @@ namespace vosvideo
 			virtual void OnSignalingChange(webrtc::PeerConnectionInterface::SignalingState new_state);
 			virtual void OnRenegotiationNeeded() {}
 			virtual void OnIceChange() {}
+			// Triggered when a remote peer open a data channel.
+			virtual void OnDataChannel(webrtc::DataChannelInterface* data_channel){}
 
 			// PeerConnectionClientObserver implementation.
 			virtual void OnSignedIn();
@@ -107,11 +109,11 @@ namespace vosvideo
 			virtual void OnFailure(const std::string& error);
 
 			// Marshals SignalStateChange onto thread_.
-			virtual void OnMessage(talk_base::Message* message);
+			virtual void OnMessage(rtc::Message* message);
 
 		private:
 			template <class T>
-			class TypedMessagePtr : public talk_base::MessageData 
+			class TypedMessagePtr : public rtc::MessageData 
 			{
 			public:
 				explicit TypedMessagePtr(T* data) : data_(data) { }
@@ -121,8 +123,8 @@ namespace vosvideo
 				T* data_;
 			};
 
-			typedef std::pair<std::string, talk_base::scoped_refptr<webrtc::MediaStreamInterface> > MediaStreamPair;
-			typedef std::map<std::string, talk_base::scoped_refptr<webrtc::MediaStreamInterface> > MediaStreamMap;
+			typedef std::pair<std::string, rtc::scoped_refptr<webrtc::MediaStreamInterface> > MediaStreamPair;
+			typedef std::map<std::string, rtc::scoped_refptr<webrtc::MediaStreamInterface> > MediaStreamMap;
 
 			void InitSdp_r(const std::string& sdpPayload);
 			void InitIce_r(const Json::Value& jmessage);
@@ -135,8 +137,8 @@ namespace vosvideo
 			cricket::VideoCapturer* OpenVideoCaptureDevice();
 			void ProcessSdpMessage(const std::string& message);
 			void ProcessIceMessage(const std::string& message);
-			talk_base::scoped_refptr<webrtc::PeerConnectionFactoryInterface> peer_connection_factory_;
-			talk_base::scoped_refptr<webrtc::PeerConnectionInterface> peer_connection_;
+			rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> peer_connection_factory_;
+			rtc::scoped_refptr<webrtc::PeerConnectionInterface> peer_connection_;
 
 			MediaStreamMap active_streams_;
 			std::shared_ptr<vosvideo::camera::CameraDeviceManager> deviceManager_;
@@ -144,7 +146,7 @@ namespace vosvideo
 			std::string server_;
 			std::wstring clientPeer_;
 			std::wstring srvPeer_;
-			talk_base::Thread* commandThr_;
+			rtc::Thread* commandThr_;
 			cricket::VideoCapturer* videoCapturer_;
 			vosvideo::cameraplayer::CameraPlayerBase* player_;
 			bool isPeerConnectionFinished_;

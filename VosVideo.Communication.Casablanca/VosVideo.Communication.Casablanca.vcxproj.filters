@@ -24,12 +24,18 @@
     <ClInclude Include="CbHttpClientEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CbWebsocketClientEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CbHttpClientEngine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CbWebsocketClientEngine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

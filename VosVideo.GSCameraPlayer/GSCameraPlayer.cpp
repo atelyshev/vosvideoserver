@@ -26,9 +26,12 @@ void GSCameraPlayer::NewBufferHandler(GstElement *sink, GSCameraPlayer *cameraPl
 		webRtcCap.codecType = webrtc::VideoCodecType::kVideoCodecUnknown;
 		webRtcCap.interlaced = true;
 
-		for(auto iter = cameraPlayer->_webRtcVideoCapturers.begin(); iter != cameraPlayer->_webRtcVideoCapturers.end(); ++iter)
 		{
-			iter->second->IncomingFrame(data, size, webRtcCap);
+			boost::shared_lock<boost::shared_mutex> lock(cameraPlayer->_mutex);
+			for (auto iter = cameraPlayer->_webRtcVideoCapturers.begin(); iter != cameraPlayer->_webRtcVideoCapturers.end(); ++iter)
+			{
+				iter->second->IncomingFrame(data, size, webRtcCap);
+			}
 		}
 
 		gst_buffer_unref (buffer);
@@ -346,7 +349,7 @@ void GSCameraPlayer::GetWebRtcCapability(webrtc::VideoCaptureCapability& webRtcC
 	webRtcCapability.width = GSCameraPlayer::FRAME_WIDTH;
 	webRtcCapability.height = GSCameraPlayer::FRAME_HEIGHT;
 	webRtcCapability.interlaced = true;
-	webRtcCapability.codecType = webrtc::VideoCodecType::kVideoCodecVP8;
+	webRtcCapability.codecType = webrtc::VideoCodecType::kVideoCodecUnknown;
 	webRtcCapability.maxFPS = GSCameraPlayer::FRAMERATE_NUMERATOR;
 }
 
@@ -391,7 +394,7 @@ void GSCameraPlayer::SetExternalCapturer(webrtc::VideoCaptureExternal* captureOb
 	}
 
 	{
-		std::lock_guard<std::mutex> lock(_mutex);
+		boost::unique_lock<boost::shared_mutex> lock(_mutex);
 		this->_webRtcVideoCapturers.insert(std::make_pair(reinterpret_cast<uint32_t>(captureObserver), captureObserver));
 	}
 
@@ -404,7 +407,7 @@ void GSCameraPlayer::SetExternalCapturer(webrtc::VideoCaptureExternal* captureOb
 void GSCameraPlayer::RemoveExternalCapturers(){
 	LOG_TRACE("GSCameraPlayer RemoveExternalCapturers called");	
 	
-	std::lock_guard<std::mutex> lock(_mutex);
+	boost::unique_lock<boost::shared_mutex> lock(_mutex);
 	this->_webRtcVideoCapturers.clear();
 	DestroyGSStreamerPipeline();
 }
@@ -412,7 +415,7 @@ void GSCameraPlayer::RemoveExternalCapturers(){
 void GSCameraPlayer::RemoveExternalCapturer(webrtc::VideoCaptureExternal* captureObserver){
 	LOG_TRACE("GSCameraPlayer RemoveExternalCapturer called");
 	
-	std::lock_guard<std::mutex> lock(_mutex);
+	boost::unique_lock<boost::shared_mutex> lock(_mutex);
 	this->_webRtcVideoCapturers.erase(reinterpret_cast<uint32_t>(captureObserver));
 	//If we don't have any more webrtc capturers we destroy the pipeline
 	//TODO: don't destroy it if recording is enabled

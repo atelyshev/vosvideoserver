@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -19,13 +19,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -50,18 +50,19 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;POCO_NO_UNWINDOWS;JSONCPP_RELATIVE_PATH;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;POCO_NO_UNWINDOWS;JSONCPP_RELATIVE_PATH;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;WEBRTC_WIN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(THIRDPARTY_ROOT);$(THIRDPARTY_ROOT)\OpenSSL32\include;$(THIRDPARTY_ROOT)\boost_1_56_0;$(THIRDPARTY_ROOT)\poco-1.4.6\Net\include;$(THIRDPARTY_ROOT)\poco-1.4.6\Foundation\include;$(THIRDPARTY_ROOT)\libjingle\trunk;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\jsoncpp\source\include;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc\modules\video_capture\include;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\webrtc\system_wrappers\interface;$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(VOSVIDEO_ROOT)\vosvideovp8;$(VOSVIDEO_ROOT)\vosvideocommon;..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(THIRDPARTY_ROOT);$(THIRDPARTY_ROOT)\OpenSSL32\include;$(THIRDPARTY_ROOT)\boost_1_56_0;$(THIRDPARTY_ROOT)\poco-1.4.7p1\Net\include;$(THIRDPARTY_ROOT)\poco-1.4.7p1\Foundation\include;$(THIRDPARTY_ROOT)\libjingle\trunk;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\jsoncpp\source\include;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc\modules\video_capture\include;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\webrtc\system_wrappers\interface;$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(VOSVIDEO_ROOT)\vosvideovp8;$(VOSVIDEO_ROOT)\vosvideocommon;..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <AdditionalOptions>-Zm200 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(THIRDPARTY_ROOT)\OpenSSL32\lib;$(THIRDPARTY_ROOT)\libjingle\lib\Debug;$(THIRDPARTY_ROOT)\boost_1_56_0\stage\lib;$(THIRDPARTY_ROOT)\poco-1.4.6\lib\Debug;$(THIRDPARTY_ROOT)\websocketpp\lib\Debug;$(THIRDPARTY_ROOT)\casablanca\SDK\lib\x86\Debug;$(VOSVIDEO_ROOT)\vosvideocommon\Debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>acm2.lib;amstrmid.lib;audio_coding_module.lib;audio_conference_mixer.lib;audio_device.lib;audio_processing.lib;audio_processing_sse2.lib;audioproc_debug_proto.lib;bitrate_controller.lib;CNG.lib;common_audio.lib;common_audio_sse2.lib;common_video.lib;cpprest110d_1_2.lib;crnspr.lib;crnss.lib;crssl.lib;crypt32.lib;dbghelp.lib;directshow_baseclasses.lib;dmoguids.lib;dnsapi.lib;expat.lib;G711.lib;G722.lib;icui18n.lib;icuuc.lib;iLBC.lib;iphlpapi.lib;iSAC.lib;iSACFix.lib;jsoncpp.lib;libeay32d.lib;libjingle.lib;libjingle_media.lib;libjingle_p2p.lib;libjingle_peerconnection.lib;libjingle_sound.lib;libjpeg.lib;libsrtp.lib;libvpx.lib;libvpx_asm_offsets_vp8.lib;libvpx_intrinsics_mmx.lib;libvpx_intrinsics_sse2.lib;libvpx_intrinsics_ssse3.lib;libyuv.lib;media_file.lib;Mf.lib;Mfplat.lib;Mfuuid.lib;msdmo.lib;msimg32.lib;NetEq.lib;NetEq4.lib;nss_static.lib;opus.lib;paced_sender.lib;PCM16B.lib;Propsys.lib;protobuf_lite.lib;psapi.lib;rbe_components.lib;remote_bitrate_estimator.lib;rtp_rtcp.lib;secur32.lib;shlwapi.lib;sqlite3.lib;ssleay32d.lib;system_wrappers.lib;usp10.lib;usrsctplib.lib;version.lib;video_capture_module.lib;video_coding_utility.lib;video_engine_core.lib;video_processing.lib;video_processing_sse2.lib;video_render_module.lib;voice_engine.lib;VosVideoCommon.lib;webrtc_i420.lib;webrtc_opus.lib;webrtc_utility.lib;webrtc_video_coding.lib;webrtc_vp8.lib;wininet.lib;winmm.lib;wmcodecdspuuid.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(THIRDPARTY_ROOT)\OpenSSL32\lib;$(THIRDPARTY_ROOT)\libjingle\lib\Debug;$(THIRDPARTY_ROOT)\boost_1_56_0\stage\lib;$(THIRDPARTY_ROOT)\poco-1.4.7p1\lib\;$(THIRDPARTY_ROOT)\casablanca\SDK\lib\x86\Debug;$(VOSVIDEO_ROOT)\vosvideocommon\Debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>amstrmid.lib;audio_coding_module.lib;audio_conference_mixer.lib;audio_device.lib;audio_processing.lib;audio_processing_sse2.lib;audioproc_debug_proto.lib;bitrate_controller.lib;CNG.lib;common_audio.lib;common_audio_sse2.lib;common_video.lib;cpprest120d_2_3.lib;crnspr.lib;crnss.lib;crssl.lib;crypt32.lib;dbghelp.lib;directshow_baseclasses.lib;dmoguids.lib;dnsapi.lib;expat.lib;G711.lib;G722.lib;icui18n.lib;icuuc.lib;iLBC.lib;iphlpapi.lib;iSAC.lib;iSACFix.lib;jsoncpp.lib;libeay32d.lib;libjingle_media.lib;libjingle_p2p.lib;libjingle_peerconnection.lib;libjpeg.lib;libsrtp.lib;libvpx.lib;libvpx_intrinsics_mmx.lib;libvpx_intrinsics_sse2.lib;libvpx_intrinsics_ssse3.lib;libyuv.lib;media_file.lib;Mf.lib;Mfplat.lib;Mfuuid.lib;msdmo.lib;msimg32.lib;NetEq.lib;nss_static.lib;opus.lib;paced_sender.lib;PCM16B.lib;Propsys.lib;protobuf_lite.lib;psapi.lib;rbe_components.lib;remote_bitrate_estimator.lib;rtp_rtcp.lib;secur32.lib;shlwapi.lib;sqlite3.lib;ssleay32d.lib;system_wrappers.lib;usp10.lib;usrsctplib.lib;version.lib;video_capture_module.lib;video_capture_module_internal_impl.lib;video_coding_utility.lib;video_engine_core.lib;video_processing.lib;video_processing_sse2.lib;video_render_module.lib;voice_engine.lib;VosVideoCommon.lib;webrtc_i420.lib;webrtc_opus.lib;webrtc_utility.lib;webrtc_video_coding.lib;webrtc_vp8.lib;rtc_base.lib;rtc_base_approved.lib;wininet.lib;winmm.lib;wmcodecdspuuid.lib;ws2_32.lib;Winhttp.lib;Bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions> /FORCE:MULTIPLE %(AdditionalOptions)</AdditionalOptions>
+      <IgnoreSpecificDefaultLibraries>libboost_system-vc120-mt-gd-1_55.lib;libboost_date_time-vc120-mt-gd-1_55.lib;libboost_regex-vc120-mt-gd-1_55.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
       <Command>copy $(ProjectDir)app.config $(SolutionDir)$(Configuration)\$(ProjectName).config.xml /Y
@@ -79,10 +80,10 @@ $(SolutionDir)copythirdparty_debug.bat $(SolutionDir)</Command>
       <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;POCO_NO_UNWINDOWS;JSONCPP_RELATIVE_PATH;_CRT_SECURE_NO_WARNINGS;WIN32;WEBRTC_SVNREVISION="Unavailable(issue687)";_WIN32_WINNT=0x0602;WINVER=0x0602;_WINDOWS;NOMINMAX;PSAPI_VERSION=1;_CRT_RAND_S;CERT_CHAIN_PARA_HAS_EXTRA_FIELDS;_ATL_NO_OPENGL;_HAS_EXCEPTIONS=1;_SECURE_ATL;CHROMIUM_BUILD;TOOLKIT_VIEWS=1;USE_LIBJPEG_TURBO=1;ENABLE_ONE_CLICK_SIGNIN;ENABLE_REMOTING=1;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;POCO_NO_UNWINDOWS;JSONCPP_RELATIVE_PATH;_CRT_SECURE_NO_WARNINGS;WIN32;WEBRTC_SVNREVISION="Unavailable(issue687)";_WIN32_WINNT=0x0602;WINVER=0x0602;_WINDOWS;NOMINMAX;PSAPI_VERSION=1;_CRT_RAND_S;CERT_CHAIN_PARA_HAS_EXTRA_FIELDS;_ATL_NO_OPENGL;_HAS_EXCEPTIONS=1;_SECURE_ATL;CHROMIUM_BUILD;TOOLKIT_VIEWS=1;USE_LIBJPEG_TURBO=1;ENABLE_ONE_CLICK_SIGNIN;ENABLE_REMOTING=1;NDEBUG;_CONSOLE;WEBRTC_WIN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(THIRDPARTY_ROOT);$(THIRDPARTY_ROOT)\OpenSSL32\include;$(THIRDPARTY_ROOT)\boost_1_56_0;$(THIRDPARTY_ROOT)\poco-1.4.6\Net\include;$(THIRDPARTY_ROOT)\poco-1.4.6\Foundation\include;$(THIRDPARTY_ROOT)\libjingle\trunk;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\jsoncpp\source\include;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc\modules\video_capture\include;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\webrtc\system_wrappers\interface;$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(VOSVIDEO_ROOT)\vosvideovp8;$(VOSVIDEO_ROOT)\vosvideocommon;..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(THIRDPARTY_ROOT);$(THIRDPARTY_ROOT)\OpenSSL32\include;$(THIRDPARTY_ROOT)\boost_1_56_0;$(THIRDPARTY_ROOT)\poco-1.4.7p1\Net\include;$(THIRDPARTY_ROOT)\poco-1.4.7p1\Foundation\include;$(THIRDPARTY_ROOT)\libjingle\trunk;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\jsoncpp\source\include;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc\modules\video_capture\include;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\webrtc\system_wrappers\interface;$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(VOSVIDEO_ROOT)\vosvideovp8;$(VOSVIDEO_ROOT)\vosvideocommon;..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm200 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -90,10 +91,13 @@ $(SolutionDir)copythirdparty_debug.bat $(SolutionDir)</Command>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(THIRDPARTY_ROOT)\OpenSSL32\lib;$(THIRDPARTY_ROOT)\libjingle\lib\Release;$(THIRDPARTY_ROOT)\boost_1_56_0\stage\lib;$(THIRDPARTY_ROOT)\poco-1.4.6\lib\Release;$(THIRDPARTY_ROOT)\websocketpp\lib\Release;$(THIRDPARTY_ROOT)\casablanca\SDK\lib\x86\Release;$(VOSVIDEO_ROOT)\vosvideocommon\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>acm2.lib;amstrmid.lib;audio_coding_module.lib;audio_conference_mixer.lib;audio_device.lib;audio_processing.lib;audio_processing_sse2.lib;audioproc_debug_proto.lib;bitrate_controller.lib;CNG.lib;common_audio.lib;common_audio_sse2.lib;common_video.lib;cpprest110_1_2.lib;crnspr.lib;crnss.lib;crssl.lib;crypt32.lib;dbghelp.lib;directshow_baseclasses.lib;dmoguids.lib;dnsapi.lib;expat.lib;G711.lib;G722.lib;icui18n.lib;icuuc.lib;iLBC.lib;iphlpapi.lib;iSAC.lib;iSACFix.lib;jsoncpp.lib;libeay32.lib;libjingle.lib;libjingle_media.lib;libjingle_p2p.lib;libjingle_peerconnection.lib;libjingle_sound.lib;libjpeg.lib;libsrtp.lib;libvpx.lib;libvpx_asm_offsets_vp8.lib;libvpx_intrinsics_mmx.lib;libvpx_intrinsics_sse2.lib;libvpx_intrinsics_ssse3.lib;libyuv.lib;media_file.lib;Mf.lib;Mfplat.lib;Mfuuid.lib;msdmo.lib;msimg32.lib;NetEq.lib;NetEq4.lib;nss_static.lib;opus.lib;paced_sender.lib;PCM16B.lib;Propsys.lib;protobuf_lite.lib;psapi.lib;rbe_components.lib;remote_bitrate_estimator.lib;rtp_rtcp.lib;secur32.lib;shlwapi.lib;sqlite3.lib;ssleay32.lib;system_wrappers.lib;usp10.lib;usrsctplib.lib;version.lib;video_capture_module.lib;video_coding_utility.lib;video_engine_core.lib;video_processing.lib;video_processing_sse2.lib;video_render_module.lib;voice_engine.lib;VosVideoCommon.lib;webrtc_i420.lib;webrtc_opus.lib;webrtc_utility.lib;webrtc_video_coding.lib;webrtc_vp8.lib;wininet.lib;winmm.lib;wmcodecdspuuid.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(THIRDPARTY_ROOT)\OpenSSL32\lib;$(THIRDPARTY_ROOT)\libjingle\lib\Release;$(THIRDPARTY_ROOT)\boost_1_56_0\stage\lib;$(THIRDPARTY_ROOT)\poco-1.4.7p1\lib\;$(THIRDPARTY_ROOT)\casablanca\SDK\lib\x86\Release;$(VOSVIDEO_ROOT)\vosvideocommon\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>amstrmid.lib;audio_coding_module.lib;audio_conference_mixer.lib;audio_device.lib;audio_processing.lib;audio_processing_sse2.lib;audioproc_debug_proto.lib;bitrate_controller.lib;CNG.lib;common_audio.lib;common_audio_sse2.lib;common_video.lib;cpprest120_2_3.lib;crnspr.lib;crnss.lib;crssl.lib;crypt32.lib;dbghelp.lib;directshow_baseclasses.lib;dmoguids.lib;dnsapi.lib;expat.lib;G711.lib;G722.lib;icui18n.lib;icuuc.lib;iLBC.lib;iphlpapi.lib;iSAC.lib;iSACFix.lib;jsoncpp.lib;libeay32.lib;libjingle_media.lib;libjingle_p2p.lib;libjingle_peerconnection.lib;libjpeg.lib;libsrtp.lib;libvpx.lib;libvpx_intrinsics_mmx.lib;libvpx_intrinsics_sse2.lib;libvpx_intrinsics_ssse3.lib;libyuv.lib;media_file.lib;Mf.lib;Mfplat.lib;Mfuuid.lib;msdmo.lib;msimg32.lib;NetEq.lib;nss_static.lib;opus.lib;paced_sender.lib;PCM16B.lib;Propsys.lib;protobuf_lite.lib;psapi.lib;rbe_components.lib;remote_bitrate_estimator.lib;rtp_rtcp.lib;secur32.lib;shlwapi.lib;sqlite3.lib;ssleay32.lib;system_wrappers.lib;usp10.lib;usrsctplib.lib;version.lib;video_capture_module.lib;video_capture_module_internal_impl.lib;video_coding_utility.lib;video_engine_core.lib;video_processing.lib;video_processing_sse2.lib;video_render_module.lib;voice_engine.lib;VosVideoCommon.lib;webrtc_i420.lib;webrtc_opus.lib;webrtc_utility.lib;webrtc_video_coding.lib;webrtc_vp8.lib;rtc_base.lib;rtc_base_approved.lib;wininet.lib;winmm.lib;wmcodecdspuuid.lib;ws2_32.lib;Winhttp.lib;Bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions> /FORCE:MULTIPLE %(AdditionalOptions)</AdditionalOptions>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+      <IgnoreAllDefaultLibraries>
+      </IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>libboost_system-vc120-mt-1_55.lib;libboost_date_time-vc120-mt-1_55.lib;libboost_regex-vc120-mt-1_55.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
       <Command>copy $(ProjectDir)app.config $(SolutionDir)$(Configuration)\$(ProjectName).config.xml /Y
@@ -134,9 +138,6 @@ $(SolutionDir)copythirdparty_release.bat $(SolutionDir)</Command>
     </ProjectReference>
     <ProjectReference Include="..\VosVideo.Communication.InterprocessQueue\VosVideo.Communication.InterprocessQueue.vcxproj">
       <Project>{99dc47b1-653d-4173-b50f-d7d99cd8c1a9}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\VosVideo.Communication.Websocketpp\VosVideo.Communication.Websocketpp.vcxproj">
-      <Project>{52541aef-c817-4f3c-8736-7f60a055fed8}</Project>
     </ProjectReference>
     <ProjectReference Include="..\VosVideo.Communication\VosVideo.Communication.vcxproj">
       <Project>{cb254df4-87c7-49b1-8d6d-a35a74ab6706}</Project>

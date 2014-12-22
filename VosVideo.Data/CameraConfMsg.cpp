@@ -29,90 +29,62 @@ CameraConfMsg::CameraConfMsg(CameraType ct, CameraVideoFormat vf) :
 CameraConfMsg::CameraConfMsg(const std::wstring& jsonStr)
 {
 	web::json::value jObj = web::json::value::parse(jsonStr);
-	web::json::value::iterator it;
-
-	for(it = jObj.begin(); it != jObj.end(); ++it)
-	{
-		wstring key = (*it).first.as_string();
-		web::json::value value = (*it).second;
-		// For video url we should make decision
-		if (key == L"isActive")
-		{
-			if(value.is_string())
-				isActive_ = value.as_bool();
-		}
-
-		if (key == L"cameraType")
-		{
-			if(value.is_string())
-				cameraType_ = static_cast<CameraType>(value.as_integer());
-		}
-
-		if (key == L"videoFormat")
-		{
-			if(value.is_string())
-				videoFormat_ = static_cast<CameraVideoFormat>(value.as_integer());
-		}
-
-		if (key == L"cameraId")
-		{
-			if(value.is_string())
-				cameraId_ = value.as_integer();
-		}
-
-		if (key == L"cameraName")
-		{
-			if(value.is_string())
-				cameraName_ = value.as_string();
-		}
-
-		if (key == L"outFolder")
-		{
-			if(value.is_string())
-				outFolder_ = value.as_string();
-		}
-
-		if (key == L"recordLen")
-		{
-			if(value.is_string())
-				recordLen_ = value.as_integer();
-		}
-
-		if (key == L"recordingType")
-		{
-			if(value.is_string())
-				recordingType_ = static_cast<CameraVideoRecording>(value.as_integer());
-		}
-
-		if (key == L"videouri")
-		{
-			if(value.is_string())
-				videouri_ = value.as_string();
-		}
-
-		if (key == L"audiouri")
-		{
-			if(value.is_string())
-				audiouri_ = value.as_string();
-		}
-
-		if (key == L"username")
-		{
-			if(value.is_string())
-				username_ = value.as_string();
-		}
-
-		if (key == L"pass")
-		{
-			if(value.is_string())
-				pass_ = value.as_string();
-		}
-	}
+	SetFields(jObj);
 }
-
 
 CameraConfMsg::~CameraConfMsg()
 {
+}
+
+void CameraConfMsg::SetFields(const web::json::value& json){
+	auto activeVal = json.at(U("isActive"));
+	if (activeVal.is_string())
+		isActive_ = activeVal.as_bool();
+
+	auto cameraTypeVal = json.at(U("cameraType"));
+	if (cameraTypeVal.is_number())
+		cameraType_ = static_cast<CameraType>(cameraTypeVal.as_integer());
+
+	auto videoFormatVal = json.at(U("videoFormat"));
+	if (videoFormatVal.is_number())
+		videoFormat_ = static_cast<CameraVideoFormat>(videoFormatVal.as_integer());
+
+	auto cameraIdVal = json.at(U("cameraId"));
+	if (cameraIdVal.is_number())
+		cameraId_ = cameraIdVal.as_integer();
+
+	auto cameraNameVal = json.at(U("cameraName"));
+	if (cameraNameVal.is_string())
+		cameraName_ = cameraNameVal.as_string();
+
+	auto outFolderVal = json.at(U("outFolder"));
+	if (outFolderVal.is_string())
+		outFolder_ = outFolderVal.as_string();
+
+	auto recordLenVal = json.at(U("recordLen"));
+	if (recordLenVal.is_number())
+		recordLen_ = recordLenVal.as_integer();
+
+	auto recordingTypeVal = json.at(U("recordingType"));
+	if (recordingTypeVal.is_number())
+		recordingType_ = static_cast<CameraVideoRecording>(recordingTypeVal.as_integer());
+
+	auto videoUriVal = json.at(U("videouri"));
+	if (videoUriVal.is_string())
+		videouri_ = videoUriVal.as_string();
+
+	auto audioUriVal = json.at(U("audiouri"));
+	if (audioUriVal.is_string())
+		audiouri_ = audioUriVal.as_string();
+
+	auto usernameVal = json.at(U("username"));
+	if (usernameVal.is_string())
+		username_ = usernameVal.as_string();
+
+	auto passVal = json.at(U("pass"));
+	if (passVal.is_string())
+		pass_ = passVal.as_string();
+
 }
 
 void CameraConfMsg::Init(std::shared_ptr<WebSocketMessageParser> parser)
@@ -211,64 +183,14 @@ void CameraConfMsg::ToJsonValue(web::json::value& jObj) const
 
 void CameraConfMsg::FromJsonValue(web::json::value& jpayload)
 {
-	for (web::json::value::iterator iter = jpayload.begin(); iter != jpayload.end(); iter++)
-	{
-		if (iter->first.as_string() == U("isActive"))
-		{
-			isActive_ = iter->second.as_bool();
-		}
-		else if (iter->first.as_string() == U("cameraType"))
-		{
-			cameraType_ = static_cast<CameraType>(iter->second.as_integer());
-		}
-		else if (iter->first.as_string() == U("videoFormat"))
-		{
-			videoFormat_ = static_cast<CameraVideoFormat>(iter->second.as_integer());
-		}
-		else if (iter->first.as_string() == U("cameraId"))
-		{
-			cameraId_ = iter->second.as_integer();
-		}
-		else if (iter->first.as_string() == U("cameraName"))
-		{
-			cameraName_ = iter->second.as_string();
-		}
-		else if (iter->first.as_string() == U("outFolder"))
-		{
-			outFolder_ = iter->second.as_string();
-		}
-		else if (iter->first.as_string() == U("recordLen"))
-		{
-			recordLen_ = iter->second.as_integer();
-		}
-		else if (iter->first.as_string() == U("recordingType"))
-		{
-			recordingType_ = static_cast<CameraVideoRecording>(iter->second.as_integer());
-		}
-		else if (iter->first.as_string() == U("videouri"))
-		{
-			videouri_ = iter->second.as_string();
-		}
-		else if (iter->first.as_string() == U("audiouri"))
-		{
-			audiouri_ = iter->second.as_string();
-		}
-		else if (iter->first.as_string() == U("username"))
-		{
-			username_ = iter->second.as_string();
-		}
-		else if (iter->first.as_string() == U("pass"))
-		{
-			pass_ = iter->second.as_string();
-		}
-	}
+	SetFields(jpayload);
 }
 
 wstring CameraConfMsg::ToString() const
 {
 	web::json::value jObj;
 	ToJsonValue(jObj);
-	return jObj.to_string();
+	return jObj.serialize();
 }
 
 bool CameraConfMsg::operator==(const CameraConfMsg &other) const

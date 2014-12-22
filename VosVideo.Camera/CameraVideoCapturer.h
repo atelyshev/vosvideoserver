@@ -1,6 +1,6 @@
 #pragma once
 
-#include <talk/base/messagehandler.h>
+#include <webrtc/base/messagehandler.h>
 #include <talk/media/base/videocapturer.h>
 #include <modules/video_capture/include/video_capture.h>
 #include <talk/media/webrtc/webrtcvideoframe.h>
@@ -55,7 +55,7 @@ namespace vosvideo
 			virtual void OnIncomingCapturedFrame(const int32_t id,
 				webrtc::I420VideoFrame& videoFrame);
 
-			talk_base::scoped_ptr<CameraVcmFactoryInterface> factory_;
+			webrtc::scoped_ptr<CameraVcmFactoryInterface> factory_;
 			webrtc::VideoCaptureModule* module_;
 			int captured_frames_;
 			std::vector<uint8_t> capture_buffer_;

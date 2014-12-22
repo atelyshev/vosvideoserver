@@ -1,11 +1,11 @@
 #pragma once
 
 #include <boost/asio/detail/config.hpp>
-#include "talk/base/nethelpers.h"
-#include "talk/base/signalthread.h"
-#include "talk/base/sigslot.h"
-#include "talk/base/physicalsocketserver.h"
-#include "talk/base/scoped_ptr.h"
+#include "webrtc/base/nethelpers.h"
+#include "webrtc/base/signalthread.h"
+#include "webrtc/base/sigslot.h"
+#include "webrtc/base/physicalsocketserver.h"
+#include "webrtc/base/scoped_ptr.h"
 #include "PeerConnectionObserver.h"
 
 
@@ -14,7 +14,7 @@ namespace vosvideo
 	namespace vvwebrtc
 	{
 		class PeerConnectionClientBase : public sigslot::has_slots<>,
-			public talk_base::MessageHandler 
+			public rtc::MessageHandler 
 		{
 		public:
 			enum class State 
@@ -46,7 +46,7 @@ namespace vosvideo
 			virtual bool SignOut() = 0;
 
 			// implements the MessageHandler interface
-			virtual void OnMessage(talk_base::Message* msg) = 0;
+			virtual void OnMessage(rtc::Message* msg) = 0;
 
 		protected:
 			PeerConnectionClientObserver* callback_;

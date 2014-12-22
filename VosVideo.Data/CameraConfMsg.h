@@ -67,6 +67,7 @@ namespace vosvideo
 			static void ToObject(const std::wstring& jsonStr, CameraConfMsg& objRef);
 
 		private:
+			void SetFields(const web::json::value& json);
 			bool isActive_;
 			CameraType cameraType_;
 			CameraVideoFormat videoFormat_;

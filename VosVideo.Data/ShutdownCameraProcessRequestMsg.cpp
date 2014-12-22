@@ -20,5 +20,5 @@ void ShutdownCameraProcessRequestMsg::FromJsonValue( web::json::value& obj )
 
 wstring ShutdownCameraProcessRequestMsg::ToString() const
 {
-	return jObj_.to_string();
+	return jObj_.serialize();
 }

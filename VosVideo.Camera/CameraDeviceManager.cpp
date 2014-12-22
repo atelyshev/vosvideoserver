@@ -17,11 +17,11 @@
 #include <boost/assign/list_inserter.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/interprocess/ipc/message_queue.hpp>
-#include <talk/base/logging.h>
-#include <talk/base/stringutils.h>
-#include <talk/base/thread.h>
-#include <talk/base/win32.h>  // ToUtf8
-#include <talk/base/win32window.h>
+#include <webrtc/base/logging.h>
+#include <webrtc/base/stringutils.h>
+#include <webrtc/base/thread.h>
+#include <webrtc/base/win32.h>  // ToUtf8
+#include <webrtc/base/win32window.h>
 #include <talk/media/base/mediacommon.h>
 #include <talk/media/webrtc/webrtcvideocapturer.h>
 #include <Poco/Process.h>
@@ -198,20 +198,7 @@ void CameraDeviceManager::RemoveIpCam(int camId)
 
 void CameraDeviceManager::GetDeviceIdFromJson(int& camId, web::json::value& camParms)
 {
-	camId = -1;
-	web::json::value::iterator it;
-
-	for(it = camParms.begin(); it != camParms.end(); ++it)
-	{
-		wstring key = (*it).first.as_string();
-		web::json::value value = (*it).second;
-
-		if (key == L"DeviceId" && value.is_number())
-		{
-			camId = value.as_integer();
-			break;
-		}
-	}
+	camId = camParms.at(U("DeviceId")).as_integer();
 }
 
 void CameraDeviceManager::CreateCameraConfFromJson(int& camId, CameraConfMsg& conf, web::json::value& camParms)
@@ -229,102 +216,72 @@ void CameraDeviceManager::CreateCameraConfFromJson(int& camId, CameraConfMsg& co
 	wstring camPass;
 	CameraVideoFormat uriType = CameraVideoFormat::UNKNOWN;
 	CameraVideoRecording recordingType = CameraVideoRecording::DISABLED;
-	web::json::value::iterator it;
 	
-	for(it = camParms.begin(); it != camParms.end(); ++it)
-	{
-		wstring key = (*it).first.as_string();
-		web::json::value value = (*it).second;
-		// For video url we should make decision
-		if (key == L"DeviceName")
-		{
-			if(value.is_string())
-				devName = value.as_string();
-		}
-		if (key == L"DeviceId")
-		{
-			if(value.is_number())
-				camId = value.as_integer();
-		}
-		else if (key == L"CustomUri")
-		{
-			if(value.is_string())
-				customUri = value.as_string();
-		}
-		else if (key == L"MjpegUri")
-		{
-			if(value.is_string())
-				strVideoUri[static_cast<int>(CameraVideoFormat::MJPEG)] = value.as_string();
-		}
-		else if (key == L"Mpeg4Uri")
-		{
-			if(value.is_string())
-				strVideoUri[static_cast<int>(CameraVideoFormat::MPEG4)] = value.as_string();
-		}
-		else if (key == L"H264Uri")
-		{
-			if(value.is_string())
-				strVideoUri[static_cast<int>(CameraVideoFormat::H264)] = value.as_string();
-		}
-		else if (key == L"RecordingType")
-		{
-			if(value.is_number())
-			{
-				int rType = value.as_integer();
-				recordingType = static_cast<CameraVideoRecording>(rType);
-			}
-		}
-		else if (key == L"RecordingLength")
-		{
-			if(value.is_number())
-			{
-				recordLen = value.as_integer();
-			}
-		}
-		else if (key == L"UriType")
-		{
-			if(value.is_number())
-			{
-				int uType = value.as_integer();
-				uriType = static_cast<CameraVideoFormat>(uType);
-			}
-		}
-		else if (key == L"AudioUri")
-		{
-			if(value.is_string())
-				audioUri = value.as_string();
-		}
-		else if (key == L"IpAddress")
-		{
-			if(value.is_string())
-				camIpAddr = value.as_string();
-		}
-		else if (key == L"Port")
-		{
-			if(value.is_number())
-				camPort = value.as_integer();
-		}
-		else if (key == L"DeviceUserName")
-		{
-			if(value.is_string())
-				camUsername = value.as_string();
-		}
-		else if (key == L"DevicePassword")
-		{
-			if(value.is_string())
-				camPass = value.as_string();
-		}
-		else if (key == L"IsActive")
-		{
-			if(value.is_boolean())
-				isActive = value.as_bool();
-		}
-		else if (key == L"ModelType")
-		{
-			if(value.is_number())
-				modelType = static_cast<CameraType>(value.as_integer());
-		}
-	}
+
+	auto deviceNameVal = camParms.at(U("DeviceName"));
+	if (deviceNameVal.is_string())
+		devName = deviceNameVal.as_string();
+
+	auto deviceIdVal = camParms.at(U("DeviceId"));
+	if (deviceIdVal.is_number())
+		camId = deviceIdVal.as_integer();
+
+	auto customUriVal = camParms.at(U("CustomUri"));
+	if (customUriVal.is_string())
+		customUri = customUriVal.as_string();
+	
+	auto mjepgUriVal = camParms.at(U("MjpegUri"));
+	if (mjepgUriVal.is_string())
+		strVideoUri[static_cast<int>(CameraVideoFormat::MJPEG)] = mjepgUriVal.as_string();
+
+	auto mpeg4UriVal = camParms.at(U("Mpeg4Uri"));
+	if (mpeg4UriVal.is_string())
+		strVideoUri[static_cast<int>(CameraVideoFormat::MPEG4)] = mpeg4UriVal.as_string();
+
+	auto h264UriVal = camParms.at(U("H264Uri"));
+	if (h264UriVal.is_string())
+		strVideoUri[static_cast<int>(CameraVideoFormat::H264)] = h264UriVal.as_string();
+
+	auto recordingTypeVal = camParms.at(U("RecordingType"));
+	if (recordingTypeVal.is_number())
+		recordingType = static_cast<CameraVideoRecording>(recordingTypeVal.as_integer());
+
+	auto recordingLengthVal = camParms.at(U("RecordingLength"));
+	if (recordingLengthVal.is_number())
+		recordLen = recordingLengthVal.as_integer();
+
+	auto uriTypeVal = camParms.at(U("UriType"));
+	if (uriTypeVal.is_number())
+		uriType = static_cast<CameraVideoFormat>(uriTypeVal.as_integer());
+
+	auto audioUriVal = camParms.at(U("AudioUri"));
+	if (uriTypeVal.is_string())
+		audioUri = audioUriVal.as_string();
+
+	auto ipAddressVal = camParms.at(U("IpAddress"));
+	if (ipAddressVal.is_string())
+		camIpAddr = ipAddressVal.as_string();
+
+	auto portVal = camParms.at(U("Port"));
+	if (portVal.is_number())
+		camPort = portVal.as_integer();
+
+	auto deviceUserNameVal = camParms.at(U("DeviceUserName"));
+	if (deviceUserNameVal.is_string())
+		camUsername = deviceUserNameVal.as_string();
+
+	auto devicePasswordVal = camParms.at(U("DevicePassword"));
+	if (devicePasswordVal.is_string())
+		camPass = devicePasswordVal.as_string();
+
+	auto isActiveVal = camParms.at(U("IsActive"));
+	if (isActiveVal.is_boolean())
+		isActive = isActiveVal.as_bool();
+
+	auto modelTypeVal = camParms.at(U("ModelType"));
+	if (modelTypeVal.is_number())
+		modelType = static_cast<CameraType>(modelTypeVal.as_integer());
+
 
 	// Custom URI has higher priority, respect it 
 	wstring videoUri = customUri.length() > 0 ? customUri : strVideoUri[static_cast<int>(uriType)];
@@ -353,7 +310,8 @@ void CameraDeviceManager::CreateCameraConfFromJson(int& camId, CameraConfMsg& co
 
 void CameraDeviceManager::OnCameraUpdate(web::json::value& camArr)
 {
-	web::json::value::iterator camIter;
+	auto arr = camArr.as_array();
+	web::json::array::iterator camIter;
 
 	// Quite possible situation that user click twice on save button
 	// Just to make sure protect this block
@@ -366,11 +324,11 @@ void CameraDeviceManager::OnCameraUpdate(web::json::value& camArr)
 	}
 
 	// STEP 2: Mark with actual status
-	for(camIter = camArr.begin(); camIter != camArr.end(); ++camIter)
+	for(camIter = arr.begin(); camIter != arr.end(); ++camIter)
 	{
 		int camId;
 		CameraConfMsg ipConf;
-		CreateCameraConfFromJson(camId, ipConf, camIter->second);
+		CreateCameraConfFromJson(camId, ipConf, *camIter);
 		//
 		// Here we implementing very simple algo
 		// All new cam conf has flag NEW
