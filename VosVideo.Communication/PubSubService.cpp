@@ -30,11 +30,12 @@ void PubSubService::Publish(shared_ptr<vosvideo::data::ReceivedData> receivedDat
 									{
 										receiver.OnMessageReceived(receivedData);
 									}
-									catch (int i)
+									catch (int)
 									{
 										__asm int 3;
 									}
-									catch (...){
+									catch (...)
+									{
 										__asm int 3;
 									}
 								}

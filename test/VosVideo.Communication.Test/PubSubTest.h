@@ -1,10 +1,9 @@
 #pragma once
 #include <windows.h>
-#include <gtest\gtest.h>
+#include <gtest/gtest.h>
 #include "VosVideo.Communication/PubSubService.h"
 #include "VosVideo.Data/ReceivedData.h"
 
-using namespace std;
 using namespace vosvideo::communication;
 using namespace vosvideo::data;
 

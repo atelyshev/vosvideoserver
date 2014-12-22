@@ -2,6 +2,7 @@
 #include <ppltasks.h>
 #include "PubSubTest.h"
 
+using namespace testing::internal;
 using namespace vosvideo::data;
 
 int Subscribe();
