@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include <boost/format.hpp>
-#include <talk/base/ssladapter.h>
+#include <webrtc/base/ssladapter.h>
 #include <Unknwn.h>
 #include "VosVideo.Communication/TypeInfoWrapper.h"
 #include "VosVideo.Data/WebRtcIceCandidateMsg.h"
@@ -68,8 +68,8 @@ pubSubService_(pubsubService), queueEng_(queueEng), inShutdown_(false)
 
 	// First check if peer conn can be created
 	CreatePeerConnectionFactory();
-	physicalSocketServer_ = new talk_base::PhysicalSocketServer();
-	mainThread_ = new talk_base::AutoThread(physicalSocketServer_);
+	physicalSocketServer_ = new rtc::PhysicalSocketServer();
+	mainThread_ = new rtc::AutoThread(physicalSocketServer_);
 	mainThread_->Start();
 }
 
@@ -122,7 +122,7 @@ void WebRtcManager::OnMessageReceived(const shared_ptr<ReceivedData> receivedMes
 	}
 
 	wstring clientPeerKey = str(wformat(L"%1%-%2%") % clientPeer % activeDeviseId_);
-	talk_base::scoped_refptr<WebRtcPeerConnection> conn;
+	rtc::scoped_refptr<WebRtcPeerConnection> conn;
 	WebRtcPeerConnectionMap::iterator iter;
 
 	if ((iter = peer_connections_.find(clientPeerKey)) != peer_connections_.end())
@@ -136,7 +136,7 @@ void WebRtcManager::OnMessageReceived(const shared_ptr<ReceivedData> receivedMes
 		shared_ptr<LiveVideoOfferMsg> liveVideoDto = dynamic_pointer_cast<LiveVideoOfferMsg>(receivedMessage);
 
 		LOG_TRACE("Create new peer connection with key:" << StringUtil::ToString(clientPeerKey));
-		conn = new talk_base::RefCountedObject<WebRtcPeerConnection>(clientPeer, srvPeer, player_, peer_connection_factory_, queueEng_);
+		conn = new rtc::RefCountedObject<WebRtcPeerConnection>(clientPeer, srvPeer, player_, peer_connection_factory_, queueEng_);
 		conn->SetCurrentThread(mainThread_);
 
 		// Check if peer with camera id doesnt exists. 
@@ -187,8 +187,7 @@ void WebRtcManager::OnMessageReceived(const shared_ptr<ReceivedData> receivedMes
 	{
 		web::json::value jsonMsg;
 		receivedMessage->ToJsonValue(jsonMsg);
-		web::json::value::iterator jsonPeer = jsonMsg.begin();
-		wstring fromPeer = jsonPeer->second.as_string();
+		wstring fromPeer = jsonMsg.at(U("p")).as_string();
 		DeletePeerConnection(fromPeer);
 	}
 	else if(dynamic_pointer_cast<DeletePeerConnectionRequestMsg>(receivedMessage))
@@ -272,7 +271,7 @@ int WebRtcManager::CheckFinishingPeerConnections()
 
 	while (iter != finishing_peer_connections_.end())
 	{
-		talk_base::scoped_refptr<WebRtcPeerConnection> ptr = (*iter);
+		rtc::scoped_refptr<WebRtcPeerConnection> ptr = (*iter);
 		if (ptr->IsPeerConnectionFinished() == true)
 		{
 			// Just remove from vector, it will die automatically
@@ -288,7 +287,7 @@ int WebRtcManager::CheckFinishingPeerConnections()
 
 void WebRtcManager::CreatePeerConnectionFactory()
 {
-	if (!talk_base::InitializeSSL() || !talk_base::InitializeSSLThread())
+	if (!rtc::InitializeSSL() || !rtc::InitializeSSLThread())
 	{
 		throw WebRtcException("Failed to initialize SSL");
 	}

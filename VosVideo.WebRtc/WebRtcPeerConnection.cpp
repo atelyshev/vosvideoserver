@@ -36,7 +36,7 @@ const char kSessionDescriptionSdpName[] = "sdp";
 WebRtcPeerConnection::WebRtcPeerConnection(wstring clientPeer,
 										   wstring srvPeer,
 										   CameraPlayerBase* player,
-										   talk_base::scoped_refptr<webrtc::PeerConnectionFactoryInterface> peer_connection_factory, 
+										   rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> peer_connection_factory, 
 										   std::shared_ptr<vosvideo::communication::InterprocessQueueEngine> queueEng): 
 	clientPeer_(clientPeer),
 	srvPeer_(srvPeer),
@@ -55,7 +55,7 @@ WebRtcPeerConnection::~WebRtcPeerConnection()
 	peer_connection_ = nullptr;
 }
 
-void WebRtcPeerConnection::SetCurrentThread(talk_base::Thread* commandThr)
+void WebRtcPeerConnection::SetCurrentThread(rtc::Thread* commandThr)
 {
 	commandThr_ = commandThr;
 }
@@ -66,21 +66,21 @@ void WebRtcPeerConnection::SetDeviceManager(std::shared_ptr<vosvideo::camera::Ca
 	isShutdownOnClose_ = isShutdownOnClose;
 }
 
-void WebRtcPeerConnection::OnMessage(talk_base::Message* message) 
+void WebRtcPeerConnection::OnMessage(rtc::Message* message) 
 {
 	switch (message->message_id) 
 	{
 	case PeerConnectionMessages::DoInitSdp:
 		{
-			shared_ptr<talk_base::TypedMessageData<string>> data(static_cast<talk_base::TypedMessageData<string>*>(message->pdata));
+			shared_ptr<rtc::TypedMessageData<string>> data(static_cast<rtc::TypedMessageData<string>*>(message->pdata));
 			string wrappedMessage = data->data();
 			InitSdp_r(wrappedMessage);		
 			break;
 		}
 	case PeerConnectionMessages::DoInitIce:
 		{
-			shared_ptr<talk_base::TypedMessageData<Json::Value>> 
-				data(static_cast<talk_base::TypedMessageData<Json::Value>*>(message->pdata));
+			shared_ptr<rtc::TypedMessageData<Json::Value>> 
+				data(static_cast<rtc::TypedMessageData<Json::Value>*>(message->pdata));
 			Json::Value wrappedMessage = data->data();
 			InitIce_r(wrappedMessage);		
 			break;
@@ -108,8 +108,8 @@ void WebRtcPeerConnection::OnMessage(talk_base::Message* message)
 		}
 	case PeerConnectionMessages::DoOnSignalChange:
 		{
-			shared_ptr<talk_base::TypedMessageData<webrtc::PeerConnectionInterface::SignalingState>> 
-				data(static_cast<talk_base::TypedMessageData<webrtc::PeerConnectionInterface::SignalingState>*>(message->pdata));
+			shared_ptr<rtc::TypedMessageData<webrtc::PeerConnectionInterface::SignalingState>> 
+				data(static_cast<rtc::TypedMessageData<webrtc::PeerConnectionInterface::SignalingState>*>(message->pdata));
 			webrtc::PeerConnectionInterface::SignalingState wrappedMessage = data->data();
 			OnSignalingChange_r(wrappedMessage);
 			break;
@@ -128,7 +128,7 @@ void WebRtcPeerConnection::InitSdp(shared_ptr<SdpOffer> sdp)
 	sdp->GetSdpOffer(wpayload);
 	string sdpPayload = StringUtil::ToString(wpayload);
 	commandThr_->Post(this, static_cast<uint32>(PeerConnectionMessages::DoInitSdp), 
-		new talk_base::TypedMessageData<string>(sdpPayload));
+		new rtc::TypedMessageData<string>(sdpPayload));
 }
 
 void WebRtcPeerConnection::InitSdp_r(const string& sdpPayload) 
@@ -140,7 +140,8 @@ void WebRtcPeerConnection::InitSdp_r(const string& sdpPayload)
 	servers.push_back(server);
 	MediaConstraints pcmc;
 	pcmc.SetAllowDtlsSctpDataChannels();
-	peer_connection_ = peer_connection_factory_->CreatePeerConnection(servers, &pcmc, nullptr, this);
+	//pcmc.AddOptional(webrtc::MediaConstraintsInterface::kLeakyBucket, "true");
+	peer_connection_ = peer_connection_factory_->CreatePeerConnection(servers, &pcmc, NULL, NULL, this);
 
 	if (!peer_connection_.get()) 
 	{
@@ -167,7 +168,7 @@ void WebRtcPeerConnection::InitIce(const std::shared_ptr<vosvideo::data::WebRtcI
 	}
 
 	commandThr_->Post(this, static_cast<uint32>(PeerConnectionMessages::DoInitIce), 
-		new talk_base::TypedMessageData<Json::Value>(jmessage));
+		new rtc::TypedMessageData<Json::Value>(jmessage));
 }
 
 void WebRtcPeerConnection::InitIce_r(const Json::Value& jmessage)
@@ -197,7 +198,7 @@ void WebRtcPeerConnection::InitIce_r(const Json::Value& jmessage)
 			return;
 		}
 
-		talk_base::scoped_ptr<webrtc::IceCandidateInterface> candidate(webrtc::CreateIceCandidate(sdp_mid, sdp_mlineindex, ice));
+		webrtc::scoped_ptr<webrtc::IceCandidateInterface> candidate(webrtc::CreateIceCandidate(sdp_mid, sdp_mlineindex, ice));
 		if (!candidate.get()) 
 		{
 			LOG_ERROR("Can't parse received candidate message.");
@@ -271,7 +272,7 @@ void WebRtcPeerConnection::OnIceCandidate_r(webrtc::IceCandidateInterface* iceca
 void WebRtcPeerConnection::OnSignalingChange(webrtc::PeerConnectionInterface::SignalingState new_state)
 {
 	commandThr_->Post(this, static_cast<uint32>(PeerConnectionMessages::DoOnSignalChange), 
-		new talk_base::TypedMessageData<webrtc::PeerConnectionInterface::SignalingState>(new_state));
+		new rtc::TypedMessageData<webrtc::PeerConnectionInterface::SignalingState>(new_state));
 }
 
 void WebRtcPeerConnection::OnSignalingChange_r(webrtc::PeerConnectionInterface::SignalingState new_state)
@@ -357,15 +358,15 @@ void WebRtcPeerConnection::AddStreams_r()
 		return;
 	}
 
-	talk_base::scoped_refptr<webrtc::VideoTrackInterface> 
+	rtc::scoped_refptr<webrtc::VideoTrackInterface> 
 		video_track(peer_connection_factory_->CreateVideoTrack(kVideoLabel,peer_connection_factory_->CreateVideoSource(videoCapturer_, NULL)));
 
-	talk_base::scoped_refptr<webrtc::MediaStreamInterface> stream = peer_connection_factory_->CreateLocalMediaStream(kStreamLabel);
+	rtc::scoped_refptr<webrtc::MediaStreamInterface> stream = peer_connection_factory_->CreateLocalMediaStream(kStreamLabel);
 
 //	stream->AddTrack(audio_track);
 	stream->AddTrack(video_track);
 
-	if (!peer_connection_->AddStream(stream, nullptr)) 
+	if (!peer_connection_->AddStream(stream)) 
 	{
 		LOG_ERROR("Adding stream to PeerConnection failed");
 	}	

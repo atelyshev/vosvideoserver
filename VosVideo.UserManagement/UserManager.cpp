@@ -101,6 +101,12 @@ void UserManager::OnMessageReceived(const shared_ptr<vosvideo::data::ReceivedDat
 	logInInProgress_ = false;
 	set<wstring> clientPeers;
 
+	wstring fromPeer;
+	receivedMessage->GetFromPeer(fromPeer);
+	//If we can't find a peer sender of the message we will ignore it
+	if (fromPeer == L"")
+		return;
+
 	if(dynamic_pointer_cast<WebsocketConnectionOpenedMsg>(receivedMessage))
 	{
 		shared_ptr<WebsocketConnectionOpenedMsg> openedMsg = dynamic_pointer_cast<WebsocketConnectionOpenedMsg>(receivedMessage);
@@ -141,19 +147,13 @@ void UserManager::NotifyAllUsers(shared_ptr<SendData> outMsg)
 
 std::wstring UserManager::GetByKeyFromJson(web::json::value& jval, wstring key)
 {
-	web::json::value::iterator it;
 
-	for(it = jval.begin(); it != jval.end(); it++)
+	if (!jval.has_field(key))
 	{
-		utility::string_t frst = (*it).first.as_string();
-		if(frst == key)
-		{
-			utility::string_t scnd = (*it).second.as_string();
-			return scnd;
-		}
+		LOG_CRITICAL("No " << StringUtil::ToString(key) << " was found in response.");
+		return L"";
 	}
-	LOG_CRITICAL("No " << StringUtil::ToString(key) << " was found in response.");
-	return L"";
+	return jval.at(key).as_string();
 }
 
 void UserManager::SetAccountIdFromJson( web::json::value& jval)
@@ -172,9 +172,10 @@ void UserManager::GetClientPeersFromJson(web::json::value& jval, set<wstring>& c
 {
 	if (jval.type() == web::json::value::Array)
 	{
-		for(web::json::value::iterator iter = jval.begin(); iter != jval.end(); ++iter)
+		auto arr = jval.as_array();
+		for (web::json::array::iterator iter = arr.begin(); iter != arr.end(); ++iter)
 		{
-			GetClientPeerFromJson(iter->second, clientPeers);
+			GetClientPeerFromJson(*iter, clientPeers);
 		}
 	}
 	else
@@ -188,23 +189,9 @@ void UserManager::GetClientPeerFromJson(web::json::value& jval, set<wstring>& cl
 	wstring peerId;
 	wstring connType;
 
-	for(web::json::value::iterator iter = jval.begin(); iter != jval.end(); ++iter)
-	{
-		utility::string_t frst1 = iter->first.as_string();
-		utility::string_t scnd1 = iter->second.as_string();
-		if(frst1 == L"p") // Peer Id
-		{
-			peerId = scnd1;
-		}
-		else if(frst1 == L"ct") // Connection type 0 - client, 1 - self
-		{
-			connType = scnd1;
-		}
-		else if(frst1 == L"s") // Site id, irrelevant for client
-		{
-			// Reserved
-		}
-	}
+	peerId = jval.at(U("p")).as_string();
+	connType = jval.at(U("ct")).as_string();
+	//U("s"), Site id, irrelevant for client 
 
 	if (connType == L"0") // Interested only in clients
 	{

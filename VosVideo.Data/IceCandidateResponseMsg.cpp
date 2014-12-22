@@ -38,5 +38,5 @@ wstring IceCandidateResponseMsg::ToString() const
 		parser_->GetMessage(msg);
 		return msg;
 	}
-	return jObj_.to_string();
+	return jObj_.serialize();
 }

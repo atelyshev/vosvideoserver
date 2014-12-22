@@ -2,7 +2,7 @@
 #include <boost/lexical_cast.hpp>
 #include <modules/video_capture/include/video_capture_factory.h>
 #include <modules/video_capture/include/video_capture_defines.h>
-#include <talk/base/logging.h>
+#include <webrtc/base/logging.h>
 #include <vpx/vpx_encoder.h>
 #include <talk/media/webrtc/webrtcvideocapturer.h>
 
@@ -343,7 +343,7 @@ CaptureState CameraVideoCapturer::Start(const VideoFormat& capture_format)
 	}
 
 	string camera_id(GetId());
-	uint32 start = talk_base::Time();
+	uint32 start = rtc::Time();
 	module_->RegisterCaptureDataCallback(*this);
 
 	if (module_->StartCapture(cap) != 0) 
@@ -352,7 +352,7 @@ CaptureState CameraVideoCapturer::Start(const VideoFormat& capture_format)
 		return CS_FAILED;
 	}
 
-	LOG(LS_INFO) << "Camera '" << camera_id << "' started with format "<< capture_format.ToString() << ", elapsed time "<< talk_base::TimeSince(start) << " ms";
+	LOG(LS_INFO) << "Camera '" << camera_id << "' started with format "<< capture_format.ToString() << ", elapsed time "<< rtc::TimeSince(start) << " ms";
 
 	captured_frames_ = 0;
 	SetCaptureState(CS_RUNNING);
@@ -363,7 +363,7 @@ void CameraVideoCapturer::Stop()
 {
 	if (IsRunning()) 
 	{
-		talk_base::Thread::Current()->Clear(this);
+		rtc::Thread::Current()->Clear(this);
 		module_->StopCapture();
 		module_->DeRegisterCaptureDataCallback();
 

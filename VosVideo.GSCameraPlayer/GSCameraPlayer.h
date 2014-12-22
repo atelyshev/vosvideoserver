@@ -1,6 +1,5 @@
 #pragma once
 #include <boost\thread\thread.hpp>
-#include <mutex>
 #include <gst\gst.h>
 #include "VosVideo.CameraPlayer\CameraPlayerBase.h"
 
@@ -73,7 +72,7 @@ namespace vosvideo
 			GstElement *_pipeline;
 			GMainLoop *_mainLoop;
 
-			std::mutex _mutex;
+			boost::shared_mutex _mutex;
 			std::unordered_map<uint32_t, webrtc::VideoCaptureExternal*> _webRtcVideoCapturers;
 		};
 	}

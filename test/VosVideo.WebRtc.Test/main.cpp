@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include <memory>
 #include <string>
-#include <talk/base/scoped_ref_ptr.h>
+#include <webrtc/base/scoped_ref_ptr.h>
 #include <talk/app/webrtc/peerconnectioninterface.h>
 #include <vosvideocommon/StringUtil.h>
 #include "VosVideo.WebRtc/WebRtcPeerConnection.h"
@@ -67,7 +67,7 @@ TEST(VosVideoWebRtcHandshake, CreateIceDto)
 
 TEST(VosVideoWebRtcPeerConnection, Create)
 {
-	talk_base::scoped_refptr<webrtc::PeerConnectionFactoryInterface>peer_connection_factory  = webrtc::CreatePeerConnectionFactory();
+	rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>peer_connection_factory  = webrtc::CreatePeerConnectionFactory();
 
 	DtoFactory dtoFactory;
 	shared_ptr<WebSocketMessageParser> msgParser(new WebSocketMessageParser(testSdpMsg));

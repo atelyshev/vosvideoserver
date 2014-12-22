@@ -20,7 +20,7 @@ void LiveVideoOfferMsg::GetSdpOffer(wstring& sdpOffer)
 {
 	web::json::value jmessage;
 	ToJsonValue(jmessage);
-	sdpOffer = jmessage[0].to_string();
+	sdpOffer = jmessage[0].serialize();
 }
 
 void LiveVideoOfferMsg::GetMediaInfo(web::json::value& mi)
@@ -28,16 +28,14 @@ void LiveVideoOfferMsg::GetMediaInfo(web::json::value& mi)
 	web::json::value jmessage;
 	ToJsonValue(jmessage);
 
-	for (web::json::value::iterator iter1 = jmessage.begin(); iter1 != jmessage.end(); iter1++)
+	auto arr = jmessage.as_array();
+	for (web::json::array::iterator iter1 = arr.begin(); iter1 != arr.end(); iter1++)
 	{
 		auto lvl2 = *iter1;
-		for (web::json::value::iterator iter2 = lvl2.second.begin(); iter2 != lvl2.second.end(); iter2++)
+		if (lvl2.has_field(U("media_info")))
 		{
-			if (iter2->first.as_string() == U("media_info"))
-			{
-				mi = iter2->second;
-				break;
-			}
+			mi = lvl2.at(U("media_info"));
+			return;
 		}
 	}
 }

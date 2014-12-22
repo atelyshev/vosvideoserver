@@ -128,13 +128,6 @@ concurrency::task<web::json::value> DeviceConfigurationManager::RequestDeviceCon
 
 void DeviceConfigurationManager::ParseDeviceConfiguration(web::json::value& resp)
 {
-	web::json::value::iterator it = resp.begin();
-	for(it = resp.begin(); it != resp.end(); it++)
-	{
-		if ((*it).first.as_string() == L"DeviceList")
-		{
-			deviceUpdateSignal_((*it).second);
-			break;
-		}
-	}
+	auto lst = resp.at(U("DeviceList"));
+	deviceUpdateSignal_(lst);
 }

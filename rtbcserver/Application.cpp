@@ -4,8 +4,8 @@
 #include <ppltasks.h>
 #include <boost/bind.hpp>
 #include <boost/signals2.hpp>
-#include <talk/base/win32socketinit.h>
-#include <talk/base/win32socketserver.h>
+#include <webrtc/base/win32socketinit.h>
+#include <webrtc/base/win32socketserver.h>
 #include <vosvideocommon/StringUtil.h>
 
 #include "VosVideo.WebRtc/PeerConnectionClientManager.h"
@@ -16,7 +16,7 @@
 #include "VosVideo.Configuration/ServiceCredentialsManager.h"
 #include "VosVideo.Configuration/CredentialsException.h"
 #include "VosVideo.Communication.Casablanca/CbHttpClientEngine.h"
-#include "VosVideo.Communication.Websocketpp/WsppWebsocketClientEngine.h"
+#include "VosVideo.Communication.Casablanca/CbWebsocketClientEngine.h"
 #include "VosVideo.WebRtc/WebRtcException.h"
 #include "VosVideo.DeviceManagement/DeviceConfigurationManager.h"
 #include "ServiceInstaller.h"
@@ -33,7 +33,6 @@ using namespace vosvideo::communication;
 using namespace vosvideo::usermanagement;
 using namespace vosvideo::configuration;
 using namespace vosvideo::communication::casablanca;
-using namespace vosvideo::communication::wspp;
 using namespace vosvideo::vvwebrtc;
 using namespace vosvideo::camera;
 using namespace vosvideo::devicemanagement;
@@ -247,7 +246,7 @@ bool Application::Main()
 	std::shared_ptr<CbHttpClientEngine> httpClientEngine(new CbHttpClientEngine(webSiteUri));
 	std::shared_ptr<HttpClient> httpClient(new HttpClient(httpClientEngine));
 	std::shared_ptr<PubSubService> communicationPubSub(new PubSubService());
-	std::shared_ptr<WsppWebsocketClientEngine> websocketClientEngine(new WsppWebsocketClientEngine(communicationPubSub));
+	std::shared_ptr<CbWebsocketClientEngine> websocketClientEngine(new CbWebsocketClientEngine(communicationPubSub));
 	std::shared_ptr<WebsocketClient> websocketClient(new WebsocketClient(websocketClientEngine));
 	std::shared_ptr<CommunicationManager> commManager = std::shared_ptr<CommunicationManager>(new CommunicationManager(httpClient, websocketClient));	 	
 

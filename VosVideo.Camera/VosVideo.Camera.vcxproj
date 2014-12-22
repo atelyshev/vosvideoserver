@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -19,13 +19,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -47,9 +47,9 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;WIN32;_CRT_SECURE_NO_WARNINGS;HAVE_WEBRTC_VIDEO;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;WIN32;_CRT_SECURE_NO_WARNINGS;HAVE_WEBRTC_VIDEO;WEBRTC_WIN;_NO_ASYNCRTIMP</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(THIRDPARTY_ROOT);$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(THIRDPARTY_ROOT)\boost_1_56_0;$(THIRDPARTY_ROOT)\poco-1.4.6\Net\include;$(THIRDPARTY_ROOT)\poco-1.4.6\Foundation\include;$(THIRDPARTY_ROOT)\libjingle\trunk;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\jsoncpp\source\include;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc\modules\video_capture\include;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\libvpx\source\libvpx;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc\system_wrappers\interface;$(VOSVIDEO_ROOT)\vosvideovp8;$(VOSVIDEO_ROOT)\vosvideocommon;..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(THIRDPARTY_ROOT);$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(THIRDPARTY_ROOT)\boost_1_56_0;$(THIRDPARTY_ROOT)\poco-1.4.7p1\Net\include;$(THIRDPARTY_ROOT)\poco-1.4.7p1\Foundation\include;$(THIRDPARTY_ROOT)\libjingle\trunk;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\jsoncpp\source\include;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc\modules\video_capture\include;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\libvpx\source\libvpx;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc\system_wrappers\interface;$(VOSVIDEO_ROOT)\vosvideovp8;$(VOSVIDEO_ROOT)\vosvideocommon;..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <AdditionalOptions>-Zm200 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -72,10 +72,11 @@
       <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;WIN32;_CRT_SECURE_NO_WARNINGS;HAVE_WEBRTC_VIDEO;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;WIN32;_CRT_SECURE_NO_WARNINGS;HAVE_WEBRTC_VIDEO;WEBRTC_WIN;_NO_ASYNCRTIMP</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(THIRDPARTY_ROOT);$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(THIRDPARTY_ROOT)\boost_1_56_0;$(THIRDPARTY_ROOT)\poco-1.4.6\Net\include;$(THIRDPARTY_ROOT)\poco-1.4.6\Foundation\include;$(THIRDPARTY_ROOT)\libjingle\trunk;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\jsoncpp\source\include;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc\modules\video_capture\include;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\libvpx\source\libvpx;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc\system_wrappers\interface;$(VOSVIDEO_ROOT)\vosvideovp8;$(VOSVIDEO_ROOT)\vosvideocommon;..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(THIRDPARTY_ROOT);$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(THIRDPARTY_ROOT)\boost_1_56_0;$(THIRDPARTY_ROOT)\poco-1.4.7p1\Net\include;$(THIRDPARTY_ROOT)\poco-1.4.7p1\Foundation\include;$(THIRDPARTY_ROOT)\libjingle\trunk;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\jsoncpp\source\include;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc\modules\video_capture\include;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\libvpx\source\libvpx;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc\system_wrappers\interface;$(VOSVIDEO_ROOT)\vosvideovp8;$(VOSVIDEO_ROOT)\vosvideocommon;..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm200 %(AdditionalOptions)</AdditionalOptions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
