@@ -54,7 +54,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>JSONCPP_RELATIVE_PATH;WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;WEBRTC_WIN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\;$(THIRDPARTY_ROOT);$(THIRDPARTY_ROOT)\boost_1_56_0;$(THIRDPARTY_ROOT)\poco-1.4.7p1\Net\include;$(THIRDPARTY_ROOT)\poco-1.4.7p1\Foundation\include;$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(VOSVIDEO_ROOT)\vosvideocommon;$(THIRDPARTY_ROOT)\libjingle\trunk;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\jsoncpp\source\include;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\modules\video_capture\include;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\system_wrappers\interface;$(VOSVIDEO_ROOT)\vosvideovp8</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;$(THIRDPARTY_ROOT);$(THIRDPARTY_ROOT)\boost_1_56_0;$(THIRDPARTY_ROOT)\poco-1.4.7p1\Net\include;$(THIRDPARTY_ROOT)\poco-1.4.7p1\Foundation\include;$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(VOSVIDEO_ROOT)\vosvideocommon;$(THIRDPARTY_ROOT)\libjingle\src;$(THIRDPARTY_ROOT)\libjingle\src\third_party;$(THIRDPARTY_ROOT)\libjingle\src\webrtc;$(THIRDPARTY_ROOT)\libjingle\src\third_party\jsoncpp\source\include;$(THIRDPARTY_ROOT)\libjingle\src\third_party\modules\video_capture\include;$(THIRDPARTY_ROOT)\libjingle\src\third_party\system_wrappers\interface;$(VOSVIDEO_ROOT)\vosvideovp8</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm200 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
@@ -75,7 +75,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>JSONCPP_RELATIVE_PATH;WIN32;_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;WEBRTC_WIN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\;$(THIRDPARTY_ROOT);$(THIRDPARTY_ROOT)\boost_1_56_0;$(THIRDPARTY_ROOT)\poco-1.4.7p1\Net\include;$(THIRDPARTY_ROOT)\poco-1.4.7p1\Foundation\include;$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(VOSVIDEO_ROOT)\vosvideocommon;$(THIRDPARTY_ROOT)\libjingle\trunk;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\jsoncpp\source\include;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\modules\video_capture\include;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\system_wrappers\interface;$(VOSVIDEO_ROOT)\vosvideovp8</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;$(THIRDPARTY_ROOT);$(THIRDPARTY_ROOT)\boost_1_56_0;$(THIRDPARTY_ROOT)\poco-1.4.7p1\Net\include;$(THIRDPARTY_ROOT)\poco-1.4.7p1\Foundation\include;$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(VOSVIDEO_ROOT)\vosvideocommon;$(THIRDPARTY_ROOT)\libjingle\src;$(THIRDPARTY_ROOT)\libjingle\src\third_party;$(THIRDPARTY_ROOT)\libjingle\src\webrtc;$(THIRDPARTY_ROOT)\libjingle\src\third_party\jsoncpp\source\include;$(THIRDPARTY_ROOT)\libjingle\src\third_party\modules\video_capture\include;$(THIRDPARTY_ROOT)\libjingle\src\third_party\system_wrappers\interface;$(VOSVIDEO_ROOT)\vosvideovp8</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm200 %(AdditionalOptions)</AdditionalOptions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
