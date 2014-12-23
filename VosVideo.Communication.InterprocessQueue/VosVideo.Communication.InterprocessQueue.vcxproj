@@ -46,7 +46,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(THIRDPARTY_ROOT);$(THIRDPARTY_ROOT)\boost_1_56_0;$(VOSVIDEO_ROOT)\vosvideocommon;$(VOSVIDEO_ROOT)\vosvideovp8;$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(THIRDPARTY_ROOT)\libjingle\trunk;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\jsoncpp\source\include;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc\modules\video_capture\include;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\libvpx\source\libvpx;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc\system_wrappers\interface;..\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(THIRDPARTY_ROOT);$(THIRDPARTY_ROOT)\boost_1_56_0;$(VOSVIDEO_ROOT)\vosvideocommon;$(VOSVIDEO_ROOT)\vosvideovp8;$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(THIRDPARTY_ROOT)\libjingle\src;$(THIRDPARTY_ROOT)\libjingle\src\third_party;$(THIRDPARTY_ROOT)\libjingle\src\third_party\jsoncpp\source\include;$(THIRDPARTY_ROOT)\libjingle\src\webrtc;$(THIRDPARTY_ROOT)\libjingle\src\webrtc\modules\video_capture\include;$(THIRDPARTY_ROOT)\libjingle\src\third_party\libvpx\source\libvpx;$(THIRDPARTY_ROOT)\libjingle\src\webrtc\system_wrappers\interface;..\</AdditionalIncludeDirectories>
       <SDLCheck>false</SDLCheck>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
@@ -69,7 +69,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;WIN32;_CRT_SECURE_NO_WARNINGS;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(THIRDPARTY_ROOT);$(THIRDPARTY_ROOT)\boost_1_56_0;$(VOSVIDEO_ROOT)\vosvideocommon;$(VOSVIDEO_ROOT)\vosvideovp8;$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(THIRDPARTY_ROOT)\libjingle\trunk;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\jsoncpp\source\include;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc\modules\video_capture\include;$(THIRDPARTY_ROOT)\libjingle\trunk\third_party\libvpx\source\libvpx;$(THIRDPARTY_ROOT)\libjingle\trunk\webrtc\system_wrappers\interface;..\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(THIRDPARTY_ROOT);$(THIRDPARTY_ROOT)\boost_1_56_0;$(VOSVIDEO_ROOT)\vosvideocommon;$(VOSVIDEO_ROOT)\vosvideovp8;$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(THIRDPARTY_ROOT)\libjingle\src;$(THIRDPARTY_ROOT)\libjingle\src\third_party;$(THIRDPARTY_ROOT)\libjingle\src\third_party\jsoncpp\source\include;$(THIRDPARTY_ROOT)\libjingle\src\webrtc;$(THIRDPARTY_ROOT)\libjingle\src\webrtc\modules\video_capture\include;$(THIRDPARTY_ROOT)\libjingle\src\third_party\libvpx\source\libvpx;$(THIRDPARTY_ROOT)\libjingle\src\webrtc\system_wrappers\interface;..\</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
       <SDLCheck>false</SDLCheck>
     </ClCompile>
