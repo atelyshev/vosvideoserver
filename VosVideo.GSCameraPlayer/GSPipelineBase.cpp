@@ -229,9 +229,6 @@ void GSPipelineBase::NewBufferHandler(GstElement *sink, GSPipelineBase *pipeline
 	guint8 *data;
 	guint size;
 
-	GstCaps *caps;
-	GstVideoFormat gstVideoFormat;
-
 	webrtc::VideoCaptureCapability webRtcCap;
 
 	//g_print("*");
@@ -240,18 +237,15 @@ void GSPipelineBase::NewBufferHandler(GstElement *sink, GSPipelineBase *pipeline
 	if (buffer) {
 		data = GST_BUFFER_DATA(buffer);
 		size = GST_BUFFER_SIZE(buffer);
-		caps = GST_BUFFER_CAPS(buffer);
 
 		//PrintCaps(caps, " ");
-
-		gstVideoFormat = GSPipelineBase::GetGstVideoFormatFromCaps(caps);
 
 		webRtcCap.width = GSPipelineBase::FRAME_WIDTH;
 		webRtcCap.height = GSPipelineBase::FRAME_HEIGHT;
 		webRtcCap.maxFPS = GSPipelineBase::FRAMERATE_NUMERATOR;
 		webRtcCap.expectedCaptureDelay = 0;
 
-		webRtcCap.rawType = GSPipelineBase::GetRawVideoTypeFromGsVideoFormat(gstVideoFormat);
+		webRtcCap.rawType = pipelineBase->_rawVideoType;
 		webRtcCap.codecType = webrtc::VideoCodecType::kVideoCodecUnknown;
 		webRtcCap.interlaced = true;
 
@@ -367,8 +361,12 @@ gboolean GSPipelineBase::BusWatchHandler(GstBus *bus, GstMessage *msg, gpointer 
 			g_print("GSPipelineBase %s state changed from %s to %s:\n",
 				messageSourceName, gst_element_state_get_name(old_state), gst_element_state_get_name(new_state));
 
-			//if (new_state == GstState::GST_STATE_PLAYING)
-			//	GST_DEBUG_BIN_TO_DOT_FILE(GST_BIN(pipelineBase->_pipeline), GST_DEBUG_GRAPH_SHOW_ALL, "debug.dot");
+			if (new_state == GstState::GST_STATE_PLAYING)
+			{
+				//We need to set the webrtc raw video type that appsink will receive. This will be used later as frames are coming in to the appsink.
+				pipelineBase->SetWebRtcRawVideoType();
+				//	GST_DEBUG_BIN_TO_DOT_FILE(GST_BIN(pipelineBase->_pipeline), GST_DEBUG_GRAPH_SHOW_ALL, "debug.dot");
+			}
 		}
 
 		g_free(messageSourceName);
@@ -378,5 +376,21 @@ gboolean GSPipelineBase::BusWatchHandler(GstBus *bus, GstMessage *msg, gpointer 
 	}
 
 	return TRUE;
+}
+
+void GSPipelineBase::SetWebRtcRawVideoType(){
+	GstPad *pad = NULL;
+	GstCaps *caps = NULL;
+
+	pad = gst_element_get_static_pad(_appSink, "sink");
+
+	caps = gst_pad_get_negotiated_caps(pad);
+	if (!caps)
+		caps = gst_pad_get_caps_reffed(pad);
+
+	_rawVideoType = GSPipelineBase::GetRawVideoTypeFromGsVideoFormat(GSPipelineBase::GetGstVideoFormatFromCaps(caps));
+
+	gst_caps_unref(caps);
+	gst_object_unref(pad);
 }
 
