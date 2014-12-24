@@ -89,8 +89,8 @@ void DeviceConfigurationManager::RunDeviceDiscoveryAsync(const shared_ptr<vosvid
 			{
 				web::json::value jObj;
 				jObj[L"modeltype"] = web::json::value::number(static_cast<int>(CameraType::WEBCAM));
-				jObj[L"friendlyname"] = web::json::value::string(iter->friendlyName_);
-				jObj[L"url"] = web::json::value::string(iter->symLink_);
+				jObj[L"friendlyname"] = web::json::value::string(iter->FriendlyName);
+				jObj[L"url"] = web::json::value::string(iter->SymLink);
 				jobjVect[i++] = jObj;
 			}
 

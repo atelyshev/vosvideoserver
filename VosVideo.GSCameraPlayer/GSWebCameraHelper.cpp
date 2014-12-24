@@ -10,5 +10,9 @@ GSWebCameraHelper::~GSWebCameraHelper(){
 }
 
 HRESULT GSWebCameraHelper::CreateVideoCaptureDevices(GSWebCameraHelper::WebCamsList& webCams){
+	WebCameraDescription description = WebCameraDescription();
+	description.FriendlyName = L"Web Camera";
+	description.SymLink = L"webcamera";
+	webCams.push_back(description);
 	return S_OK;
 }
