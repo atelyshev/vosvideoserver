@@ -81,14 +81,7 @@ concurrency::task<LogInResponse> UserManager::LogInAsync(LogInRequest const& log
 	}
 	);
 
-	try
-	{
-		webSockAuthTask.wait();
-	}
-	catch(HttpClientException&)
-	{
-		throw;
-	}
+	webSockAuthTask.wait();
 
 	concurrency::task<LogInResponse> loginToWebsocketServerTask(wsOpenedCompletionEvent_);
 

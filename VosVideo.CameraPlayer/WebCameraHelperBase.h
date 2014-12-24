@@ -13,8 +13,8 @@ namespace vosvideo
 		class WebCameraDescription
 		{
 		public:
-			std::wstring symLink_;
-			std::wstring friendlyName_;
+			std::wstring SymLink;
+			std::wstring FriendlyName;
 		};
 
 		class WebCameraHelperBase

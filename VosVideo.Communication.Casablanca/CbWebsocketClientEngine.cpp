@@ -13,17 +13,24 @@ CbWebsocketClientEngine::~CbWebsocketClientEngine(void){
 
 }
 
-void CbWebsocketClientEngine::Connect(std::wstring const& wUri){
-	_client.connect(wUri)
-		.then([=]{
-		    //Websocket connection opened. Publish to intrested parties
+void CbWebsocketClientEngine::Connect(std::wstring const& wUri)
+{
+	try
+	{
+		_client.connect(wUri)
+			.then([=]{
+			//Websocket connection opened. Publish to interested parties
 			auto dto = _dtoFactory.Create(vosvideo::data::MsgType::ConnectionOpenedMsg);
 			pubSubService_->Publish(dto);
 
 			//Start listening for incoming messages
 			StartListeningForMessages();
-		})
-		.wait();
+		}).wait();
+	}
+	catch (websocket_exception& ex){
+		std::cout << "There was an error connecting to websocket server: " << ex.what();
+		LOG_ERROR("There was an error connecting to websocket server: " << ex.what());
+	}
 }
 
 void CbWebsocketClientEngine::Send(std::string const& msg)
