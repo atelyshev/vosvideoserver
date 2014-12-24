@@ -42,6 +42,8 @@ namespace vosvideo
 			static void PrintCaps(const GstCaps * caps, const gchar * pfx);
 			static gboolean PrintField(GQuark field, const GValue * value, gpointer pfx);
 
+			void SetWebRtcRawVideoType();
+
 			static const int FRAME_WIDTH = 528;
 			static const int FRAME_HEIGHT = 384;
 			static const int FRAMERATE_NUMERATOR = 10;
@@ -59,6 +61,8 @@ namespace vosvideo
 			GstElement *_appSink;
 			GstElement *_pipeline;
 			GMainLoop *_mainLoop;
+
+			webrtc::RawVideoType _rawVideoType;
 
 			boost::shared_mutex _mutex;
 			std::unordered_map<uint32_t, webrtc::VideoCaptureExternal*> _webRtcVideoCapturers;
