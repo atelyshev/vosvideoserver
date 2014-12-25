@@ -4,7 +4,7 @@
 
 using vosvideo::cameraplayer::GSPipelineBase;
 
-GSPipelineBase::GSPipelineBase()
+GSPipelineBase::GSPipelineBase() : _rawVideoType(webrtc::RawVideoType::kVideoUnknown)
 {
 	this->_appThread = new boost::thread(boost::bind(&GSPipelineBase::AppThreadStart, this));
 	this->_appThread->detach();
@@ -234,7 +234,7 @@ void GSPipelineBase::NewBufferHandler(GstElement *sink, GSPipelineBase *pipeline
 	//g_print("*");
 	//Retrieve the buffer
 	g_signal_emit_by_name(sink, "pull-buffer", &buffer);
-	if (buffer) {
+	if (buffer && pipelineBase->_rawVideoType != webrtc::RawVideoType::kVideoUnknown) {
 		data = GST_BUFFER_DATA(buffer);
 		size = GST_BUFFER_SIZE(buffer);
 
@@ -247,7 +247,6 @@ void GSPipelineBase::NewBufferHandler(GstElement *sink, GSPipelineBase *pipeline
 
 		webRtcCap.rawType = pipelineBase->_rawVideoType;
 		webRtcCap.codecType = webrtc::VideoCodecType::kVideoCodecUnknown;
-		webRtcCap.interlaced = true;
 
 		{
 			boost::shared_lock<boost::shared_mutex> lock(pipelineBase->_mutex);
