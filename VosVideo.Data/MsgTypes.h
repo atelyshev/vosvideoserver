@@ -16,7 +16,7 @@ namespace vosvideo
 			ArchiveCatalogRequestMsg,
 			DeviceDiscoveryMsg,
 			CameraConfMsg,
-			ShutdownCameraProcessMsg,
+			ShutdownCameraProcessRequestMsg,
 			SdpAnswerMsg = 101,
 			IceCandidateAnswerMsg,
 			LiveVideoErrorMsg,

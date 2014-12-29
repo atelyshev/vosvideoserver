@@ -6,7 +6,7 @@ using namespace vosvideo::data;
 
 ShutdownCameraProcessRequestMsg::ShutdownCameraProcessRequestMsg()
 {
-	jObj_[L"mt"] = web::json::value::number(static_cast<int>(vosvideo::data::MsgType::ShutdownCameraProcessMsg));
+	jObj_[L"mt"] = web::json::value::number(static_cast<int>(vosvideo::data::MsgType::ShutdownCameraProcessRequestMsg));
 }
 
 
