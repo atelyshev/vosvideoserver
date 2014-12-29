@@ -15,7 +15,8 @@ WebSocketMessageParser::WebSocketMessageParser(const string& msg)
 	web::json::value jpayload = web::json::value::parse(wmsg);
 	messageType_ = GetMessageType(jpayload);
 
-	if(messageType_  != MsgType::CameraConfMsg)
+	if(messageType_  != MsgType::CameraConfMsg && 
+		messageType_ != MsgType::ShutdownCameraProcessRequestMsg)
 	{
 		fromPeer_ = jpayload.at(U("fp")).as_string();
 		toPeer_ = jpayload.at(U("tp")).as_string();

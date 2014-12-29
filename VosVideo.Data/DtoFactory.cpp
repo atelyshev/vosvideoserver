@@ -34,7 +34,7 @@ namespace vosvideo
 			factories_[MsgType::CameraConfMsg] =  boost::factory<CameraConfMsg*>();
 			factories_[MsgType::SdpAnswerMsg] =  boost::factory<SdpAnswerMsg*>();			
 			factories_[MsgType::IceCandidateAnswerMsg] =  boost::factory<IceCandidateResponseMsg*>();			
-			factories_[MsgType::ShutdownCameraProcessMsg] = boost::factory<ShutdownCameraProcessRequestMsg*>();			
+			factories_[MsgType::ShutdownCameraProcessRequestMsg] = boost::factory<ShutdownCameraProcessRequestMsg*>();
 		}
 
 		DtoFactory::~DtoFactory()
