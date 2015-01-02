@@ -10,6 +10,8 @@ using namespace concurrency;
 
 void PubSubService::Publish(shared_ptr<vosvideo::data::ReceivedData> receivedData)
 {
+	LOG_TRACE("Publishing data: " << receivedData->ToString());
+
 	for_each
 		(
 			subscriptions_.begin(), subscriptions_.end(), 

@@ -10,7 +10,8 @@ GSPipelineBase::GSPipelineBase() : _rawVideoType(webrtc::RawVideoType::kVideoUnk
 	this->_appThread->detach();
 }
 
-GSPipelineBase::~GSPipelineBase(){
+GSPipelineBase::~GSPipelineBase()
+{
 	LOG_TRACE("GSPipelineBase destroying camera player");
 	if (this->_appThread)
 		delete _appThread;
@@ -23,30 +24,37 @@ GSPipelineBase::~GSPipelineBase(){
 	}
 }
 
-void GSPipelineBase::GetWebRtcCapability(webrtc::VideoCaptureCapability& webRtcCapability){
+void GSPipelineBase::GetWebRtcCapability(webrtc::VideoCaptureCapability& webRtcCapability)
+{
 	webRtcCapability.width = GSPipelineBase::FRAME_WIDTH;
 	webRtcCapability.height = GSPipelineBase::FRAME_HEIGHT;
 	webRtcCapability.codecType = webrtc::VideoCodecType::kVideoCodecUnknown;
 	webRtcCapability.maxFPS = GSPipelineBase::FRAMERATE_NUMERATOR;
 }
 
-void GSPipelineBase::Create(){
+void GSPipelineBase::Create()
+{
 	g_main_context_invoke(NULL, CreateGStreamerPipeline, this);
 }
 
-void GSPipelineBase::Start(){
-	if (!GSPipelineBase::ChangeElementState(_pipeline, GST_STATE_PLAYING)) {
+void GSPipelineBase::Start()
+{
+	if (!GSPipelineBase::ChangeElementState(_pipeline, GST_STATE_PLAYING)) 
+	{
 		LOG_ERROR("GSPipeline: Unable to set the pipeline to the playing state.");
 	}
 }
 
-void GSPipelineBase::Stop(){
-	if (!GSPipelineBase::ChangeElementState(_pipeline, GST_STATE_NULL)) {
+void GSPipelineBase::Stop()
+{
+	if (!GSPipelineBase::ChangeElementState(_pipeline, GST_STATE_NULL)) 
+	{
 		LOG_ERROR("GSPipeline: Unable to set the pipeline to the null state.");
 	}
 }
 
-void GSPipelineBase::AddExternalCapturer(webrtc::VideoCaptureExternal* externalCapturer){
+void GSPipelineBase::AddExternalCapturer(webrtc::VideoCaptureExternal* externalCapturer)
+{
 	{
 		boost::unique_lock<boost::shared_mutex> lock(_mutex);
 		this->_webRtcVideoCapturers.insert(std::make_pair(reinterpret_cast<uint32_t>(externalCapturer), externalCapturer));
@@ -57,8 +65,8 @@ void GSPipelineBase::AddExternalCapturer(webrtc::VideoCaptureExternal* externalC
 		g_main_context_invoke(NULL, CreateGStreamerPipeline, this);
 }
 
-void GSPipelineBase::RemoveExternalCapturer(webrtc::VideoCaptureExternal* externalCapturer){
-
+void GSPipelineBase::RemoveExternalCapturer(webrtc::VideoCaptureExternal* externalCapturer)
+{
 	boost::unique_lock<boost::shared_mutex> lock(_mutex);
 	this->_webRtcVideoCapturers.erase(reinterpret_cast<uint32_t>(externalCapturer));
 	//If we don't have any more webrtc capturers we destroy the pipeline
@@ -67,14 +75,16 @@ void GSPipelineBase::RemoveExternalCapturer(webrtc::VideoCaptureExternal* extern
 		DestroyGSStreamerPipeline();
 }
 
-void GSPipelineBase::RemoveAllExternalCapturers(){
+void GSPipelineBase::RemoveAllExternalCapturers()
+{
 	boost::unique_lock<boost::shared_mutex> lock(_mutex);
 	this->_webRtcVideoCapturers.clear();
 	DestroyGSStreamerPipeline();
 }
 
 
-void GSPipelineBase::AppThreadStart(){
+void GSPipelineBase::AppThreadStart()
+{
 	LOG_TRACE("GSPipeline App thread started");
 
 	this->_mainLoop = g_main_loop_new(nullptr, FALSE);
@@ -87,14 +97,16 @@ void GSPipelineBase::AppThreadStart(){
 	g_main_loop_run(this->_mainLoop);
 }
 
-void GSPipelineBase::DestroyGSStreamerPipeline(){
+void GSPipelineBase::DestroyGSStreamerPipeline()
+{
 	Stop();
 	gst_object_unref(_pipeline);
 	g_source_remove(_busWatchId);
 	this->_pipeline = NULL;
 }
 
-gboolean GSPipelineBase::CreateGStreamerPipeline(gpointer data){
+gboolean GSPipelineBase::CreateGStreamerPipeline(gpointer data)
+{
 	GstBus *bus;
 	GstCaps *rawVideoScaleCaps;
 	GstCaps *rawVideoRateCaps;
@@ -115,48 +127,56 @@ gboolean GSPipelineBase::CreateGStreamerPipeline(gpointer data){
 
 	pipelineBase->_pipeline = gst_pipeline_new("pipeline");
 
-	if (!pipelineBase->SourceElement){
+	if (!pipelineBase->SourceElement)
+	{
 		LOG_ERROR("GSPipelineBase error: Unable to create the source element");
 		return FALSE;
 	}
 
-	if (!pipelineBase->_videoScale){
+	if (!pipelineBase->_videoScale)
+	{
 		LOG_ERROR("GSPipelineBase error: Unable to create videoscale element");
 		return FALSE;
 	}
 
-	if (!pipelineBase->VideoRate){
+	if (!pipelineBase->VideoRate)
+	{
 		LOG_ERROR("GSPipelineBase error: Unable to create videorate element");
 		return FALSE;
 	}
 
-	if (!pipelineBase->_videoScaleCapsFilter){
+	if (!pipelineBase->_videoScaleCapsFilter)
+	{
 		LOG_ERROR("GSPipelineBase error: Unable to create videoscalefilter element");
 		return FALSE;
 	}
 
-
-	if (!pipelineBase->_videoRateCapsFilter){
+	if (!pipelineBase->_videoRateCapsFilter)
+	{
 		LOG_ERROR("GSPipelineBase error: Unable to create videoratesfilter element");
 		return FALSE;
 	}
 
-	if (!pipelineBase->_videoConverter){
+	if (!pipelineBase->_videoConverter)
+	{
 		LOG_ERROR("GSPipelineBase error: Unable to create ffmpegcolorspace element");
 		return FALSE;
 	}
 
-	if (!pipelineBase->_appSinkQueue){
+	if (!pipelineBase->_appSinkQueue)
+	{
 		LOG_ERROR("GSPipelineBase error: Unable to create appsink queue element");
 		return FALSE;
 	}
 
-	if (!pipelineBase->_appSink){
+	if (!pipelineBase->_appSink)
+	{
 		LOG_ERROR("GSPipelineBase error: Unable to create appsink element");
 		return FALSE;
 	}
 
-	if (!pipelineBase->_pipeline){
+	if (!pipelineBase->_pipeline)
+	{
 		LOG_ERROR("GSPipelineBase error: Unable to create the pipeline");
 		return FALSE;
 	}
@@ -166,15 +186,13 @@ gboolean GSPipelineBase::CreateGStreamerPipeline(gpointer data){
 		pipelineBase->_videoScale, pipelineBase->_videoScaleCapsFilter, pipelineBase->_videoConverter,
 		pipelineBase->_appSinkQueue, pipelineBase->_appSink, NULL);
 
-
-
-	if (!pipelineBase->LinkElements()) {
+	if (!pipelineBase->LinkElements()) 
+	{
 		LOG_ERROR("GSPipelineBase error: Unable to link all elements");
 		return FALSE;
 	}
 
 	//Sets relevant properties for the elements in the pipeline
-
 	//Set the caps filter to DCIF size. This will force the videoscale element to scale the video to DCIF size.
 	rawVideoScaleCaps = gst_caps_new_simple("video/x-raw-yuv", "width", G_TYPE_INT, GSPipelineBase::FRAME_WIDTH, "height", G_TYPE_INT, GSPipelineBase::FRAME_HEIGHT, NULL);
 	g_object_set(pipelineBase->_videoScaleCapsFilter, "caps", rawVideoScaleCaps, NULL);
@@ -193,38 +211,42 @@ gboolean GSPipelineBase::CreateGStreamerPipeline(gpointer data){
 	//Connect to the new-buffer signal so we can retrieve samples without blocking
 	g_signal_connect(pipelineBase->_appSink, "new-buffer", G_CALLBACK(pipelineBase->NewBufferHandler), pipelineBase);
 
-	if (!GSPipelineBase::ChangeElementState(pipelineBase->_pipeline, GST_STATE_PLAYING)) {
+	if (!GSPipelineBase::ChangeElementState(pipelineBase->_pipeline, GST_STATE_PLAYING)) 
+	{
 		LOG_ERROR("GSPipelineBase: Unable to set the pipeline to the playing state.");
 		return FALSE;
 	}
 
 	bus = gst_pipeline_get_bus(GST_PIPELINE(pipelineBase->_pipeline));
 	pipelineBase->_busWatchId = gst_bus_add_watch(bus, BusWatchHandler, pipelineBase);
-	gst_object_unref(bus);
-	
+	gst_object_unref(bus);	
 
 	return FALSE;
 }
 
-gboolean GSPipelineBase::LinkElements(){
-	if (!gst_element_link_many(VideoRate, _videoRateCapsFilter, _videoScale, _videoScaleCapsFilter, _videoConverter, _appSinkQueue, _appSink, NULL)) {
+gboolean GSPipelineBase::LinkElements()
+{
+	if (!gst_element_link_many(VideoRate, _videoRateCapsFilter, _videoScale, _videoScaleCapsFilter, _videoConverter, _appSinkQueue, _appSink, NULL)) 
+	{
 		return FALSE;
 	}
 	return TRUE;
 }
 
-bool GSPipelineBase::ChangeElementState(GstElement *element, GstState state){
+bool GSPipelineBase::ChangeElementState(GstElement *element, GstState state)
+{
 	GstStateChangeReturn stateChangeReturn;
 	stateChangeReturn = gst_element_set_state(element, state);
-	if (stateChangeReturn == GST_STATE_CHANGE_FAILURE) {
+	if (stateChangeReturn == GST_STATE_CHANGE_FAILURE) 
+	{
 		LOG_ERROR("GSCameraPlayer: Unable to set the element state to " << state);
 		return false;
 	}
 	return true;
 }
 
-
-void GSPipelineBase::NewBufferHandler(GstElement *sink, GSPipelineBase *pipelineBase){
+void GSPipelineBase::NewBufferHandler(GstElement *sink, GSPipelineBase *pipelineBase)
+{
 	GstBuffer *buffer;
 	guint8 *data;
 	guint size;
@@ -234,7 +256,8 @@ void GSPipelineBase::NewBufferHandler(GstElement *sink, GSPipelineBase *pipeline
 	//g_print("*");
 	//Retrieve the buffer
 	g_signal_emit_by_name(sink, "pull-buffer", &buffer);
-	if (buffer && pipelineBase->_rawVideoType != webrtc::RawVideoType::kVideoUnknown) {
+	if (buffer && pipelineBase->_rawVideoType != webrtc::RawVideoType::kVideoUnknown) 
+	{
 		data = GST_BUFFER_DATA(buffer);
 		size = GST_BUFFER_SIZE(buffer);
 
@@ -261,7 +284,8 @@ void GSPipelineBase::NewBufferHandler(GstElement *sink, GSPipelineBase *pipeline
 
 }
 
-GstVideoFormat GSPipelineBase::GetGstVideoFormatFromCaps(GstCaps* caps){
+GstVideoFormat GSPipelineBase::GetGstVideoFormatFromCaps(GstCaps* caps)
+{
 	GstStructure *capsStructure;
 	const GValue *formatTypeGValue;
 	const gchar *videoFormatStr;
@@ -277,9 +301,11 @@ GstVideoFormat GSPipelineBase::GetGstVideoFormatFromCaps(GstCaps* caps){
 	return gstVideoFormat;
 }
 
-webrtc::RawVideoType GSPipelineBase::GetRawVideoTypeFromGsVideoFormat(const GstVideoFormat& videoFormat){
+webrtc::RawVideoType GSPipelineBase::GetRawVideoTypeFromGsVideoFormat(const GstVideoFormat& videoFormat)
+{
 	//Try to map gstreamer video formats to webrtc video formats.
-	switch (videoFormat){
+	switch (videoFormat)
+	{
 		case GST_VIDEO_FORMAT_I420:
 			return webrtc::kVideoI420;
 		case GST_VIDEO_FORMAT_YV12:
@@ -300,20 +326,21 @@ webrtc::RawVideoType GSPipelineBase::GetRawVideoTypeFromGsVideoFormat(const GstV
 
 void GSPipelineBase::PrintCaps(const GstCaps * caps, const gchar * pfx) 
 {
-	guint i;
-
 	g_return_if_fail(caps != NULL);
 
-	if (gst_caps_is_any(caps)) {
+	if (gst_caps_is_any(caps)) 
+	{
 		g_print("%sANY\n", pfx);
 		return;
 	}
-	if (gst_caps_is_empty(caps)) {
+	if (gst_caps_is_empty(caps)) 
+	{
 		g_print("%sEMPTY\n", pfx);
 		return;
 	}
 
-	for (i = 0; i < gst_caps_get_size(caps); i++) {
+	for (guint i = 0; i < gst_caps_get_size(caps); i++) 
+	{
 		GstStructure *structure = gst_caps_get_structure(caps, i);
 
 		g_print("%s%s\n", pfx, gst_structure_get_name(structure));
@@ -335,7 +362,8 @@ gboolean GSPipelineBase::BusWatchHandler(GstBus *bus, GstMessage *msg, gpointer 
 	GError *err;
 	gchar *debug_info;
 
-	switch (GST_MESSAGE_TYPE(msg)) {
+	switch (GST_MESSAGE_TYPE(msg)) 
+	{
 	case GST_MESSAGE_ERROR:
 		//_asm int 3;
 		gst_message_parse_error(msg, &err, &debug_info);
@@ -377,7 +405,8 @@ gboolean GSPipelineBase::BusWatchHandler(GstBus *bus, GstMessage *msg, gpointer 
 	return TRUE;
 }
 
-void GSPipelineBase::SetWebRtcRawVideoType(){
+void GSPipelineBase::SetWebRtcRawVideoType()
+{
 	GstPad *pad = NULL;
 	GstCaps *caps = NULL;
 

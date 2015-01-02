@@ -159,6 +159,7 @@ void CameraDeviceManager::PassMessage(web::json::value& mediaObj, const wstring&
 
 void CameraDeviceManager::Shutdown()
 {
+	LOG_TRACE("Shutdown CameraDeviceManager");
 	lock_guard<std::mutex> lock(mutex_);
 	reconnectTimer_->stop();
 
@@ -184,16 +185,6 @@ void CameraDeviceManager::AddIpCam(web::json::value& camParms)
 	CameraConfMsg conf;
 	CreateCameraConfFromJson(camId, conf, camParms);
 	CreatePlayerProcess(conf);
-}
-
-void CameraDeviceManager::RemoveIpCam(int camId)
-{
-	CameraPlayerProcessMap::iterator iter = cameraProcess_.find(camId);
-
-	if (iter != cameraProcess_.end())
-	{
-		iter->second->Shutdown();
-	}
 }
 
 void CameraDeviceManager::GetDeviceIdFromJson(int& camId, web::json::value& camParms)
@@ -462,43 +453,16 @@ void CameraDeviceManager::ReconnectCamera()
 	}
 }
 
-
-//void CameraDeviceManager::ReconnectCamera()
-//{
-//	lock_guard<std::mutex> lock(mutex_);
-//
-//	vector< pair<int, CameraPlayer*> > candidates;
-//
-//	for (CameraPlayersMap::iterator iter = cameraPlayers_.begin(); iter != cameraPlayers_.end(); ++iter)
-//	{
-//		if (iter->second->GetState() == PlayerState::Stopped || 
-//			iter->second->GetState() == PlayerState::Closed)
-//		{
-//			candidates.push_back(make_pair(iter->first, iter->second));
-//		}
-//	}
-//
-//	for (vector<pair<int, CameraPlayer*>>::iterator iter = candidates.begin(); iter != candidates.end(); ++iter)
-//	{
-//		DeletePlayerProcess(iter->first);
-//		CameraConfsMap::iterator conf = cameraConfs_.find(iter->first);
-//
-//		if (conf != cameraConfs_.end())
-//		{
-//			CreatePlayerProcess(conf->second.first);
-//		}
-//	}
-//}
-
 void CameraDeviceManager::DeletePlayerProcess(int devId)
 {
+	LOG_TRACE("Shutdown camera with id: " << devId);
+
 	CameraPlayerProcessMap::iterator processIter = cameraProcess_.find(devId);
 	if (processIter != cameraProcess_.end())
 	{
 		processIter->second->Shutdown();
 		cameraProcess_.erase(processIter->first);
 	}
-
 }
 
 void CameraDeviceManager::Terminate()
