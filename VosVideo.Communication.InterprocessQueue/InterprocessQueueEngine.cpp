@@ -77,7 +77,7 @@ void InterprocessQueueEngine::Send(const std::string& smsg)
 	lock_guard<std::mutex> lock(mutex_);
 	try
 	{
-		LOG_TRACE("Pass message with size: " << smsg.size());
+		LOG_TRACE("Pass message with size: " << smsg.size() << " and body: " << smsg);
 
 		if (openAsParent_)
 		{

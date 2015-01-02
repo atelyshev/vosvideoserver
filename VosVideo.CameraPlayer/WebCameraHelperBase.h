@@ -31,7 +31,7 @@ namespace vosvideo
 
 
 			// Enumerates all video devices an returns pair Device_link/VideoSource
-			virtual HRESULT CreateVideoCaptureDevices(WebCamsList& webCams) = 0;
+			virtual void CreateVideoCaptureDevices(WebCamsList& webCams) = 0;
 		};
 	}
 }

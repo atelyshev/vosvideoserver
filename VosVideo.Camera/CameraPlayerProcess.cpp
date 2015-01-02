@@ -51,8 +51,13 @@ void CameraPlayerProcess::Reconnect()
 {
 	if (!IsAlive())
 	{
+		LOG_TRACE("deviceworker process is gone. Cleaning environment and restart.");
 		Shutdown();
 		Init();
+	}
+	else
+	{
+		LOG_TRACE("deviceworker process is alive.");
 	}
 }
 
@@ -66,6 +71,7 @@ bool CameraPlayerProcess::IsAlive()
 
 void CameraPlayerProcess::Shutdown()
 {
+	LOG_TRACE("Send Shutdown to deviceworker.");
 	vosvideo::data::ShutdownCameraProcessRequestMsg shutdownReq;
 	duplexChannel_->Send(shutdownReq.ToString());
 }

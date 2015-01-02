@@ -9,11 +9,8 @@ namespace vosvideo
 		class GSWebCameraHelper : public vosvideo::cameraplayer::WebCameraHelperBase
 		{
 		public:
-			GSWebCameraHelper();
-			~GSWebCameraHelper();
-
 			// Enumerates all video devices an returns pair Device_link/VideoSource
-			HRESULT CreateVideoCaptureDevices(WebCamsList& webCams);
+			void CreateVideoCaptureDevices(WebCamsList& webCams);
 		};
 	}
 }

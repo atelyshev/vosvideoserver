@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <vosvideocommon/SeverityLoggerMacros.h>
 #include "DtoFactory.h"
 #include "CameraConfMsg.h"
 #include "WebsocketConnectionOpenedMsg.h"
@@ -43,6 +44,7 @@ namespace vosvideo
 
 		std::shared_ptr<ReceivedData> DtoFactory::Create(MsgType dtoType)
 		{
+			LOG_TRACE("Requested to create DTO with type: " << (int)dtoType);
 			return std::shared_ptr<ReceivedData>(factories_[dtoType]());
 		}
 	}
