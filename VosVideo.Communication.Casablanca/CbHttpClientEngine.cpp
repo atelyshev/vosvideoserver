@@ -30,7 +30,7 @@ concurrency::task<web::json::value> CbHttpClientEngine::Get(const std::wstring& 
 						uri_builder uriBuilder = uri_builder(path);
 						utility::string_t pathAndQueryFragment = uriBuilder.to_string();
 						auto requestTask = httpClient_.request(methods::GET, pathAndQueryFragment);
-						return ExecuteRequest(requestTask);
+						return ExecuteRequest(pathAndQueryFragment, requestTask);
 					} 
 		);
 	return getTask;
@@ -46,13 +46,13 @@ concurrency::task<web::json::value> CbHttpClientEngine::Post(const std::wstring&
 					uri_builder uriBuilder = uri_builder(path);
 					utility::string_t pathAndQueryFragment = uriBuilder.to_string();
 					auto requestTask = httpClient_.request(methods::POST, pathAndQueryFragment, payload);
-					return ExecuteRequest(requestTask);
+					return ExecuteRequest(pathAndQueryFragment, requestTask);
 				} 
 		);
 	return postTask;
 }
 
-web::json::value CbHttpClientEngine::ExecuteRequest(pplx::task<http_response>& requestTask)
+web::json::value CbHttpClientEngine::ExecuteRequest(const std::wstring& url, pplx::task<http_response>& requestTask)
 {
 	http_response resp = requestTask.get();
 	web::json::value jsonVal;
@@ -60,11 +60,20 @@ web::json::value CbHttpClientEngine::ExecuteRequest(pplx::task<http_response>& r
 	if (resp.status_code() != 200)
 	{
 		string str = StringUtil::ToString(resp.reason_phrase());
-		throw HttpClientException(str.c_str());
+		LOG_ERROR(L"Execute Request: There was an error calling url: " + url);
+		throw HttpClientException(util::StringUtil::ToString(url), str.c_str());
 	}
-	else 
+	else
 	{
-		jsonVal = resp.extract_json().get();
+		try
+		{
+			jsonVal = resp.extract_json().get();
+		}
+		catch (...){
+			LOG_ERROR(L"Execute Request: There was an error extracting the response from: " + url);
+			throw HttpClientException(util::StringUtil::ToString(url), "There was an error extracting the response");
+		}	
 	}
+
 	return jsonVal;
 }

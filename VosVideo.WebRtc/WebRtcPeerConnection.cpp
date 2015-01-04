@@ -2,7 +2,6 @@
 #include <talk/app/webrtc/mediaconstraintsinterface.h>
 #include <talk/media/devices/devicemanager.h>
 #include <vosvideocommon/StringUtil.h>
-
 #include "VosVideo.Camera/CameraVideoCapturer.h"
 #include "VosVideo.Data/CameraConfMsg.h"
 #include "VosVideo.Data/SdpAnswerMsg.h"
@@ -90,30 +89,6 @@ void WebRtcPeerConnection::OnMessage(rtc::Message* message)
 			AddStreams_r();
 			break;
 		}
-	case PeerConnectionMessages::DoOnSuccess:
-		{
-			shared_ptr<TypedMessagePtr<webrtc::SessionDescriptionInterface>> 
-				data(static_cast<TypedMessagePtr<webrtc::SessionDescriptionInterface>*>(message->pdata));
-			auto wrappedMessage = dynamic_cast<webrtc::SessionDescriptionInterface*>(data->data());
-			OnSuccess_r(wrappedMessage);
-			break;
-		}
-	case PeerConnectionMessages::DoOnIceCandidate:
-		{
-			shared_ptr<TypedMessagePtr<webrtc::IceCandidateInterface>> 
-				data(static_cast<TypedMessagePtr<webrtc::IceCandidateInterface>*>(message->pdata));
-			auto wrappedMessage = dynamic_cast<webrtc::IceCandidateInterface*>(data->data());
-			OnIceCandidate_r(wrappedMessage);
-			break;
-		}
-	case PeerConnectionMessages::DoOnSignalChange:
-		{
-			shared_ptr<rtc::TypedMessageData<webrtc::PeerConnectionInterface::SignalingState>> 
-				data(static_cast<rtc::TypedMessageData<webrtc::PeerConnectionInterface::SignalingState>*>(message->pdata));
-			webrtc::PeerConnectionInterface::SignalingState wrappedMessage = data->data();
-			OnSignalingChange_r(wrappedMessage);
-			break;
-		}
 	case PeerConnectionMessages::DoCloseCapturer:
 		{
 			Close_r();
@@ -127,7 +102,7 @@ void WebRtcPeerConnection::InitSdp(shared_ptr<SdpOffer> sdp)
 	wstring wpayload;
 	sdp->GetSdpOffer(wpayload);
 	string sdpPayload = StringUtil::ToString(wpayload);
-	commandThr_->Post(this, static_cast<uint32>(PeerConnectionMessages::DoInitSdp), 
+	commandThr_->Send(this, static_cast<uint32>(PeerConnectionMessages::DoInitSdp), 
 		new rtc::TypedMessageData<string>(sdpPayload));
 }
 
@@ -167,7 +142,7 @@ void WebRtcPeerConnection::InitIce(const std::shared_ptr<vosvideo::data::WebRtcI
 		throw WebRtcException("Received unknown message: " + payload);
 	}
 
-	commandThr_->Post(this, static_cast<uint32>(PeerConnectionMessages::DoInitIce), 
+	commandThr_->Send(this, static_cast<uint32>(PeerConnectionMessages::DoInitIce), 
 		new rtc::TypedMessageData<Json::Value>(jmessage));
 }
 
@@ -214,12 +189,6 @@ void WebRtcPeerConnection::InitIce_r(const Json::Value& jmessage)
 
 void WebRtcPeerConnection::OnSuccess(webrtc::SessionDescriptionInterface* desc) 
 {
-	TypedMessagePtr<webrtc::SessionDescriptionInterface>* wrapper = new TypedMessagePtr<webrtc::SessionDescriptionInterface>(desc);
-	commandThr_->Post(this, static_cast<uint32>(PeerConnectionMessages::DoOnSuccess), wrapper);
-}
-
-void WebRtcPeerConnection::OnSuccess_r(webrtc::SessionDescriptionInterface* desc)
-{
 	peer_connection_->SetLocalDescription(DummySetSessionDescriptionObserver::Create(), desc);
 	Json::StyledWriter writer;
 	Json::Value jmessage;
@@ -235,16 +204,10 @@ void WebRtcPeerConnection::OnSuccess_r(webrtc::SessionDescriptionInterface* desc
 	string respSdp = StringUtil::ToString(wrespSdp);
 
 	queueEng_->Send(respSdp);
+
 }
 
-void WebRtcPeerConnection::OnIceCandidate(const webrtc::IceCandidateInterface* candidate) 
-{
-	TypedMessagePtr<const webrtc::IceCandidateInterface>* wrapper = new TypedMessagePtr<const webrtc::IceCandidateInterface>(candidate);
-	// Cant use Post, caller will free memory immediately and application will crash
-	commandThr_->Send(this, static_cast<uint32>(PeerConnectionMessages::DoOnIceCandidate), wrapper);
-}
-
-void WebRtcPeerConnection::OnIceCandidate_r(webrtc::IceCandidateInterface* icecandidate)
+void WebRtcPeerConnection::OnIceCandidate(const webrtc::IceCandidateInterface* icecandidate) 
 {
 	Json::StyledWriter writer;
 	Json::Value jmessage;
@@ -252,7 +215,7 @@ void WebRtcPeerConnection::OnIceCandidate_r(webrtc::IceCandidateInterface* iceca
 	jmessage[kCandidateSdpMidName] = icecandidate->sdp_mid();
 	jmessage[kCandidateSdpMlineIndexName] = icecandidate->sdp_mline_index();
 	std::string candidateStr;
-	if (!icecandidate->ToString(&candidateStr)) 
+	if (!icecandidate->ToString(&candidateStr))
 	{
 		LOG_ERROR("Failed to serialize ICE candidate");
 		return;
@@ -269,17 +232,12 @@ void WebRtcPeerConnection::OnIceCandidate_r(webrtc::IceCandidateInterface* iceca
 	queueEng_->Send(respIce);
 }
 
+
 void WebRtcPeerConnection::OnSignalingChange(webrtc::PeerConnectionInterface::SignalingState new_state)
 {
-	commandThr_->Post(this, static_cast<uint32>(PeerConnectionMessages::DoOnSignalChange), 
-		new rtc::TypedMessageData<webrtc::PeerConnectionInterface::SignalingState>(new_state));
-}
-
-void WebRtcPeerConnection::OnSignalingChange_r(webrtc::PeerConnectionInterface::SignalingState new_state)
-{
-	if(peer_connection_->signaling_state() == webrtc::PeerConnectionInterface::SignalingState::kClosed)
-	{			
-		for(MediaStreamMap::iterator iter = active_streams_.begin(); iter != active_streams_.end(); ++iter)
+	if (peer_connection_->signaling_state() == webrtc::PeerConnectionInterface::SignalingState::kClosed)
+	{
+		for (MediaStreamMap::iterator iter = active_streams_.begin(); iter != active_streams_.end(); ++iter)
 		{
 			peer_connection_->RemoveStream(iter->second);
 		}
@@ -373,7 +331,7 @@ void WebRtcPeerConnection::AddStreams_r()
 	active_streams_.insert(MediaStreamPair(stream->label(), stream));
 }
 
-cricket::VideoCapturer* WebRtcPeerConnection::OpenVideoCaptureDevice()
+vosvideo::camera::CameraVideoCapturer* WebRtcPeerConnection::OpenVideoCaptureDevice()
 {
 	int devId = player_->GetDeviceId();
 
@@ -451,7 +409,7 @@ void WebRtcPeerConnection::OnStateChange(webrtc::PeerConnectionObserver::StateTy
 
 void WebRtcPeerConnection::Close()
 {
-	commandThr_->Post(this, static_cast<uint32>(PeerConnectionMessages::DoCloseCapturer));
+	commandThr_->Send(this, static_cast<uint32>(PeerConnectionMessages::DoCloseCapturer));
 }
 
 void WebRtcPeerConnection::Close_r()

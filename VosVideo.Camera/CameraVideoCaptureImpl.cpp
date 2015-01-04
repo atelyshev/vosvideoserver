@@ -10,17 +10,10 @@ using vosvideo::camera::CameraVideoCaptureImpl;
 using vosvideo::cameraplayer::CameraPlayerBase;
 
 
-VideoCaptureModule* CameraVideoCaptureImpl::Create(const int32_t id, VideoCaptureExternal*& externalCapture, vosvideo::cameraplayer::CameraPlayerBase* player)
-{
-	RefCountImpl<CameraVideoCaptureImpl>* implementation = new RefCountImpl<CameraVideoCaptureImpl>(id, player);
-	externalCapture = implementation;
-	return implementation;
-}
-
 CameraVideoCaptureImpl::CameraVideoCaptureImpl(const int32_t id, CameraPlayerBase* player) : 
 	webrtc::videocapturemodule::VideoCaptureImpl(id),
-	startedCapture_(false),
-	player_(player)
+	player_(player),
+	startedCapture_(false)
 {
 	//Check if it derives from IUnknown
 	IUnknown* iUnknownPlayer = dynamic_cast<IUnknown*>(player_);
@@ -37,8 +30,9 @@ CameraVideoCaptureImpl::~CameraVideoCaptureImpl()
 		iUnknownPlayer->Release();
 }
 
+
 int32_t CameraVideoCaptureImpl::StartCapture(const webrtc::VideoCaptureCapability& capability)
-{
+{	
 	startedCapture_ = true;
 	player_->SetExternalCapturer(this);
 	return 0;

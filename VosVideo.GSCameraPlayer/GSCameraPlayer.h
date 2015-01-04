@@ -8,7 +8,8 @@ namespace vosvideo
 {
 	namespace cameraplayer
 	{
-		class GSCameraPlayer : public vosvideo::cameraplayer::CameraPlayerBase{
+		class GSCameraPlayer : public vosvideo::cameraplayer::CameraPlayerBase
+		{
 		public:
 			GSCameraPlayer();
 			~GSCameraPlayer();
@@ -30,6 +31,7 @@ namespace vosvideo
 			void RemoveExternalCapturer(webrtc::VideoCaptureExternal* captureObserver);
 
 			uint32_t GetDeviceId() const;			
+
 		private:			
 			PlayerState  _state;
 			int _deviceId;

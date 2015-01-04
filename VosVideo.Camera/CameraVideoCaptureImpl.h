@@ -12,8 +12,8 @@ namespace vosvideo
 		{
 		public:
 			CameraVideoCaptureImpl(const int32_t id, vosvideo::cameraplayer::CameraPlayerBase* player);
+			virtual ~CameraVideoCaptureImpl();
 
-			static webrtc::VideoCaptureModule* Create(const int32_t id, webrtc::VideoCaptureExternal*& externalCapture, vosvideo::cameraplayer::CameraPlayerBase* player);
 
 			/*************************************************************************
 			 *
@@ -32,10 +32,11 @@ namespace vosvideo
 			virtual bool CaptureStarted();
 			virtual int32_t CaptureSettings(webrtc::VideoCaptureCapability& settings);
 
-		protected:
-			virtual ~CameraVideoCaptureImpl();
-			bool startedCapture_;
+		private:
 			vosvideo::cameraplayer::CameraPlayerBase* player_;
+
+		protected:
+			bool startedCapture_;
 			webrtc::I420VideoFrame captureFrame_;
 		};
 	}

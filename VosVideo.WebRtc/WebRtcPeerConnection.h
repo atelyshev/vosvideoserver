@@ -17,6 +17,7 @@
 #include "VosVideo.Data/SdpOffer.h"
 #include "VosVideo.Data/WebRtcIceCandidateMsg.h"
 #include "VosVideo.Camera/CameraDeviceManager.h"
+#include "VosVideo.Camera/CameraVideoCapturer.h"
 #include "VosVideo.CameraPlayer/CameraPlayerBase.h"
 #include "PeerConnectionObserver.h"
 #include "WebRtcMessageWrapper.h"
@@ -126,15 +127,13 @@ namespace vosvideo
 			typedef std::pair<std::string, rtc::scoped_refptr<webrtc::MediaStreamInterface> > MediaStreamPair;
 			typedef std::map<std::string, rtc::scoped_refptr<webrtc::MediaStreamInterface> > MediaStreamMap;
 
+
 			void InitSdp_r(const std::string& sdpPayload);
 			void InitIce_r(const Json::Value& jmessage);
-			void OnSuccess_r(webrtc::SessionDescriptionInterface* desc);
-			void OnSignalingChange_r(webrtc::PeerConnectionInterface::SignalingState new_state);
-			void OnIceCandidate_r(webrtc::IceCandidateInterface* icecandidate);
 			void AddStreams_r();
 			void Close_r();
 
-			cricket::VideoCapturer* OpenVideoCaptureDevice();
+			vosvideo::camera::CameraVideoCapturer* OpenVideoCaptureDevice();
 			void ProcessSdpMessage(const std::string& message);
 			void ProcessIceMessage(const std::string& message);
 			rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> peer_connection_factory_;
@@ -147,7 +146,7 @@ namespace vosvideo
 			std::wstring clientPeer_;
 			std::wstring srvPeer_;
 			rtc::Thread* commandThr_;
-			cricket::VideoCapturer* videoCapturer_;
+			vosvideo::camera::CameraVideoCapturer* videoCapturer_;
 			vosvideo::cameraplayer::CameraPlayerBase* player_;
 			bool isPeerConnectionFinished_;
 			bool isShutdownOnClose_;

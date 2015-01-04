@@ -9,9 +9,9 @@ namespace vosvideo
 		class HttpClientException : public std::runtime_error
 		{
 		public:
-			HttpClientException(const std::string msg) : runtime_error(msg)
+			HttpClientException(const std::string& url, const std::string& msg) : runtime_error(msg)
 			{
-				LOG_ERROR(msg);
+				LOG_ERROR("URL: " + url + " MSG: " + msg);
 			}
 
 			virtual ~HttpClientException(){}

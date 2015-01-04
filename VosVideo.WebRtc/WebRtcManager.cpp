@@ -11,7 +11,6 @@
 #include "VosVideo.Data/ShutdownCameraProcessRequestMsg.h"
 #include "VosVideo.CameraPlayer/CameraPlayerBase.h"
 #include "VosVideo.Camera/CameraPlayerFactory.h"
-
 #include "VosVideo.Camera/CameraException.h"
 #include "WebRtcManager.h"
 #include "WebRtcException.h"

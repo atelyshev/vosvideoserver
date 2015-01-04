@@ -2,7 +2,7 @@
 #include "VosVideo.Data/CameraConfMsg.h"
 #include "VosVideo.Data/SendData.h"
 #include <modules/video_capture/include/video_capture_defines.h>
-#include <windows.h>
+#include <Windows.h>
 
 namespace vosvideo
 {
