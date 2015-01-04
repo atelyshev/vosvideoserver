@@ -17,7 +17,7 @@ namespace vosvideo
 				virtual concurrency::task<web::json::value> Get(const std::wstring& path);
 				virtual concurrency::task<web::json::value> Post(const std::wstring& path, const web::json::value& payload);
 			private:
-				web::json::value ExecuteRequest(pplx::task<web::http::http_response>& requestTask);
+				web::json::value ExecuteRequest(const std::wstring& url, pplx::task<web::http::http_response>& requestTask);
 
 				web::http::client::http_client httpClient_;
 			};

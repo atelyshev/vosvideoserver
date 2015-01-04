@@ -5,6 +5,7 @@
 #include <modules/video_capture/include/video_capture.h>
 #include <talk/media/webrtc/webrtcvideoframe.h>
 #include "VosVideo.CameraPlayer/CameraPlayerBase.h"
+#include "VosVideo.Camera\CameraVideoCaptureImpl.h"
 
 
 namespace vosvideo
@@ -29,7 +30,6 @@ namespace vosvideo
 		{
 		public:
 			CameraVideoCapturer();
-			explicit CameraVideoCapturer(CameraVcmFactoryInterface* factory);
 			virtual ~CameraVideoCapturer();
 
 			bool Init(int camId, vosvideo::cameraplayer::CameraPlayerBase* device);
@@ -55,8 +55,7 @@ namespace vosvideo
 			virtual void OnIncomingCapturedFrame(const int32_t id,
 				webrtc::I420VideoFrame& videoFrame);
 
-			webrtc::scoped_ptr<CameraVcmFactoryInterface> factory_;
-			webrtc::VideoCaptureModule* module_;
+			vosvideo::camera::CameraVideoCaptureImpl* videoCapturerImpl_;
 			int captured_frames_;
 			std::vector<uint8_t> capture_buffer_;
 		};

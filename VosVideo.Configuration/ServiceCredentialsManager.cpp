@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include <vosvideocommon/StringUtil.h>
 #include <vosvideocommon/SystemUtil.h>
-
+#include <vosvideocommon/EventLogLogger.h>
 #include "CredentialsException.h"
 #include "ServiceCredentialsManager.h"
 
@@ -62,6 +62,7 @@ void ServiceCredentialsManager::GetCredentials(wstring& userName, wstring& passw
 	if(!::CredReadW (targetName_, CRED_TYPE_GENERIC, 0, &pcred))
 	{
 		string errMsg = "Failed to access credentials. " + SystemUtil::GetLastErrorMsg();
+		loggers::EventLogLogger::WriteError(util::StringUtil::ToWstring(errMsg));
 		throw CredentialsException(errMsg);
 	}
 

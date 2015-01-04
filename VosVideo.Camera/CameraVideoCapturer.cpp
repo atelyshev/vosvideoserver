@@ -5,8 +5,6 @@
 #include <webrtc/base/logging.h>
 #include <vpx/vpx_encoder.h>
 #include <talk/media/webrtc/webrtcvideocapturer.h>
-
-
 #include "CameraVideoCapturer.h"
 #include "CameraVideoCaptureImpl.h"
 
@@ -93,77 +91,38 @@ static bool FormatToCapability(const VideoFormat& format, webrtc::VideoCaptureCa
 	return true;
 }
 
-namespace vosvideo
-{
-	namespace camera
-	{
-		class IpCamVcmFactory : public CameraVcmFactoryInterface 
-		{
-		public:
-			virtual webrtc::VideoCaptureModule* Create(int id, const char* device) 
-			{
-				return webrtc::VideoCaptureFactory::Create(id, device);
-			}
-
-			virtual webrtc::VideoCaptureModule* Create(const int32_t id, webrtc::VideoCaptureExternal*& externalCapture, vosvideo::cameraplayer::CameraPlayerBase* player) 
-			{
-				return CameraVideoCaptureImpl::Create(id, externalCapture, player);
-			}
-
-			virtual webrtc::VideoCaptureModule::DeviceInfo* CreateDeviceInfo(int id) 
-			{
-				return webrtc::VideoCaptureFactory::CreateDeviceInfo(id);
-			}
-
-			virtual void DestroyDeviceInfo(webrtc::VideoCaptureModule::DeviceInfo* info) 
-			{
-				delete info;
-			}
-		};
-	}
-}
 
 
-
-CameraVideoCapturer::CameraVideoCapturer() : 
-	factory_(new IpCamVcmFactory),
-	module_(NULL),
-	captured_frames_(0) 
+CameraVideoCapturer::CameraVideoCapturer() :
+videoCapturerImpl_(NULL),
+captured_frames_(0)
 {
 }
 
-CameraVideoCapturer::CameraVideoCapturer(CameraVcmFactoryInterface* factory) : 
-	factory_(factory),
-	module_(NULL),
-	captured_frames_(0) 
-{
-}
 
 CameraVideoCapturer::~CameraVideoCapturer() 
 {
-	if (module_) 
+	if (videoCapturerImpl_)
 	{
-		module_->Release();
+		delete videoCapturerImpl_;
+		videoCapturerImpl_ = NULL;
 	}
 }
 
+
 bool CameraVideoCapturer::Init(int camId, CameraPlayerBase* device) 
 {
-	if (module_) 
+	if (videoCapturerImpl_)
 	{
 		LOG(LS_ERROR) << "The capturer is already initialized";
 		return false;
 	}
-	VideoCaptureExternal *extCapturer = nullptr;
-	module_ = factory_->Create(camId, extCapturer, device);
-	if (!module_) 
+	videoCapturerImpl_ = new CameraVideoCaptureImpl(camId, device);
+	if (!videoCapturerImpl_)
 	{
 		LOG_ERROR("Failed to create capturer for id: " << device);
 		return false;
 	}
-
-	// It is safe to change member attributes now.
-	module_->AddRef();
 
 	try
 	{
@@ -194,100 +153,12 @@ bool CameraVideoCapturer::Init(int camId, CameraPlayerBase* device)
 
 bool CameraVideoCapturer::Init(const Device& device) 
 {
-	if (module_) 
-	{
-		LOG(LS_ERROR) << "The capturer is already initialized";
-		return false;
-	}
-
-	webrtc::VideoCaptureModule::DeviceInfo* info = factory_->CreateDeviceInfo(0);
-	if (!info) 
-	{
-		return false;
-	}
-
-	// Find the desired camera, by name.
-	// In the future, comparing IDs will be more robust.
-	// TODO(juberti): Figure what's needed to allow this.
-	int num_cams = info->NumberOfDevices();
-	char vcm_id[256] = "";
-	bool found = false;
-	for (int index = 0; index < num_cams; ++index) 
-	{
-		char vcm_name[256];
-		if (info->GetDeviceName(index, vcm_name, ARRAY_SIZE(vcm_name),
-			vcm_id, ARRAY_SIZE(vcm_id)) != -1) 
-		{
-			if (device.name == reinterpret_cast<char*>(vcm_name)) 
-			{
-				found = true;
-				break;
-			}
-		}
-	}
-	if (!found) 
-	{
-		LOG(LS_WARNING) << "Failed to find capturer for id: " << device.id;
-		factory_->DestroyDeviceInfo(info);
-		return false;
-	}
-
-	// Enumerate the supported formats.
-	// TODO(juberti): Find out why this starts/stops the camera...
-	vector<VideoFormat> supported;
-	int32_t num_caps = info->NumberOfCapabilities(vcm_id);
-	for (int32_t i = 0; i < num_caps; ++i) 
-	{
-		webrtc::VideoCaptureCapability cap;
-		if (info->GetCapability(vcm_id, i, cap) != -1) 
-		{
-			VideoFormat format;
-			if (CapabilityToFormat(cap, &format)) 
-			{
-				supported.push_back(format);
-			}
-			else 
-			{
-				LOG(LS_WARNING) << "Ignoring unsupported WebRTC capture format "<< cap.rawType;
-			}
-		}
-	}
-	factory_->DestroyDeviceInfo(info);
-	if (supported.empty()) 
-	{
-		LOG(LS_ERROR) << "Failed to find usable formats for id: " << device.id;
-		return false;
-	}
-
-	module_ = factory_->Create(0, vcm_id);
-	if (!module_) 
-	{
-		LOG(LS_ERROR) << "Failed to create capturer for id: " << device.id;
-		return false;
-	}
-
-	// It is safe to change member attributes now.
-	module_->AddRef();
-	SetId(device.id);
-	SetSupportedFormats(supported);
-	return true;
+	throw exception("Unsupported called to this version of Init");
 }
 
 bool CameraVideoCapturer::Init(webrtc::VideoCaptureModule* module) 
 {
-	if (module_) 
-	{
-		LOG(LS_ERROR) << "The capturer is already initialized";
-		return false;
-	}
-	if (!module) 
-	{
-		LOG(LS_ERROR) << "Invalid VCM supplied";
-		return false;
-	}
-	// TODO(juberti): Set id and formats.
-	(module_ = module)->AddRef();
-	return true;
+	throw exception("Unsupported called to this version of Init");
 }
 
 bool CameraVideoCapturer::GetBestCaptureFormat(const VideoFormat& desired,
@@ -320,7 +191,7 @@ bool CameraVideoCapturer::GetBestCaptureFormat(const VideoFormat& desired,
 
 CaptureState CameraVideoCapturer::Start(const VideoFormat& capture_format) 
 {
-	if (!module_) 
+	if (!videoCapturerImpl_)
 	{
 		LOG(LS_ERROR) << "The capturer has not been initialized";
 		return CS_NO_DEVICE;
@@ -344,9 +215,9 @@ CaptureState CameraVideoCapturer::Start(const VideoFormat& capture_format)
 
 	string camera_id(GetId());
 	uint32 start = rtc::Time();
-	module_->RegisterCaptureDataCallback(*this);
+	videoCapturerImpl_->RegisterCaptureDataCallback(*this);
 
-	if (module_->StartCapture(cap) != 0) 
+	if (videoCapturerImpl_->StartCapture(cap) != 0)
 	{
 		LOG(LS_ERROR) << "Camera '" << camera_id << "' failed to start";
 		return CS_FAILED;
@@ -364,8 +235,8 @@ void CameraVideoCapturer::Stop()
 	if (IsRunning()) 
 	{
 		rtc::Thread::Current()->Clear(this);
-		module_->StopCapture();
-		module_->DeRegisterCaptureDataCallback();
+		videoCapturerImpl_->StopCapture();
+		videoCapturerImpl_->DeRegisterCaptureDataCallback();
 
 		// TODO(juberti): Determine if the VCM exposes any drop stats we can use.
 		double drop_ratio = 0.0;
@@ -377,7 +248,7 @@ void CameraVideoCapturer::Stop()
 
 bool CameraVideoCapturer::IsRunning() 
 {
-	return (module_ != nullptr && module_->CaptureStarted());
+	return (videoCapturerImpl_ != nullptr && videoCapturerImpl_->CaptureStarted());
 }
 
 bool CameraVideoCapturer::GetPreferredFourccs(vector<uint32>* fourccs) 
