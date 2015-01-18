@@ -23,6 +23,8 @@ CbHttpClientEngine::~CbHttpClientEngine(void)
 
 concurrency::task<web::json::value> CbHttpClientEngine::Get(const std::wstring& path)
 {
+	LOG_TRACE("Execution method GET with path: " << path);
+
 	concurrency::task<web::json::value> getTask
 		(
 		[&, path]() 
@@ -39,6 +41,8 @@ concurrency::task<web::json::value> CbHttpClientEngine::Get(const std::wstring& 
 
 concurrency::task<web::json::value> CbHttpClientEngine::Post(const std::wstring& path, const web::json::value& payload)
 {
+	LOG_TRACE("Execution method POST with path: " << path);
+
 	concurrency::task<web::json::value> postTask
 		(
 			[&, path, payload]() 
@@ -69,7 +73,14 @@ web::json::value CbHttpClientEngine::ExecuteRequest(const std::wstring& url, ppl
 		{
 			jsonVal = resp.extract_json().get();
 		}
-		catch (...){
+		catch (std::exception& e)
+		{
+			LOG_ERROR(L"Execute Request: There was an error extracting the response from: " + url);
+			LOG_ERROR(L"Exception: " << e.what());
+			throw HttpClientException(util::StringUtil::ToString(url), e.what());
+		}
+		catch (...)
+		{
 			LOG_ERROR(L"Execute Request: There was an error extracting the response from: " + url);
 			throw HttpClientException(util::StringUtil::ToString(url), "There was an error extracting the response");
 		}	

@@ -32,13 +32,12 @@ void PubSubService::Publish(shared_ptr<vosvideo::data::ReceivedData> receivedDat
 									{
 										receiver.OnMessageReceived(receivedData);
 									}
-									catch (int)
-									{
-										__asm int 3;
-									}
 									catch (...)
 									{
+#ifdef _DEBUG
+										LOG_DEBUG("Calling windows debugger.");
 										__asm int 3;
+#endif
 									}
 								}
 							}
