@@ -71,6 +71,7 @@ web::json::value CbHttpClientEngine::ExecuteRequest(const std::wstring& url, ppl
 	{
 		try
 		{
+			LOG_DEBUG("Response body: " << resp.to_string());
 			jsonVal = resp.extract_json().get();
 		}
 		catch (std::exception& e)

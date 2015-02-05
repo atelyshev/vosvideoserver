@@ -5,12 +5,12 @@ using vosvideo::communication::casablanca::CbWebsocketClientEngine;
 using namespace vosvideo::communication;
 using namespace web::web_sockets::client;
 
-CbWebsocketClientEngine::CbWebsocketClientEngine(std::shared_ptr<PubSubService> pubsubService) : WebsocketClientEngine(pubsubService){
-
+CbWebsocketClientEngine::CbWebsocketClientEngine(std::shared_ptr<PubSubService> pubsubService) : WebsocketClientEngine(pubsubService)
+{
 }
 
-CbWebsocketClientEngine::~CbWebsocketClientEngine(void){
-
+CbWebsocketClientEngine::~CbWebsocketClientEngine(void)
+{
 }
 
 void CbWebsocketClientEngine::Connect(std::wstring const& wUri)
@@ -27,7 +27,8 @@ void CbWebsocketClientEngine::Connect(std::wstring const& wUri)
 			StartListeningForMessages();
 		}).wait();
 	}
-	catch (websocket_exception& ex){
+	catch (websocket_exception& ex)
+	{
 		std::cout << "There was an error connecting to websocket server: " << ex.what();
 		LOG_ERROR("There was an error connecting to websocket server: " << ex.what());
 	}
@@ -45,16 +46,21 @@ void CbWebsocketClientEngine::Close()
 	_client.close();
 }
 
-void CbWebsocketClientEngine::StartListeningForMessages(){
+void CbWebsocketClientEngine::StartListeningForMessages()
+{
 	auto background_context = Concurrency::task_continuation_context::use_default();
 
 	//As long as the internal task return true this task will continue to get invoked over and over again.
-	create_task([=]() {
-		AsyncDoWhile([=](){
-			return _client.receive().then([=](pplx::task<websocket_incoming_message> inMsgTask){
+	create_task([=]() 
+	{
+		AsyncDoWhile([=]()
+		{
+			return _client.receive().then([=](pplx::task<websocket_incoming_message> inMsgTask)
+			{
 				websocket_incoming_message inMsg = inMsgTask.get();
 
-				return inMsg.extract_string().then([=](pplx::task<std::string> strTask) {
+				return inMsg.extract_string().then([=](pplx::task<std::string> strTask) 
+				{
 					std::string payload = strTask.get();
 					std::shared_ptr<vosvideo::data::WebSocketMessageParser> msgParser(new vosvideo::data::WebSocketMessageParser(payload));
 					LOG_TRACE("Received message with payload:" << payload);
@@ -62,10 +68,11 @@ void CbWebsocketClientEngine::StartListeningForMessages(){
 					auto dto = _dtoFactory.Create(msgParser->GetMessageType());
 					dto->Init(msgParser);
 					pubSubService_->Publish(dto);
+				}, 
+					background_context);
 
-				}, background_context);
-
-			}).then([](pplx::task<void> end_task){
+			}).then([](pplx::task<void> end_task)
+			{
 				try
 				{
 					end_task.get();
@@ -73,7 +80,8 @@ void CbWebsocketClientEngine::StartListeningForMessages(){
 				}
 				catch (websocket_exception ex)
 				{
-					LOG_ERROR("Websocket Connection failed with a websocket_exception, Error code: " << ex.error_code());
+					LOG_ERROR("Websocket Connection failed with a websocket_exception, Error code: "
+						<< ex.error_code() << "Message: " << ex.what());
 				}
 				catch (...)
 				{
@@ -86,7 +94,6 @@ void CbWebsocketClientEngine::StartListeningForMessages(){
 			});
 		});
 	}, background_context);
-
 }
 
 pplx::task<void> CbWebsocketClientEngine::AsyncDoWhile(std::function<pplx::task<bool>(void)> func)
@@ -108,7 +115,7 @@ pplx::task<bool> CbWebsocketClientEngine::DoWhileIteration(std::function<pplx::t
 
 pplx::task<bool> CbWebsocketClientEngine::DoWhileImpl(std::function<pplx::task<bool>(void)> func)
 {
-	return DoWhileIteration(func).then([=](bool continue_next_iteration) -> pplx::task<bool>
+	return DoWhileIteration(func).then([=](bool continue_next_iteration) -> pplx::task < bool >
 	{
 		return ((continue_next_iteration) ? DoWhileImpl(func) : pplx::task_from_result(false));
 	});
