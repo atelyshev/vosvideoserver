@@ -24,6 +24,7 @@ namespace vosvideo
 			std::unordered_map<std::wstring, std::wstring> keyValConf_;
 
 			static std::wstring vosVideoWebUriKey_;
+			static std::wstring restServiceUriKey_;
 			static std::wstring websocketUriKey_;
 			static std::wstring siteIdKey_;
 			static std::wstring siteNameKey_;

@@ -22,6 +22,7 @@ using boost::format;
 
 // This file generated at build process and located in RTBC local folder
 wstring ConfigurationManager::configFileName_ = L"rtbcserver.config.xml";
+wstring ConfigurationManager::restServiceUriKey_ = L"RestServiceUri";
 wstring ConfigurationManager::vosVideoWebUriKey_ = L"VosVideoWebUri";
 wstring ConfigurationManager::websocketUriKey_ = L"WebsocketUri";
 wstring ConfigurationManager::siteIdKey_ = L"SiteId";
@@ -72,6 +73,7 @@ ConfigurationManager::ConfigurationManager()
 			}
 
 			if (tmpPair[0] != vosVideoWebUriKey_ &&
+				tmpPair[0] != restServiceUriKey_ &&
 				tmpPair[0] != websocketUriKey_ && 
 				tmpPair[0] != siteIdKey_ && 
 				tmpPair[0] != siteNameKey_ && 
@@ -126,6 +128,11 @@ void ConfigurationManager::GetConfigurationFilePath(wstring& configFile)
 wstring ConfigurationManager::GetWebSiteUri() const
 {
 	return FindConfValue(vosVideoWebUriKey_);
+}
+
+wstring ConfigurationManager::GetRestServiceUri() const
+{
+	return FindConfValue(restServiceUriKey_);
 }
 
 wstring ConfigurationManager::GetWebsocketUri() const

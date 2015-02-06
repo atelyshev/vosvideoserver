@@ -44,7 +44,7 @@ namespace vosvideo
 			void GetClientPeerFromJson(web::json::value& jval, std::set<std::wstring>& clientPeers);
 			// Peers for WebSocket communication
 			void GetTokenFromJson(web::json::value& jval, vosvideo::communication::Peer& p);
-			void SetAccountIdFromJson( web::json::value& jval);
+			void SetAccountIdFromUserJson( web::json::value& jval);
 			std::wstring GetByKeyFromJson(web::json::value& jval, std::wstring key);
 		};
 	}

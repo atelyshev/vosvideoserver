@@ -20,8 +20,8 @@ using namespace vosvideo::data;
 UserManager::UserManager(std::shared_ptr<CommunicationManager> communicationManager, 
 						 std::shared_ptr<vosvideo::configuration::ConfigurationManager> configurationManager,
 						 std::shared_ptr<vosvideo::communication::PubSubService> pubsubService
-						 ) 
-						 : communicationManager_(communicationManager), 
+						 ) :
+						 communicationManager_(communicationManager), 
 						 configurationManager_(configurationManager), 
 						 pubSubService_(pubsubService), 
 						 logInInProgress_(false)
@@ -51,7 +51,7 @@ concurrency::task<LogInResponse> UserManager::LogInAsync(LogInRequest const& log
 {
 	if(logInInProgress_) 
 	{
-		throw std::runtime_error("A log in is in progress please wait unit it is done");
+		throw std::runtime_error("Login is in progress please wait unit it is done");
 	}
 
 	logInInProgress_ = true;
@@ -61,25 +61,38 @@ concurrency::task<LogInResponse> UserManager::LogInAsync(LogInRequest const& log
 	loginRequest.ToJsonValue(jsonVal);
 
 	// Authenticate by REST task
-	auto loginToHttpServerTask = communicationManager_->HttpPost(L"/Account/AuthenticateReturnToken", jsonVal);
+	auto loginToRestServiceTask = communicationManager_->HttpPost(L"/auth?format=json", jsonVal);
+	auto getUserProfileTask = loginToRestServiceTask.then
+		(
+		[&](web::json::value& resp)
+	{
+			return communicationManager_->HttpGet(L"/user?format=json&NeedLinkedDevices=false&UserName=" + loginRequest.GetUserName());
+	});
+
+	auto getTokenTask = getUserProfileTask.then
+		(
+		[&](web::json::value& resp)
+	{
+		SetAccountIdFromUserJson(resp);
+		wstring tokenUri = str(wformat(L"/token?format=json&AccountId=%1%&UserName=%2%") % userAccountId_ % loginRequest.GetUserName());
+		return communicationManager_->HttpGet(tokenUri);
+	});
 
 	// Finally open connection to websocket server
-	auto webSockAuthTask = loginToHttpServerTask.then
+	auto webSockAuthTask = getTokenTask.then
 		(
 		[&](web::json::value& resp)
 	{
 		std::wstring websocketServerUri = configurationManager_->GetWebsocketUri();
 		Peer token;
 		GetTokenFromJson(resp, token);
-		SetAccountIdFromJson(resp);
 		logInResponse_.SetPeer(token);
 		LOG_DEBUG(L"Peer token received: " + logInResponse_);
 
 		wstring connUri = str(wformat(L"%1%?t=%2%&ct=1&s=%3%") % websocketServerUri % token.GetPeerId() % configurationManager_->GetSiteId()); 
 		LOG_DEBUG(L"Reply with connection string: " << StringUtil::ToString(connUri));
 		communicationManager_->WebsocketConnect(connUri);
-	}
-	);
+	});
 
 	webSockAuthTask.wait();
 
@@ -140,7 +153,6 @@ void UserManager::NotifyAllUsers(shared_ptr<SendData> outMsg)
 
 std::wstring UserManager::GetByKeyFromJson(web::json::value& jval, wstring key)
 {
-
 	if (!jval.has_field(key))
 	{
 		LOG_CRITICAL("No " << StringUtil::ToString(key) << " was found in response.");
@@ -149,14 +161,25 @@ std::wstring UserManager::GetByKeyFromJson(web::json::value& jval, wstring key)
 	return jval.at(key).as_string();
 }
 
-void UserManager::SetAccountIdFromJson( web::json::value& jval)
+void UserManager::SetAccountIdFromUserJson( web::json::value& jval)
 {
-	userAccountId_ = GetByKeyFromJson(jval, L"AccountId");
+	for (auto& firstVal : jval.at(U("UserList")).as_array())
+	{
+		for (auto& p : firstVal.as_object())
+		{
+			if (p.first == L"AccountId")
+			{
+				userAccountId_ = p.second.serialize();
+				return;
+			}
+		}
+	}
 }
 
 void UserManager::GetTokenFromJson( web::json::value& jval, vosvideo::communication::Peer& peer)
 {
-	wstring val = GetByKeyFromJson(jval, L"Token");
+	auto nextVal = jval.at(L"ConnectionToken");
+	wstring val = GetByKeyFromJson(nextVal, L"Id");
 	val.erase(std::remove(val.begin(), val.end(), '-'), val.end());
 	peer = vosvideo::communication::Peer(val);
 }	

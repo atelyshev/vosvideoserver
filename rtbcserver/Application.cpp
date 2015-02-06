@@ -232,8 +232,8 @@ bool Application::Main()
 		log_.reset(new SeverityLogger(L".", L"rtbc"));
 	}
 	
-	std::wstring webSiteUri = configManager->GetWebSiteUri();
-	if (webSiteUri.length() == 0)
+	std::wstring restServiceUri = configManager->GetRestServiceUri();
+	if (restServiceUri.length() == 0)
 	{
 		string err = "Rest Service URI not found in configuration file";
 		LOG_CRITICAL(err);
@@ -243,7 +243,7 @@ bool Application::Main()
 		return false;
 	}
 
-	std::shared_ptr<CbHttpClientEngine> httpClientEngine(new CbHttpClientEngine(webSiteUri));
+	std::shared_ptr<CbHttpClientEngine> httpClientEngine(new CbHttpClientEngine(restServiceUri));
 	std::shared_ptr<HttpClient> httpClient(new HttpClient(httpClientEngine));
 	std::shared_ptr<PubSubService> communicationPubSub(new PubSubService());
 	std::shared_ptr<CbWebsocketClientEngine> websocketClientEngine(new CbWebsocketClientEngine(communicationPubSub));

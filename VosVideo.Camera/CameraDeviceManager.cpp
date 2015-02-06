@@ -208,74 +208,98 @@ void CameraDeviceManager::CreateCameraConfFromJson(int& camId, CameraConfMsg& co
 	CameraVideoFormat uriType = CameraVideoFormat::UNKNOWN;
 	CameraVideoRecording recordingType = CameraVideoRecording::DISABLED;
 	
+	if (camParms.has_field(U("DeviceName")))
+	{
+		auto deviceNameVal = camParms.at(U("DeviceName"));
+		if (deviceNameVal.is_string())
+			devName = deviceNameVal.as_string();
+	}
 
-	auto deviceNameVal = camParms.at(U("DeviceName"));
-	if (deviceNameVal.is_string())
-		devName = deviceNameVal.as_string();
+	if (camParms.has_field(U("DeviceId")))
+	{
+		auto deviceIdVal = camParms.at(U("DeviceId"));
+		if (deviceIdVal.is_number())
+			camId = deviceIdVal.as_integer();
+	}
 
-	auto deviceIdVal = camParms.at(U("DeviceId"));
-	if (deviceIdVal.is_number())
-		camId = deviceIdVal.as_integer();
+	if (camParms.has_field(U("CustomUri")))
+	{
+		auto customUriVal = camParms.at(U("CustomUri"));
+		if (customUriVal.is_string())
+			customUri = customUriVal.as_string();
+	}
 
-	auto customUriVal = camParms.at(U("CustomUri"));
-	if (customUriVal.is_string())
-		customUri = customUriVal.as_string();
-	
-	auto mjepgUriVal = camParms.at(U("MjpegUri"));
-	if (mjepgUriVal.is_string())
-		strVideoUri[static_cast<int>(CameraVideoFormat::MJPEG)] = mjepgUriVal.as_string();
+	if (camParms.has_field(U("RecordingType")))
+	{
+		auto recordingTypeVal = camParms.at(U("RecordingType"));
+		if (recordingTypeVal.is_number())
+			recordingType = static_cast<CameraVideoRecording>(recordingTypeVal.as_integer());
+	}
 
-	auto mpeg4UriVal = camParms.at(U("Mpeg4Uri"));
-	if (mpeg4UriVal.is_string())
-		strVideoUri[static_cast<int>(CameraVideoFormat::MPEG4)] = mpeg4UriVal.as_string();
+	if (camParms.has_field(U("RecordingLength")))
+	{
+		auto recordingLengthVal = camParms.at(U("RecordingLength"));
+		if (recordingLengthVal.is_number())
+			recordLen = recordingLengthVal.as_integer();
+	}
 
-	auto h264UriVal = camParms.at(U("H264Uri"));
-	if (h264UriVal.is_string())
-		strVideoUri[static_cast<int>(CameraVideoFormat::H264)] = h264UriVal.as_string();
+	if (camParms.has_field(U("UriType")))
+	{
+		auto uriTypeVal = camParms.at(U("UriType"));
+		if (uriTypeVal.is_number())
+			uriType = static_cast<CameraVideoFormat>(uriTypeVal.as_integer());
+	}
 
-	auto recordingTypeVal = camParms.at(U("RecordingType"));
-	if (recordingTypeVal.is_number())
-		recordingType = static_cast<CameraVideoRecording>(recordingTypeVal.as_integer());
+	if (camParms.has_field(U("AudioUri")))
+	{
+		auto audioUriVal = camParms.at(U("AudioUri"));
+		if (audioUriVal.is_string())
+			audioUri = audioUriVal.as_string();
+	}
 
-	auto recordingLengthVal = camParms.at(U("RecordingLength"));
-	if (recordingLengthVal.is_number())
-		recordLen = recordingLengthVal.as_integer();
+	if (camParms.has_field(U("IpAddress")))
+	{
+		auto ipAddressVal = camParms.at(U("IpAddress"));
+		if (ipAddressVal.is_string())
+			camIpAddr = ipAddressVal.as_string();
+	}
 
-	auto uriTypeVal = camParms.at(U("UriType"));
-	if (uriTypeVal.is_number())
-		uriType = static_cast<CameraVideoFormat>(uriTypeVal.as_integer());
+	if (camParms.has_field(U("Port")))
+	{
+		auto portVal = camParms.at(U("Port"));
+		if (portVal.is_number())
+			camPort = portVal.as_integer();
+	}
 
-	auto audioUriVal = camParms.at(U("AudioUri"));
-	if (uriTypeVal.is_string())
-		audioUri = audioUriVal.as_string();
+	if (camParms.has_field(U("DeviceUserName")))
+	{
+		auto deviceUserNameVal = camParms.at(U("DeviceUserName"));
+		if (deviceUserNameVal.is_string())
+			camUsername = deviceUserNameVal.as_string();
+	}
 
-	auto ipAddressVal = camParms.at(U("IpAddress"));
-	if (ipAddressVal.is_string())
-		camIpAddr = ipAddressVal.as_string();
+	if (camParms.has_field(U("DevicePassword")))
+	{
+		auto devicePasswordVal = camParms.at(U("DevicePassword"));
+		if (devicePasswordVal.is_string())
+			camPass = devicePasswordVal.as_string();
+	}
 
-	auto portVal = camParms.at(U("Port"));
-	if (portVal.is_number())
-		camPort = portVal.as_integer();
+	if (camParms.has_field(U("IsActive")))
+	{
+		auto isActiveVal = camParms.at(U("IsActive"));
+		if (isActiveVal.is_boolean())
+			isActive = isActiveVal.as_bool();
+	}
 
-	auto deviceUserNameVal = camParms.at(U("DeviceUserName"));
-	if (deviceUserNameVal.is_string())
-		camUsername = deviceUserNameVal.as_string();
-
-	auto devicePasswordVal = camParms.at(U("DevicePassword"));
-	if (devicePasswordVal.is_string())
-		camPass = devicePasswordVal.as_string();
-
-	auto isActiveVal = camParms.at(U("IsActive"));
-	if (isActiveVal.is_boolean())
-		isActive = isActiveVal.as_bool();
-
-	auto modelTypeVal = camParms.at(U("ModelType"));
-	if (modelTypeVal.is_number())
-		modelType = static_cast<CameraType>(modelTypeVal.as_integer());
-
-
+	if (camParms.has_field(U("ModelType")))
+	{
+		auto modelTypeVal = camParms.at(U("ModelType"));
+		if (modelTypeVal.is_number())
+			modelType = static_cast<CameraType>(modelTypeVal.as_integer());
+	}
 	// Custom URI has higher priority, respect it 
-	wstring videoUri = customUri.length() > 0 ? customUri : strVideoUri[static_cast<int>(uriType)];
+	wstring videoUri = customUri;
 
 	if (modelType == CameraType::IPCAM)
 	{

@@ -7,15 +7,23 @@
 
 using namespace std;
 using namespace util;
+using namespace concurrency;
 using namespace web::http;
 using namespace web::http::client;
 using namespace vosvideo::communication;
 using vosvideo::communication::casablanca::CbHttpClientEngine;
 
-CbHttpClientEngine::CbHttpClientEngine(std::wstring& uri) : httpClient_(uri)
+CbHttpClientEngine::CbHttpClientEngine(wstring& uri) : httpClient_(uri)
 {
-}
+	auto callback = new call<CbHttpClientEngine*>([this](CbHttpClientEngine*)
+	{
+		wstring path = L"/user/resettimeout?format=json";
+		this->Get(path);
+	});
 
+	sessionRefreshTimer_ = new Concurrency::timer<CbHttpClientEngine*>(sessionRefreshTimeout_, 0, callback, true);
+	sessionRefreshTimer_->start();
+}
 
 CbHttpClientEngine::~CbHttpClientEngine(void)
 {
@@ -72,7 +80,8 @@ web::json::value CbHttpClientEngine::ExecuteRequest(const std::wstring& url, ppl
 		try
 		{
 			LOG_DEBUG("Response body: " << resp.to_string());
-			jsonVal = resp.extract_json().get();
+			wstring jsonStr = resp.extract_string().get();
+			jsonVal = web::json::value::parse(jsonStr);//resp.extract_json().get();
 		}
 		catch (std::exception& e)
 		{
