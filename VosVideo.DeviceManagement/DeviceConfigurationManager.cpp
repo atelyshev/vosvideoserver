@@ -113,10 +113,8 @@ concurrency::task<web::json::value> DeviceConfigurationManager::RequestDeviceCon
 	devReqInProgress_ = true;
 	LOG_TRACE("Device configuration message received. Updating current configuration.");
 
-	DeviceConfigurationRequest devConfReq(accountId_, siteId_);
-	web::json::value jsonVal;
-	devConfReq.ToJsonValue(jsonVal);
-	auto devToHttpServerTask = communicationManager_->HttpPost(L"/Cameras/ConfiguredForSite", jsonVal);
+	wstring camerasUri = str(wformat(L"/device?format=json&AccountId=%1%&SiteId=%2%") % accountId_ % siteId_);	
+	auto devToHttpServerTask = communicationManager_->HttpGet(camerasUri);
 
 	devToHttpServerTask.then([&](web::json::value& resp)
 	{
