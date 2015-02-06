@@ -23,7 +23,7 @@ namespace vosvideo
 				web::json::value ExecuteRequest(const std::wstring& url, pplx::task<web::http::http_response>& requestTask);
 				Concurrency::timer<CbHttpClientEngine*>* sessionRefreshTimer_;
 				web::http::client::http_client httpClient_;
-				const uint32_t sessionRefreshTimeout_ = 60000; // 1Hr in milliseconds
+				const uint32_t sessionRefreshTimeout_ = 3600000; // 1Hr in milliseconds
 			};
 		}
 	}
