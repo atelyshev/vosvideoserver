@@ -2,9 +2,9 @@
 #include <cpprest/containerstream.h>
 #include <cpprest/streams.h>
 #include <cpprest/ws_client.h>
-#include "VosVideo.Communication\WebsocketClientEngine.h"
-#include "VosVideo.Communication\MessageReceiver.h"
-#include "VosVideo.Data\DtoFactory.h"
+#include "VosVideo.Communication/WebsocketClientEngine.h"
+#include "VosVideo.Communication/MessageReceiver.h"
+#include "VosVideo.Data/DtoFactory.h"
 
 namespace vosvideo
 {

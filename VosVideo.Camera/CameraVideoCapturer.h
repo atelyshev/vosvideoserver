@@ -5,7 +5,7 @@
 #include <modules/video_capture/include/video_capture.h>
 #include <talk/media/webrtc/webrtcvideoframe.h>
 #include "VosVideo.CameraPlayer/CameraPlayerBase.h"
-#include "VosVideo.Camera\CameraVideoCaptureImpl.h"
+#include "VosVideo.Camera/CameraVideoCaptureImpl.h"
 
 
 namespace vosvideo

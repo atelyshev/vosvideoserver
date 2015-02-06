@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include <gtest\gtest.h>
+#include <gtest/gtest.h>
 #include "VosVideo.UserManagement/UserManager.h"
 #include "VosVideo.Communication/CommunicationManager.h"
 #include "VosVideo.Configuration/ConfigurationManager.h"

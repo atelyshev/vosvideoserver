@@ -7,19 +7,28 @@
 using namespace vosvideo::cameraplayer;
 
 
-GSCameraPlayer::GSCameraPlayer(){
+GSCameraPlayer::GSCameraPlayer()
+{
 	LOG_TRACE("GSCameraPlayer created");
 }
 
-GSCameraPlayer::~GSCameraPlayer(){
+GSCameraPlayer::~GSCameraPlayer()
+{
 	LOG_TRACE("GSCameraPlayer destroying camera player");
 	delete _pipeline;
 }
 
 
-HRESULT GSCameraPlayer::OpenURL(vosvideo::data::CameraConfMsg& cameraConf){
-	if(_state == PlayerState::OpenPending || _state == PlayerState::Started || _state == PlayerState::Paused || _state == PlayerState::Stopped || _state == PlayerState::Closing)
+HRESULT GSCameraPlayer::OpenURL(vosvideo::data::CameraConfMsg& cameraConf)
+{
+	if (_state == PlayerState::OpenPending ||
+		_state == PlayerState::Started ||
+		_state == PlayerState::Paused ||
+		_state == PlayerState::Stopped ||
+		_state == PlayerState::Closing)
+	{
 		return E_FAIL;
+	}
 
 	std::wstring waudioUri;
 	std::wstring wvideoUri;
