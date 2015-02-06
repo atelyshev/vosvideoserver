@@ -4,9 +4,9 @@
 #include "stdafx.h"
 #include <memory>
 #include "TestUtils.h"
-#include "VosVideo.Communication\CommunicationManager.h"
-#include "VosVideo.Test.Common\HttpClientEngineStub.h"
-#include "VosVideo.Test.Common\WebsocketClientEngineStub.h"
+#include "VosVideo.Communication/CommunicationManager.h"
+#include "VosVideo.Test.Common/HttpClientEngineStub.h"
+#include "VosVideo.Test.Common/WebsocketClientEngineStub.h"
 #include "PubSubTest.h"
 #include "WebsocketTest.h"
 

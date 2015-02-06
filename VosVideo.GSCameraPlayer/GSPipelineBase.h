@@ -1,15 +1,16 @@
 #pragma once
-#include <boost\thread\thread.hpp>
+#include <boost/thread/thread.hpp>
 #include <unordered_map>
-#include <gst\gst.h>
-#include <gst\video\video.h>
+#include <gst/gst.h>
+#include <gst/video/video.h>
 #include <modules/video_capture/include/video_capture_defines.h>
 
 namespace vosvideo
 {
 	namespace cameraplayer
 	{
-		class GSPipelineBase{
+		class GSPipelineBase
+		{
 		public:
 			GSPipelineBase();
 			~GSPipelineBase();

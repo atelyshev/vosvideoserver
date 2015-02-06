@@ -1,5 +1,5 @@
 #pragma once
-#include "VosVideo.CameraPlayer\CameraPlayerBootstrapper.h"
+#include "VosVideo.CameraPlayer/CameraPlayerBootstrapper.h"
 
 namespace vosvideo
 {

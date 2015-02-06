@@ -1,7 +1,7 @@
 #pragma once
-#include <boost\thread\thread.hpp>
-#include <gst\gst.h>
-#include "VosVideo.CameraPlayer\CameraPlayerBase.h"
+#include <boost/thread/thread.hpp>
+#include <gst/gst.h>
+#include "VosVideo.CameraPlayer/CameraPlayerBase.h"
 #include "GSPipelineBase.h"
 
 namespace vosvideo
