@@ -17,7 +17,8 @@ void CbWebsocketClientEngine::Connect(std::wstring const& wUri)
 {
 	try
 	{
-		_client.connect(wUri)
+		_client.reset(new web::web_sockets::client::websocket_client());
+		_client->connect(wUri)
 			.then([=]{
 			//Websocket connection opened. Publish to interested parties
 			auto dto = _dtoFactory.Create(vosvideo::data::MsgType::ConnectionOpenedMsg);
@@ -29,7 +30,6 @@ void CbWebsocketClientEngine::Connect(std::wstring const& wUri)
 	}
 	catch (websocket_exception& ex)
 	{
-		std::cout << "There was an error connecting to websocket server: " << ex.what();
 		LOG_ERROR("There was an error connecting to websocket server: " << ex.what());
 	}
 }
@@ -38,12 +38,12 @@ void CbWebsocketClientEngine::Send(std::string const& msg)
 {
 	websocket_outgoing_message outgoingMsg = websocket_outgoing_message();
 	outgoingMsg.set_utf8_message(msg);
-	_client.send(outgoingMsg);
+	_client->send(outgoingMsg);
 }
 
 void CbWebsocketClientEngine::Close()
 {
-	_client.close();
+	_client->close();
 }
 
 void CbWebsocketClientEngine::StartListeningForMessages()
@@ -55,7 +55,7 @@ void CbWebsocketClientEngine::StartListeningForMessages()
 	{
 		AsyncDoWhile([=]()
 		{
-			return _client.receive().then([=](pplx::task<websocket_incoming_message> inMsgTask)
+			return _client->receive().then([=](pplx::task<websocket_incoming_message> inMsgTask)
 			{
 				websocket_incoming_message inMsg = inMsgTask.get();
 
@@ -71,7 +71,7 @@ void CbWebsocketClientEngine::StartListeningForMessages()
 				}, 
 					background_context);
 
-			}).then([](pplx::task<void> end_task)
+			}).then([=](pplx::task<void> end_task)
 			{
 				try
 				{
@@ -82,6 +82,10 @@ void CbWebsocketClientEngine::StartListeningForMessages()
 				{
 					LOG_ERROR("Websocket Connection failed with a websocket_exception, Error code: "
 						<< ex.error_code() << "Message: " << ex.what());
+					if (ex.error_code().value() != 0)
+					{
+						connectionProblemSignal_();
+					}
 				}
 				catch (...)
 				{

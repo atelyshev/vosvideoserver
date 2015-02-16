@@ -1,11 +1,12 @@
 #pragma once
+#include "ConnectionProblemNotifier.h"
 #include "PubSubService.h"
 
 namespace vosvideo
 {
 	namespace communication
 	{
-		class WebsocketClientEngine
+		class WebsocketClientEngine : public ConnectionProblemNotifier
 		{
 		public:
 			WebsocketClientEngine(std::shared_ptr<PubSubService> pubsubService);

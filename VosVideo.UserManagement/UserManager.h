@@ -29,6 +29,7 @@ namespace vosvideo
 
 		private:
 			bool logInInProgress_;
+			LogInRequest loginRequest_;
 			concurrency::task_completion_event<LogInResponse> wsOpenedCompletionEvent_;
 			LogInResponse logInResponse_;
 			std::wstring userAccountId_;
@@ -46,6 +47,8 @@ namespace vosvideo
 			void GetTokenFromJson(web::json::value& jval, vosvideo::communication::Peer& p);
 			void SetAccountIdFromUserJson( web::json::value& jval);
 			std::wstring GetByKeyFromJson(web::json::value& jval, std::wstring key);
+			void ReLoginAsync();
+			void ReAuthAsync();
 		};
 	}
 }

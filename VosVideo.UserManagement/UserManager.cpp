@@ -18,9 +18,8 @@ using namespace vosvideo::configuration;
 using namespace vosvideo::data;
 
 UserManager::UserManager(std::shared_ptr<CommunicationManager> communicationManager, 
-						 std::shared_ptr<vosvideo::configuration::ConfigurationManager> configurationManager,
-						 std::shared_ptr<vosvideo::communication::PubSubService> pubsubService
-						 ) :
+						 std::shared_ptr<ConfigurationManager> configurationManager,
+						 std::shared_ptr<PubSubService> pubsubService) :
 						 communicationManager_(communicationManager), 
 						 configurationManager_(configurationManager), 
 						 pubSubService_(pubsubService), 
@@ -35,6 +34,8 @@ UserManager::UserManager(std::shared_ptr<CommunicationManager> communicationMana
 	interestedTypes.push_back(typeInfo);
 
 	pubSubService_->Subscribe(interestedTypes, *this);	
+	communicationManager->ConnectToWsConnectionProblemSignal(boost::bind(&UserManager::ReLoginAsync, this));
+	communicationManager->ConnectToRestConnectionProblemSignal(boost::bind(&UserManager::ReAuthAsync, this));
 }
 
 
@@ -47,13 +48,27 @@ wstring& UserManager::GetAccountId()
 	return userAccountId_;
 }
 
+void UserManager::ReLoginAsync()
+{
+	LogInAsync(loginRequest_);
+}
+
+void UserManager::ReAuthAsync()
+{
+	LOG_DEBUG("Login requested");
+	web::json::value jsonVal;
+	loginRequest_.ToJsonValue(jsonVal);
+	communicationManager_->HttpPost(L"/auth?format=json", jsonVal).wait();
+}
+
 concurrency::task<LogInResponse> UserManager::LogInAsync(LogInRequest const& loginRequest)
 {
 	if(logInInProgress_) 
 	{
-		throw std::runtime_error("Login is in progress please wait unit it is done");
+		throw std::runtime_error("Login is in progress please wait until it is done");
 	}
 
+	loginRequest_ = loginRequest;
 	logInInProgress_ = true;
 	LOG_DEBUG("Login requested");
 

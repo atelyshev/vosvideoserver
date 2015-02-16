@@ -1,12 +1,13 @@
 #pragma once
 #include <cpprest/json.h>
+#include "ConnectionProblemNotifier.h"
 #include <ppltasks.h>
 
 namespace vosvideo
 {
 	namespace communication
 	{
-		class HttpClientEngine
+		class HttpClientEngine : public ConnectionProblemNotifier
 		{
 		public:
 			HttpClientEngine(void);

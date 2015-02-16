@@ -8,6 +8,11 @@ WebsocketClientEngine::WebsocketClientEngine(std::shared_ptr<PubSubService> pubs
 }
 
 
-WebsocketClientEngine::~WebsocketClientEngine(void)
+WebsocketClientEngine::~WebsocketClientEngine()
 {
 }
+
+//boost::signals2::connection WebsocketClientEngine::ConnectToConnectionProblemSignal(boost::signals2::signal<void()>::slot_function_type subscriber)
+//{
+//	return connectionProblemSignal_.connect(subscriber);
+//}

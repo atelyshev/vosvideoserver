@@ -47,7 +47,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(THIRDPARTY_ROOT)\casablanca\SDK\include;..\..\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(THIRDPARTY_ROOT)\boost_1_56_0;..\..\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -63,7 +63,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(THIRDPARTY_ROOT)\casablanca\SDK\include;..\..\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(THIRDPARTY_ROOT)\boost_1_56_0;..\..\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

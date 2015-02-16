@@ -25,7 +25,7 @@ CbHttpClientEngine::CbHttpClientEngine(wstring& uri) : httpClient_(uri)
 	sessionRefreshTimer_->start();
 }
 
-CbHttpClientEngine::~CbHttpClientEngine(void)
+CbHttpClientEngine::~CbHttpClientEngine()
 {
 }
 
@@ -71,9 +71,16 @@ web::json::value CbHttpClientEngine::ExecuteRequest(const std::wstring& url, ppl
 
 	if (resp.status_code() != 200)
 	{
-		string str = StringUtil::ToString(resp.reason_phrase());
-		LOG_ERROR(L"Execute Request: There was an error calling url: " + url);
-		throw HttpClientException(util::StringUtil::ToString(url), str.c_str());
+		if (resp.status_code() == 401)
+		{
+			connectionProblemSignal_();
+		}
+		else
+		{
+			string str = StringUtil::ToString(resp.reason_phrase());
+			LOG_ERROR(L"Execute Request: There was an error calling url: " + url);
+			throw HttpClientException(util::StringUtil::ToString(url), str.c_str());
+		}
 	}
 	else
 	{
