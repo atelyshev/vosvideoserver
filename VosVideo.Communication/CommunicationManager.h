@@ -32,6 +32,9 @@ namespace vosvideo
 												  const std::string& body, 
 												  std::string& returnedMessage);
 
+			boost::signals2::connection ConnectToWsConnectionProblemSignal(boost::signals2::signal<void()>::slot_function_type subscriber);
+			boost::signals2::connection ConnectToRestConnectionProblemSignal(boost::signals2::signal<void()>::slot_function_type subscriber);
+
 		private:
 			std::shared_ptr<WebsocketClient> websocketClient_;
 			std::shared_ptr<HttpClient> httpClient_;

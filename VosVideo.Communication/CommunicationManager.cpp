@@ -23,6 +23,16 @@ CommunicationManager::~CommunicationManager()
 {
 }
 
+boost::signals2::connection CommunicationManager::ConnectToWsConnectionProblemSignal(boost::signals2::signal<void()>::slot_function_type subscriber)
+{
+	return websocketClient_->ConnectToConnectionProblemSignal(subscriber);
+}
+
+boost::signals2::connection CommunicationManager::ConnectToRestConnectionProblemSignal(boost::signals2::signal<void()>::slot_function_type subscriber)
+{
+	return httpClient_->ConnectToConnectionProblemSignal(subscriber);
+}
+
 concurrency::task<web::json::value> CommunicationManager::HttpGet(std::wstring const& path)
 {
 	return httpClient_->Get(path);

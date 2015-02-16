@@ -12,6 +12,11 @@ WebsocketClient::~WebsocketClient(void)
 {
 }
 
+boost::signals2::connection WebsocketClient::ConnectToConnectionProblemSignal(boost::signals2::signal<void()>::slot_function_type subscriber)
+{
+	return engine_->ConnectToConnectionProblemSignal(subscriber);
+}
+
 void WebsocketClient::Connect(std::wstring const & url) const
 {
 	engine_->Connect(url);

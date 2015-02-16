@@ -80,6 +80,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ConnectionProblemNotifier.h" />
     <ClInclude Include="HttpClientException.h" />
     <ClInclude Include="InterprocessCommEngine.h" />
     <ClInclude Include="InterprocessComm.h" />
@@ -98,6 +99,7 @@
     <ClInclude Include="WebsocketClientEngine.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ConnectionProblemNotifier.cpp" />
     <ClCompile Include="InterprocessCommEngine.cpp" />
     <ClCompile Include="InterprocessComm.cpp" />
     <ClCompile Include="PubSubSubscription.cpp" />
