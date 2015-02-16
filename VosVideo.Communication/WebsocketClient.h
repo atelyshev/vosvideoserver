@@ -2,8 +2,10 @@
 #include <memory>
 #include "WebsocketClientEngine.h"
 
-namespace vosvideo{
-	namespace communication{
+namespace vosvideo
+{
+	namespace communication
+	{
 		class WebsocketClient final
 		{
 		public:
