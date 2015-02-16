@@ -19,8 +19,7 @@ CommunicationManager::CommunicationManager(std::shared_ptr<HttpClient> httpClien
 {
 }
 
-
-CommunicationManager::~CommunicationManager(void)
+CommunicationManager::~CommunicationManager()
 {
 }
 

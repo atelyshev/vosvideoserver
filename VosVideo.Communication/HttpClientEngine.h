@@ -2,8 +2,10 @@
 #include <cpprest/json.h>
 #include <ppltasks.h>
 
-namespace vosvideo{
-	namespace communication{
+namespace vosvideo
+{
+	namespace communication
+	{
 		class HttpClientEngine
 		{
 		public:
