@@ -45,7 +45,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>..\;$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(THIRDPARTY_ROOT)\boost_1_56_0;$(VOSVIDEO_ROOT)\vosvideocommon</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm200 %(AdditionalOptions)</AdditionalOptions>
@@ -62,7 +62,7 @@
       <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>..\;$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(THIRDPARTY_ROOT)\boost_1_56_0;$(VOSVIDEO_ROOT)\vosvideocommon</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm200 %(AdditionalOptions)</AdditionalOptions>
@@ -76,6 +76,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ArchiveManager.h" />
+    <ClInclude Include="ChangesNotifier.h" />
+    <ClInclude Include="DirectoryChangesNotifier.h" />
     <ClInclude Include="LocalVideoFile.h" />
     <ClInclude Include="ReadDirectoryChanges.h" />
     <ClInclude Include="ReadDirectoryChangesPrivate.h" />
@@ -84,9 +86,12 @@
     <ClInclude Include="ThreadSafeQueue.h" />
     <ClInclude Include="VideoCatalogEntry.h" />
     <ClInclude Include="VideoFile.h" />
+    <ClInclude Include="WinDirectoryMonitor.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ArchiveManager.cpp" />
+    <ClCompile Include="ChangesNotifier.cpp" />
+    <ClCompile Include="DirectoryChangesNotifier.cpp" />
     <ClCompile Include="LocalVideoFile.cpp" />
     <ClCompile Include="ReadDirectoryChanges.cpp" />
     <ClCompile Include="ReadDirectoryChangesPrivate.cpp" />
@@ -95,6 +100,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="VideoCatalogEntry.cpp" />
+    <ClCompile Include="WinDirectoryMonitor.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -26,6 +26,8 @@
 #include <set>
 #include <atomic>
 #include <iostream>
+#include <thread>
+#include <list>
 
 #include <boost/math/tools/rational.hpp>
 #include <boost/signals2.hpp>

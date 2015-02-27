@@ -1,14 +1,8 @@
 #pragma once
-#include <memory>
-#include <map>
-#include <unordered_map>
-#include <thread>
-
 #include "VosVideo.Configuration/ConfigurationManager.h"
 #include "VosVideo.Communication/PubSubService.h"
+#include "ChangesNotifier.h"
 #include "VideoCatalogEntry.h"
-#include "ReadDirectoryChanges.h"
-
 
 namespace vosvideo
 {
@@ -25,20 +19,15 @@ namespace vosvideo
 			virtual void GetCatalog();
 			virtual void GetCameraCatalog(uint32_t cameraId);
 			virtual void OnMessageReceived(const std::shared_ptr<vosvideo::data::ReceivedData> receivedMessage);
-			void DoMonitorArchiveDirectory();
 
 		protected:
-			void AdjustDiskSpace(const std::wstring& wstrDir);
+			void OnArchiveChanged(const std::wstring& path);
 
 			VideoCatalogMap videoCatalog_;
 			std::shared_ptr<vosvideo::communication::PubSubService> pubSubService_;
 			std::shared_ptr<vosvideo::configuration::ConfigurationManager> configManager_;
-			std::shared_ptr<std::thread> directoryWatcher_;
-			CReadDirectoryChanges changes_;
-			HANDLE endLocalDirectoryEvent_; 
-			HANDLE thrHandle_;
-			static const uint64_t reservedDiskSpace_ = 10737418240;
-			bool inRemovingState;
+			std::shared_ptr<vosvideo::archive::ChangesNotifier> changesNotifier_;
+			//			std::shared_ptr<std::thread> directoryWatcher_;
 		};
 	}
 }
