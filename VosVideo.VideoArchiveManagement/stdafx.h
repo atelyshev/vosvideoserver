@@ -17,6 +17,9 @@
 #include <vector>
 #include <list>
 #include <string>
+#include <map>
+#include <unordered_map>
+#include <thread>
 
 #include <vosvideocommon/SeverityLoggerMacros.h>
 

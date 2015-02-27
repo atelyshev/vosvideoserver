@@ -16,7 +16,6 @@ namespace vosvideo
 		protected:
 			// Notify that connection has problem
 			boost::signals2::signal<void()> connectionProblemSignal_;
-
 		};
 	}
 }
