@@ -14,16 +14,10 @@
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ArchiveManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="VideoFile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VideoCatalogEntry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LocalVideoFile.h">
@@ -47,12 +41,18 @@
     <ClInclude Include="WinDirectoryMonitor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LocalVideoFileDiscoverer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoFileDiscovererException.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoFileDiscoverer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="VideoCatalogEntry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LocalVideoFile.cpp">
@@ -74,6 +74,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WinDirectoryMonitor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LocalVideoFileDiscoverer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoFileDiscoverer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
