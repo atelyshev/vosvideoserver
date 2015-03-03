@@ -3,8 +3,10 @@
 
 using vosvideo::cameraplayer::CameraPlayerBootstrapper;
 
-CameraPlayerBootstrapper::CameraPlayerBootstrapper(){
+CameraPlayerBootstrapper::CameraPlayerBootstrapper()
+{
 }
 
-CameraPlayerBootstrapper::~CameraPlayerBootstrapper(){
+CameraPlayerBootstrapper::~CameraPlayerBootstrapper()
+{
 }

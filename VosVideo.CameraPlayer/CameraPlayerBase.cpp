@@ -3,12 +3,12 @@
 
 using vosvideo::cameraplayer::CameraPlayerBase;
 
-CameraPlayerBase::CameraPlayerBase(void)
+CameraPlayerBase::CameraPlayerBase()
 {
 	
 }
 
-CameraPlayerBase::~CameraPlayerBase(void)
+CameraPlayerBase::~CameraPlayerBase()
 {
 	
 }

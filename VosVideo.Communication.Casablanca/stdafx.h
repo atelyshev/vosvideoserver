@@ -7,7 +7,7 @@
 
 #include "targetver.h"
 #include <vosvideocommon/SeverityLoggerMacros.h>
-#include "pplx/pplxtasks.h"
+#include <pplx/pplxtasks.h>
 #define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 
 

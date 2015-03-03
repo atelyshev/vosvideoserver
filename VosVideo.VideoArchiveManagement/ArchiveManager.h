@@ -1,8 +1,8 @@
 #pragma once
 #include "VosVideo.Configuration/ConfigurationManager.h"
 #include "VosVideo.Communication/PubSubService.h"
+#include "VideoFileDiscoverer.h"
 #include "ChangesNotifier.h"
-#include "VideoCatalogEntry.h"
 
 namespace vosvideo
 {
@@ -11,7 +11,9 @@ namespace vosvideo
 		class ArchiveManager : public vosvideo::communication::MessageReceiver
 		{
 		public:
-			typedef std::unordered_map<int, std::map<std::wstring, std::shared_ptr<VideoCatalogEntry> > > VideoCatalogMap;
+			// Proposed structure: <camera_name <beginning_time, VideoFile>>
+			typedef std::unordered_map<std::wstring, std::map<uint64_t, std::shared_ptr<VideoFile>> > VideoCatalogMap;
+			typedef std::map<uint64_t, std::shared_ptr<VideoFile>> VideoEntriesMap;
 
 			ArchiveManager(std::shared_ptr<vosvideo::configuration::ConfigurationManager> configManager, 
 				std::shared_ptr<vosvideo::communication::PubSubService> pubsubService);
@@ -22,12 +24,15 @@ namespace vosvideo
 
 		protected:
 			void OnArchiveChanged(const std::wstring& path);
+			pplx::task<void> ReadVideoCatalogAsync(const std::wstring& path);
+			void AddToCatalog(std::shared_ptr<VideoFile> vf);
 
 			VideoCatalogMap videoCatalog_;
+
+			VideoFileDiscoverer videoDiscoverer_;
 			std::shared_ptr<vosvideo::communication::PubSubService> pubSubService_;
 			std::shared_ptr<vosvideo::configuration::ConfigurationManager> configManager_;
 			std::shared_ptr<vosvideo::archive::ChangesNotifier> changesNotifier_;
-			//			std::shared_ptr<std::thread> directoryWatcher_;
 		};
 	}
 }
