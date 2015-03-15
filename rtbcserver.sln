@@ -57,6 +57,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VosVideo.CameraPlayer", "Vo
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VosVideo.GSCameraPlayer", "VosVideo.GSCameraPlayer\VosVideo.GSCameraPlayer.vcxproj", "{B58DE50C-EB20-4565-98F2-453FEE89916D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "mediafile", "mediafile", "{8C1A68D5-0542-442D-BBCD-AD71E25C74BA}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VosVideo.MediaFile", "VosVideo.MediaFile\VosVideo.MediaFile.vcxproj", "{71904B6F-6E27-449D-A0A2-63F97FB8252D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VosVideo.WebmSegmenter.Test", "VosVideo.WebmSegmenter.Test\VosVideo.WebmSegmenter.Test.vcxproj", "{2DB77C68-70CA-4427-8B3B-2827B830CFE3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -291,6 +297,26 @@ Global
 		{B58DE50C-EB20-4565-98F2-453FEE89916D}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{B58DE50C-EB20-4565-98F2-453FEE89916D}.Release|Win32.ActiveCfg = Release|Win32
 		{B58DE50C-EB20-4565-98F2-453FEE89916D}.Release|Win32.Build.0 = Release|Win32
+		{71904B6F-6E27-449D-A0A2-63F97FB8252D}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{71904B6F-6E27-449D-A0A2-63F97FB8252D}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{71904B6F-6E27-449D-A0A2-63F97FB8252D}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{71904B6F-6E27-449D-A0A2-63F97FB8252D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{71904B6F-6E27-449D-A0A2-63F97FB8252D}.Debug|Win32.Build.0 = Debug|Win32
+		{71904B6F-6E27-449D-A0A2-63F97FB8252D}.Release|Any CPU.ActiveCfg = Release|Win32
+		{71904B6F-6E27-449D-A0A2-63F97FB8252D}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{71904B6F-6E27-449D-A0A2-63F97FB8252D}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{71904B6F-6E27-449D-A0A2-63F97FB8252D}.Release|Win32.ActiveCfg = Release|Win32
+		{71904B6F-6E27-449D-A0A2-63F97FB8252D}.Release|Win32.Build.0 = Release|Win32
+		{2DB77C68-70CA-4427-8B3B-2827B830CFE3}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{2DB77C68-70CA-4427-8B3B-2827B830CFE3}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{2DB77C68-70CA-4427-8B3B-2827B830CFE3}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{2DB77C68-70CA-4427-8B3B-2827B830CFE3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2DB77C68-70CA-4427-8B3B-2827B830CFE3}.Debug|Win32.Build.0 = Debug|Win32
+		{2DB77C68-70CA-4427-8B3B-2827B830CFE3}.Release|Any CPU.ActiveCfg = Release|Win32
+		{2DB77C68-70CA-4427-8B3B-2827B830CFE3}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{2DB77C68-70CA-4427-8B3B-2827B830CFE3}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{2DB77C68-70CA-4427-8B3B-2827B830CFE3}.Release|Win32.ActiveCfg = Release|Win32
+		{2DB77C68-70CA-4427-8B3B-2827B830CFE3}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -309,5 +335,7 @@ Global
 		{99DC47B1-653D-4173-B50F-D7D99CD8C1A9} = {1E7B6864-7F55-4597-B86D-C8CA22355109}
 		{1CA2C3A4-27F5-4804-9A8E-DD4F3D5BC74A} = {A6B850AF-1932-46DB-B3BE-8679AB8C5F4E}
 		{B58DE50C-EB20-4565-98F2-453FEE89916D} = {A6B850AF-1932-46DB-B3BE-8679AB8C5F4E}
+		{71904B6F-6E27-449D-A0A2-63F97FB8252D} = {8C1A68D5-0542-442D-BBCD-AD71E25C74BA}
+		{2DB77C68-70CA-4427-8B3B-2827B830CFE3} = {2998D8B0-78A7-4C6B-968F-4CD6A5717648}
 	EndGlobalSection
 EndGlobal
