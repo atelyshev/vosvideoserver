@@ -13,11 +13,11 @@ namespace vosvideo
 			WebmSegmenter(const std::wstring& path);
 			~WebmSegmenter();
 
-			void GetManifest(const std::wstring&);
-			void GetManifest(const web::json::value&);
+			std::shared_ptr<MediaFileManifest> GetManifest();
 
 		private:
-			mkvparser::MkvReader reader;
+			mkvparser::MkvReader reader_;
+			std::shared_ptr<MediaFileManifest> manifest_;
 		};
 	}
 }

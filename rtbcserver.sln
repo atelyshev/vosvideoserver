@@ -43,7 +43,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VosVideo.DeviceManagement.T
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VosVideo.DeviceManagement", "VosVideo.DeviceManagement\VosVideo.DeviceManagement.vcxproj", "{A7CA82E4-092E-40E8-A92C-38F12F2385B9}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VosVideo.VideoArchiveManagement", "VosVideo.VideoArchiveManagement\VosVideo.VideoArchiveManagement.vcxproj", "{0C44CFDB-2FBC-492D-9D0D-CEF3186064D4}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VosVideo.MediaManagement", "VosVideo.MediaManagement\VosVideo.MediaManagement.vcxproj", "{0C44CFDB-2FBC-492D-9D0D-CEF3186064D4}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VosVideo.Data.Test", "test\VosVideo.Data.Test\VosVideo.Data.Test.vcxproj", "{11D3201E-07CE-4B0D-8720-27902A8D9851}"
 EndProject
@@ -57,11 +57,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VosVideo.CameraPlayer", "Vo
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VosVideo.GSCameraPlayer", "VosVideo.GSCameraPlayer\VosVideo.GSCameraPlayer.vcxproj", "{B58DE50C-EB20-4565-98F2-453FEE89916D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "mediafile", "mediafile", "{8C1A68D5-0542-442D-BBCD-AD71E25C74BA}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "media", "media", "{8C1A68D5-0542-442D-BBCD-AD71E25C74BA}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VosVideo.MediaFile", "VosVideo.MediaFile\VosVideo.MediaFile.vcxproj", "{71904B6F-6E27-449D-A0A2-63F97FB8252D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VosVideo.WebmSegmenter.Test", "VosVideo.WebmSegmenter.Test\VosVideo.WebmSegmenter.Test.vcxproj", "{2DB77C68-70CA-4427-8B3B-2827B830CFE3}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VosVideo.WebmSegmenter.Test", "test\VosVideo.WebmSegmenter.Test\VosVideo.WebmSegmenter.Test.vcxproj", "{2DB77C68-70CA-4427-8B3B-2827B830CFE3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -331,6 +331,7 @@ Global
 		{56E341D6-68A9-4298-AE0A-C315F4B0EFAD} = {2998D8B0-78A7-4C6B-968F-4CD6A5717648}
 		{C4F0118A-89C0-4EA0-B461-036AB830C921} = {2998D8B0-78A7-4C6B-968F-4CD6A5717648}
 		{EC6BF23F-B645-4768-A1DD-4FD4AFF30C85} = {2998D8B0-78A7-4C6B-968F-4CD6A5717648}
+		{0C44CFDB-2FBC-492D-9D0D-CEF3186064D4} = {8C1A68D5-0542-442D-BBCD-AD71E25C74BA}
 		{11D3201E-07CE-4B0D-8720-27902A8D9851} = {2998D8B0-78A7-4C6B-968F-4CD6A5717648}
 		{99DC47B1-653D-4173-B50F-D7D99CD8C1A9} = {1E7B6864-7F55-4597-B86D-C8CA22355109}
 		{1CA2C3A4-27F5-4804-9A8E-DD4F3D5BC74A} = {A6B850AF-1932-46DB-B3BE-8679AB8C5F4E}

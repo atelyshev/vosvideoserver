@@ -1,7 +1,7 @@
 #pragma once
 #include "VosVideo.Camera/CameraDeviceManager.h"
 #include "VosVideo.UserManagement/UserManager.h"
-#include "VosVideo.VideoArchiveManagement/ArchiveManager.h"
+#include "VosVideo.MediaManagement/MediaWatcher.h"
 
 class Application
 {
@@ -25,7 +25,7 @@ private:
 
 	std::shared_ptr<loggers::SeverityLogger> log_;
 	std::shared_ptr<vosvideo::camera::CameraDeviceManager> ipDevManager_;
-	std::shared_ptr<vosvideo::archive::ArchiveManager> archiveManager_;
+	std::shared_ptr<vosvideo::archive::MediaWatcher> archiveManager_;
 
 	bool runApplication_;
 	bool runAsService_;

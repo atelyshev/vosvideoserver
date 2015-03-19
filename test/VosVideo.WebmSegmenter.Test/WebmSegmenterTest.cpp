@@ -8,6 +8,12 @@
 using namespace std;
 using namespace vosvideo::mediafile;
 
+TEST(WebmSegmenterInit, WebmSegmenterTest)
+{
+	WebmSegmenter wmseg(L"c:\\temp\\small.webm");
+	shared_ptr<MediaFileManifest> manifest = wmseg.GetManifest();
+	auto jsonObj = manifest->ToJsonObject();
+}
 
 int _tmain(int argc, _TCHAR* argv[])
 {
