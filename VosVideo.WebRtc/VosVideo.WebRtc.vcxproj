@@ -45,7 +45,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;JSONCPP_RELATIVE_PATH;_CRT_SECURE_NO_WARNINGS;_DEBUG;_LIB;WEBRTC_WIN;_NO_ASYNCRTIMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;JSONCPP_RELATIVE_PATH;_CRT_SECURE_NO_WARNINGS;_DEBUG;_LIB;WEBRTC_WIN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>..\;$(THIRDPARTY_ROOT);$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(THIRDPARTY_ROOT)\boost_1_56_0;$(THIRDPARTY_ROOT)\poco-1.4.7p1\Net\include;$(THIRDPARTY_ROOT)\poco-1.4.7p1\Foundation\include;$(THIRDPARTY_ROOT)\libjingle\src;$(THIRDPARTY_ROOT)\libjingle\src\third_party;$(THIRDPARTY_ROOT)\libjingle\src\webrtc;$(THIRDPARTY_ROOT)\libjingle\src\third_party\jsoncpp\source\include;$(THIRDPARTY_ROOT)\libjingle\src\third_party\modules\video_capture\include;$(THIRDPARTY_ROOT)\libjingle\src\third_party\system_wrappers\interface;$(VOSVIDEO_ROOT)\vosvideovp8;$(VOSVIDEO_ROOT)\vosvideocommon</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -67,7 +67,7 @@
       <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;JSONCPP_RELATIVE_PATH;_CRT_SECURE_NO_WARNINGS;NDEBUG;_LIB;WEBRTC_WIN;_NO_ASYNCRTIMP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;JSONCPP_RELATIVE_PATH;_CRT_SECURE_NO_WARNINGS;NDEBUG;_LIB;WEBRTC_WIN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>..\;$(THIRDPARTY_ROOT);$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(THIRDPARTY_ROOT)\boost_1_56_0;$(THIRDPARTY_ROOT)\poco-1.4.7p1\Net\include;$(THIRDPARTY_ROOT)\poco-1.4.7p1\Foundation\include;$(THIRDPARTY_ROOT)\libjingle\src;$(THIRDPARTY_ROOT)\libjingle\src\third_party;$(THIRDPARTY_ROOT)\libjingle\src\webrtc;$(THIRDPARTY_ROOT)\libjingle\src\third_party\jsoncpp\source\include;$(THIRDPARTY_ROOT)\libjingle\src\third_party\modules\video_capture\include;$(THIRDPARTY_ROOT)\libjingle\src\third_party\system_wrappers\interface;$(VOSVIDEO_ROOT)\vosvideovp8;$(VOSVIDEO_ROOT)\vosvideocommon;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm200 %(AdditionalOptions)</AdditionalOptions>

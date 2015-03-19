@@ -14,9 +14,6 @@
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ArchiveManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="VideoFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -50,15 +47,15 @@
     <ClInclude Include="VideoFileDiscoverer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MediaWatcher.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LocalVideoFile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ArchiveManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ReadDirectoryChanges.cpp">
@@ -80,6 +77,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="VideoFileDiscoverer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MediaWatcher.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

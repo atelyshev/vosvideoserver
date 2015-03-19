@@ -280,7 +280,7 @@ bool Application::Main()
 		return false;
 	}
 
-	archiveManager_.reset(new ArchiveManager(configManager, communicationPubSub));	 	
+	archiveManager_.reset(new MediaWatcher(configManager, communicationPubSub));	 	
 
 	LOG_TRACE("RTBC server is ready.");
 	return true;

@@ -6,7 +6,7 @@
 #include "VosVideo.Communication/TypeInfoWrapper.h"
 #include "VosVideo.Data/ArchiveCatalogRequestMsg.h"
 #include "DirectoryChangesNotifier.h"
-#include "ArchiveManager.h"
+#include "MediaWatcher.h"
 
 using namespace std;
 using namespace util;
@@ -15,7 +15,7 @@ using namespace vosvideo::archive;
 using namespace vosvideo::data;
 using namespace boost::filesystem;
 
-ArchiveManager::ArchiveManager(std::shared_ptr<vosvideo::configuration::ConfigurationManager> configManager, 
+MediaWatcher::MediaWatcher(std::shared_ptr<vosvideo::configuration::ConfigurationManager> configManager,
 							   shared_ptr<vosvideo::communication::PubSubService> pubsubService) :
 	configManager_(configManager),
 	pubSubService_(pubsubService)
@@ -37,15 +37,15 @@ ArchiveManager::ArchiveManager(std::shared_ptr<vosvideo::configuration::Configur
 	pubSubService_->Subscribe(interestedTypes, *this);	
 //	directoryWatcher_.reset(new std::thread(&ArchiveManager::DoMonitorArchiveDirectory, this ));
 	changesNotifier_.reset(new DirectoryChangesNotifier(configManager_));
-	changesNotifier_->ConnectToChangesSignal(boost::bind(&ArchiveManager::OnArchiveChanged, this, _1));
+	changesNotifier_->ConnectToChangesSignal(boost::bind(&MediaWatcher::OnArchiveChanged, this, _1));
 	ReadVideoCatalogAsync(configManager_->GetArchivePath());
 }
 
-ArchiveManager::~ArchiveManager()
+MediaWatcher::~MediaWatcher()
 {
 }
 
-pplx::task<void> ArchiveManager::ReadVideoCatalogAsync(const wstring& path)
+pplx::task<void> MediaWatcher::ReadVideoCatalogAsync(const wstring& path)
 {
 	wstring ext = L".webm";
 
@@ -70,7 +70,7 @@ pplx::task<void> ArchiveManager::ReadVideoCatalogAsync(const wstring& path)
 	});
 }
 
-void ArchiveManager::AddToCatalog(shared_ptr<VideoFile> videoFile)
+void MediaWatcher::AddToCatalog(shared_ptr<VideoFile> videoFile)
 {
 	auto entry = videoCatalog_.find(videoFile->GetId());
 
@@ -86,7 +86,7 @@ void ArchiveManager::AddToCatalog(shared_ptr<VideoFile> videoFile)
 	}
 }
 
-void ArchiveManager::OnMessageReceived(const std::shared_ptr<vosvideo::data::ReceivedData> receivedMessage)
+void MediaWatcher::OnMessageReceived(const std::shared_ptr<vosvideo::data::ReceivedData> receivedMessage)
 {
 	wstring srvPeer;
 	wstring clientPeer;
@@ -99,16 +99,16 @@ void ArchiveManager::OnMessageReceived(const std::shared_ptr<vosvideo::data::Rec
 	}
 }
 
-void ArchiveManager::GetCatalog()
+void MediaWatcher::GetCatalog()
 {
 
 }
 
-void ArchiveManager::GetCameraCatalog(uint32_t cameraId)
+void MediaWatcher::GetCameraCatalog(uint32_t cameraId)
 {
 }
 
-void ArchiveManager::OnArchiveChanged(const wstring& path)
+void MediaWatcher::OnArchiveChanged(const wstring& path)
 {
 	AddToCatalog(videoDiscoverer_.Discover(path));
 	LOG_TRACE("Archive was changed, new file added " << path);

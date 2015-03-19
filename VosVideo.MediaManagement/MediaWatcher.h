@@ -8,16 +8,16 @@ namespace vosvideo
 {
 	namespace archive
 	{
-		class ArchiveManager : public vosvideo::communication::MessageReceiver
+		class MediaWatcher : public vosvideo::communication::MessageReceiver
 		{
 		public:
 			// Proposed structure: <camera_name <beginning_time, VideoFile>>
 			typedef std::unordered_map<std::wstring, std::map<uint64_t, std::shared_ptr<VideoFile>> > VideoCatalogMap;
 			typedef std::map<uint64_t, std::shared_ptr<VideoFile>> VideoEntriesMap;
 
-			ArchiveManager(std::shared_ptr<vosvideo::configuration::ConfigurationManager> configManager, 
+			MediaWatcher(std::shared_ptr<vosvideo::configuration::ConfigurationManager> configManager,
 				std::shared_ptr<vosvideo::communication::PubSubService> pubsubService);
-			virtual ~ArchiveManager();
+			virtual ~MediaWatcher();
 			virtual void GetCatalog();
 			virtual void GetCameraCatalog(uint32_t cameraId);
 			virtual void OnMessageReceived(const std::shared_ptr<vosvideo::data::ReceivedData> receivedMessage);

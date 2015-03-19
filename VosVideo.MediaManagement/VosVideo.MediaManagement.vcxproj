@@ -13,7 +13,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0C44CFDB-2FBC-492D-9D0D-CEF3186064D4}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>VosVideoVideoArchiveManagement</RootNamespace>
+    <RootNamespace>MediaManagement</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -77,11 +77,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="ArchiveManager.h" />
     <ClInclude Include="ChangesNotifier.h" />
     <ClInclude Include="DirectoryChangesNotifier.h" />
     <ClInclude Include="LocalVideoFile.h" />
     <ClInclude Include="LocalVideoFileDiscoverer.h" />
+    <ClInclude Include="MediaWatcher.h" />
     <ClInclude Include="ReadDirectoryChanges.h" />
     <ClInclude Include="ReadDirectoryChangesPrivate.h" />
     <ClInclude Include="stdafx.h" />
@@ -92,11 +92,11 @@
     <ClInclude Include="WinDirectoryMonitor.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ArchiveManager.cpp" />
     <ClCompile Include="ChangesNotifier.cpp" />
     <ClCompile Include="DirectoryChangesNotifier.cpp" />
     <ClCompile Include="LocalVideoFile.cpp" />
     <ClCompile Include="LocalVideoFileDiscoverer.cpp" />
+    <ClCompile Include="MediaWatcher.cpp" />
     <ClCompile Include="ReadDirectoryChanges.cpp" />
     <ClCompile Include="ReadDirectoryChangesPrivate.cpp" />
     <ClCompile Include="stdafx.cpp">
