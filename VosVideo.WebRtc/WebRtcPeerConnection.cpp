@@ -69,14 +69,14 @@ void WebRtcPeerConnection::OnMessage(rtc::Message* message)
 {
 	switch (message->message_id) 
 	{
-	case PeerConnectionMessages::DoInitSdp:
+	case (uint32)PeerConnectionMessages::DoInitSdp:
 		{
 			shared_ptr<rtc::TypedMessageData<string>> data(static_cast<rtc::TypedMessageData<string>*>(message->pdata));
 			string wrappedMessage = data->data();
 			InitSdp_r(wrappedMessage);		
 			break;
 		}
-	case PeerConnectionMessages::DoInitIce:
+	case (uint32)PeerConnectionMessages::DoInitIce:
 		{
 			shared_ptr<rtc::TypedMessageData<Json::Value>> 
 				data(static_cast<rtc::TypedMessageData<Json::Value>*>(message->pdata));
@@ -84,12 +84,12 @@ void WebRtcPeerConnection::OnMessage(rtc::Message* message)
 			InitIce_r(wrappedMessage);		
 			break;
 		}
-	case PeerConnectionMessages::DoAddStreams:
+	case (uint32)PeerConnectionMessages::DoAddStreams:
 		{
 			AddStreams_r();
 			break;
 		}
-	case PeerConnectionMessages::DoCloseCapturer:
+	case (uint32)PeerConnectionMessages::DoCloseCapturer:
 		{
 			Close_r();
 			break;
@@ -301,8 +301,8 @@ void WebRtcPeerConnection::AddStreams_r()
 		return;  // Already added.
 	}
 
-//	talk_base::scoped_refptr<webrtc::AudioTrackInterface> audio_track(
-//		peer_connection_factory_->CreateAudioTrack(kAudioLabel, peer_connection_factory_->CreateAudioSource(NULL)));
+	rtc::scoped_refptr<webrtc::AudioTrackInterface> audio_track(
+		peer_connection_factory_->CreateAudioTrack(kAudioLabel, peer_connection_factory_->CreateAudioSource(NULL)));
 
 	videoCapturer_ = OpenVideoCaptureDevice();
 	if (videoCapturer_ == nullptr)
@@ -321,7 +321,7 @@ void WebRtcPeerConnection::AddStreams_r()
 
 	rtc::scoped_refptr<webrtc::MediaStreamInterface> stream = peer_connection_factory_->CreateLocalMediaStream(kStreamLabel);
 
-//	stream->AddTrack(audio_track);
+	stream->AddTrack(audio_track);
 	stream->AddTrack(video_track);
 
 	if (!peer_connection_->AddStream(stream)) 
