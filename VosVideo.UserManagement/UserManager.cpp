@@ -89,7 +89,7 @@ concurrency::task<LogInResponse> UserManager::LogInAsync(LogInRequest const& log
 		[&](web::json::value& resp)
 	{
 		SetAccountIdFromUserJson(resp);
-		wstring tokenUri = str(wformat(L"/token?format=json&AccountId=%1%&UserName=%2%") % userAccountId_ % loginRequest.GetUserName());
+		wstring tokenUri = str(wformat(L"/token/temp?format=json&AccountId=%1%&UserName=%2%") % userAccountId_ % loginRequest.GetUserName());
 		return communicationManager_->HttpGet(tokenUri);
 	});
 
@@ -193,8 +193,7 @@ void UserManager::SetAccountIdFromUserJson( web::json::value& jval)
 
 void UserManager::GetTokenFromJson( web::json::value& jval, vosvideo::communication::Peer& peer)
 {
-	auto nextVal = jval.at(L"ConnectionToken");
-	wstring val = GetByKeyFromJson(nextVal, L"Id");
+	wstring val = GetByKeyFromJson(jval, L"Id");
 	val.erase(std::remove(val.begin(), val.end(), '-'), val.end());
 	peer = vosvideo::communication::Peer(val);
 }	
