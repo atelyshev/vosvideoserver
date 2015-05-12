@@ -204,7 +204,6 @@ void WebRtcPeerConnection::OnSuccess(webrtc::SessionDescriptionInterface* desc)
 	string respSdp = StringUtil::ToString(wrespSdp);
 
 	queueEng_->Send(respSdp);
-
 }
 
 void WebRtcPeerConnection::OnIceCandidate(const webrtc::IceCandidateInterface* icecandidate) 
@@ -301,8 +300,13 @@ void WebRtcPeerConnection::AddStreams_r()
 		return;  // Already added.
 	}
 
-	rtc::scoped_refptr<webrtc::AudioTrackInterface> audio_track(
-		peer_connection_factory_->CreateAudioTrack(kAudioLabel, peer_connection_factory_->CreateAudioSource(NULL)));
+	rtc::scoped_refptr<webrtc::AudioTrackInterface> audio_track;
+
+	// This moment we support sound only for WebCamera
+	if (player_->GetCameraType() == CameraType::WEBCAM)
+	{
+		audio_track = peer_connection_factory_->CreateAudioTrack(kAudioLabel, peer_connection_factory_->CreateAudioSource(NULL));
+	}
 
 	videoCapturer_ = OpenVideoCaptureDevice();
 	if (videoCapturer_ == nullptr)
@@ -321,7 +325,12 @@ void WebRtcPeerConnection::AddStreams_r()
 
 	rtc::scoped_refptr<webrtc::MediaStreamInterface> stream = peer_connection_factory_->CreateLocalMediaStream(kStreamLabel);
 
-	stream->AddTrack(audio_track);
+	// This moment we support sound only for WebCamera
+	if (player_->GetCameraType() == CameraType::WEBCAM)
+	{
+		stream->AddTrack(audio_track);
+	}
+
 	stream->AddTrack(video_track);
 
 	if (!peer_connection_->AddStream(stream)) 

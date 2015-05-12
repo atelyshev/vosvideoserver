@@ -27,12 +27,12 @@ namespace vosvideo
 			virtual ~CameraPlayerBase();
 
 			// Playback control
-			virtual HRESULT OpenURL(vosvideo::data::CameraConfMsg&) = 0;
+			virtual int32_t OpenURL(vosvideo::data::CameraConfMsg&) = 0;
 			virtual void GetWebRtcCapability(webrtc::VideoCaptureCapability& webRtcCapability) = 0;
-			virtual HRESULT Play() = 0;
-			virtual HRESULT Pause() = 0;
-			virtual HRESULT Stop() = 0;
-			virtual HRESULT Shutdown() = 0;
+			virtual int32_t Play() = 0;
+			virtual int32_t Pause() = 0;
+			virtual int32_t Stop() = 0;
+			virtual int32_t Shutdown() = 0;
 
 			virtual PlayerState GetState(std::shared_ptr<vosvideo::data::SendData>& lastErrMsg) const = 0;
 			virtual PlayerState GetState() const = 0;
@@ -43,6 +43,10 @@ namespace vosvideo
 			virtual void RemoveExternalCapturer(webrtc::VideoCaptureExternal* captureObserver) = 0;
 
 			virtual uint32_t GetDeviceId() const = 0;
+			virtual vosvideo::data::CameraType GetCameraType(){ return cameraType_; }
+
+		protected:
+			vosvideo::data::CameraType cameraType_ = vosvideo::data::CameraType::UNKNOWN;
 		};
 	}
 }

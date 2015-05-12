@@ -19,7 +19,7 @@ GSCameraPlayer::~GSCameraPlayer()
 }
 
 
-HRESULT GSCameraPlayer::OpenURL(vosvideo::data::CameraConfMsg& cameraConf)
+int32_t GSCameraPlayer::OpenURL(vosvideo::data::CameraConfMsg& cameraConf)
 {
 	if (_state == PlayerState::OpenPending ||
 		_state == PlayerState::Started ||
@@ -43,6 +43,7 @@ HRESULT GSCameraPlayer::OpenURL(vosvideo::data::CameraConfMsg& cameraConf)
 	cameraConf.GetCameraIds(this->_deviceId, this->_deviceName);
 	cameraConf.GetCredentials(username, password);
 	cameraConf.GetFileSinkParameters(recordingOutfolder, recordingLength, recordingType);
+	cameraType_ = cameraConf.GetCameraType();
 
 	if (wvideoUri != L"webcamera")
 	{
@@ -72,22 +73,22 @@ void GSCameraPlayer::GetWebRtcCapability(webrtc::VideoCaptureCapability& webRtcC
 	_pipeline->GetWebRtcCapability(webRtcCapability);
 }
 
-HRESULT GSCameraPlayer::Play(){
+int32_t GSCameraPlayer::Play(){
 	LOG_TRACE("GSCameraPlayer Play called");
 	return E_FAIL;
 }
 
-HRESULT GSCameraPlayer::Pause(){
+int32_t GSCameraPlayer::Pause(){
 	LOG_TRACE("GSCameraPlayer Paused called");
 	return E_FAIL;
 }
 
-HRESULT GSCameraPlayer::Stop(){
+int32_t GSCameraPlayer::Stop(){
 	LOG_TRACE("GSCameraPlayer Stop called");
 	return E_FAIL;
 }
 
-HRESULT GSCameraPlayer::Shutdown(){
+int32_t GSCameraPlayer::Shutdown(){
 	LOG_TRACE("GSCameraPlayer Shutdown called");
 	return E_FAIL;
 }

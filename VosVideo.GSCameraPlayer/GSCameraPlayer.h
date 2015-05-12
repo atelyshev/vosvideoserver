@@ -14,13 +14,13 @@ namespace vosvideo
 			GSCameraPlayer();
 			~GSCameraPlayer();
 
-			HRESULT OpenURL(vosvideo::data::CameraConfMsg&);
+			int32_t OpenURL(vosvideo::data::CameraConfMsg&);
 
 			void GetWebRtcCapability(webrtc::VideoCaptureCapability& webRtcCapability);
-			HRESULT Play();
-			HRESULT Pause();
-			HRESULT Stop();
-			HRESULT Shutdown();
+			int32_t Play();
+			int32_t Pause();
+			int32_t Stop();
+			int32_t Shutdown();
 
 			PlayerState GetState(std::shared_ptr<vosvideo::data::SendData>& lastErrMsg) const;
 			PlayerState GetState() const;
