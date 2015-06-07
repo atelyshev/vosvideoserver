@@ -23,14 +23,15 @@ namespace vosvideo
 				virtual void Send(std::string const& msg);
 				virtual void Close();
 
+				const static std::string Closed;
 			private:
 				void StartListeningForMessages();
 				pplx::task<void> AsyncDoWhile(std::function<pplx::task<bool>(void)> func);
 				pplx::task<bool> DoWhileIteration(std::function<pplx::task<bool>(void)> func);
 				pplx::task<bool> DoWhileImpl(std::function<pplx::task<bool>(void)> func);
 
-				std::shared_ptr<web::web_sockets::client::websocket_client> _client;
-				vosvideo::data::DtoFactory _dtoFactory;
+				std::shared_ptr<web::web_sockets::client::websocket_client> client_;
+				vosvideo::data::DtoFactory dtoFactory_;
 			};
 		}
 	}

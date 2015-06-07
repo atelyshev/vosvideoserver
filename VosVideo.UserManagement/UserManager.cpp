@@ -12,6 +12,7 @@
 using namespace std;
 using namespace util;
 using boost::wformat;
+using namespace concurrency;
 using namespace vosvideo::usermanagement;
 using namespace vosvideo::communication;
 using namespace vosvideo::configuration;
@@ -50,7 +51,16 @@ wstring& UserManager::GetAccountId()
 
 void UserManager::ReLoginAsync()
 {
-	LogInAsync(loginRequest_);
+	try
+	{
+		logInInProgress_ = false;
+		LogInAsync(loginRequest_);
+	}
+	catch (...)
+	{
+		LOG_DEBUG("Relogin failed.");
+		ReLoginAsync();
+	}
 }
 
 void UserManager::ReAuthAsync()
@@ -77,16 +87,12 @@ concurrency::task<LogInResponse> UserManager::LogInAsync(LogInRequest const& log
 
 	// Authenticate by REST task
 	auto loginToRestServiceTask = communicationManager_->HttpPost(L"/auth?format=json", jsonVal);
-	auto getUserProfileTask = loginToRestServiceTask.then
-		(
-		[&](web::json::value& resp)
+	auto getUserProfileTask = loginToRestServiceTask.then([&](web::json::value& resp)
 	{
 			return communicationManager_->HttpGet(L"/user?format=json&NeedLinkedDevices=false&UserName=" + loginRequest.GetUserName());
 	});
 
-	auto getTokenTask = getUserProfileTask.then
-		(
-		[&](web::json::value& resp)
+	auto getTokenTask = getUserProfileTask.then([&](web::json::value& resp)
 	{
 		SetAccountIdFromUserJson(resp);
 		wstring tokenUri = str(wformat(L"/token/temp?format=json&AccountId=%1%&UserName=%2%") % userAccountId_ % loginRequest.GetUserName());
@@ -94,9 +100,7 @@ concurrency::task<LogInResponse> UserManager::LogInAsync(LogInRequest const& log
 	});
 
 	// Finally open connection to websocket server
-	auto webSockAuthTask = getTokenTask.then
-		(
-		[&](web::json::value& resp)
+	auto webSockAuthTask = getTokenTask.then([&](web::json::value& resp)
 	{
 		std::wstring websocketServerUri = configurationManager_->GetWebsocketUri();
 		Peer token;
@@ -109,7 +113,17 @@ concurrency::task<LogInResponse> UserManager::LogInAsync(LogInRequest const& log
 		communicationManager_->WebsocketConnect(connUri);
 	});
 
-	webSockAuthTask.wait();
+	webSockAuthTask.then([=](task<void> end_task)
+	{
+		try
+		{
+			end_task.get();
+		}
+		catch (...)
+		{
+			throw;
+		}
+	}).wait();
 
 	concurrency::task<LogInResponse> loginToWebsocketServerTask(wsOpenedCompletionEvent_);
 

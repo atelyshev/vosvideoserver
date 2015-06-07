@@ -97,6 +97,7 @@
     <ClInclude Include="TypeInfoWrapper.h" />
     <ClInclude Include="WebsocketClient.h" />
     <ClInclude Include="WebsocketClientEngine.h" />
+    <ClInclude Include="WebsocketClientException.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConnectionProblemNotifier.cpp" />

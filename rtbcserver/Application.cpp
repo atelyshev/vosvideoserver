@@ -316,13 +316,17 @@ bool Application::WebSocketServerLogin(shared_ptr<CommunicationManager> commMana
 	try
 	{
 		auto userRespAsync = userManager->LogInAsync(logInRequest);
-
-		auto userContinuation = userRespAsync.then([&](LogInResponse& resp)
+		userRespAsync.then([=](task<LogInResponse> end_task)
 		{
-			commManager->WebsocketSend("RTBC is Ready");
-			LOG_TRACE("RTBC successfully logged to WebSocket server.");
-		});
-		userContinuation.wait();
+			try
+			{
+				end_task.get();
+			}
+			catch (...)
+			{
+				throw;
+			}
+		}).wait();			
 	}
 	catch(exception& e)
 	{
@@ -332,6 +336,7 @@ bool Application::WebSocketServerLogin(shared_ptr<CommunicationManager> commMana
 		std::cin.get();
 		return false;
 	}
+	LOG_TRACE("RTBC successfully logged to WebSocket server.");
 	return true;
 }
 
