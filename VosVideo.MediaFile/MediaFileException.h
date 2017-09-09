@@ -1,6 +1,5 @@
 #pragma once
 #include <stdexcept>
-#include <vosvideocommon/SeverityLoggerMacros.h>
 
 namespace vosvideo
 {

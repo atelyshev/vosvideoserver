@@ -34,9 +34,8 @@ public:
     virtual ~RtbcService();
 
 protected:
-
-    virtual void OnStart(DWORD dwArgc, PWSTR *pszArgv);
-    virtual void OnStop();
+    virtual void OnStart(DWORD dwArgc, PWSTR *pszArgv) override;
+    virtual void OnStop() override;
 
     void ServiceWorkerThread();
 

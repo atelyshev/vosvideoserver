@@ -5,36 +5,39 @@
 #include <ostream>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/thread/thread.hpp> 
+#include "VosVideo.Camera/CameraVideoCapturer.h"
 #include "DeviceWorkerApp.h"
 
 using namespace std;
+using util::StringUtil;
 
 static wstring deviceId_ = L"-deviceid";
 static wstring logging_ = L"-logging";
 static wstring debug_ = L"-debug";
 
 
-int _tmain(int argc, _TCHAR* argv[])
+int main(int argc, char* argv[])
 {
 	vector<wstring> argVect;
 
 	for (int i = 0; i < argc; i++)
 	{
-		argVect.push_back(argv[i]);
+		string tmp = argv[i];
+		argVect.push_back(StringUtil::ToWstring(tmp));
 	}
 
 	wstring wqueueName;
 	bool isLogging = false;
 
-	for (uint32_t i = 0; i < argVect.size(); i++)
+	for (const auto& arg : argVect)
 	{
-		if (argVect[i].substr(0, deviceId_.length()) == deviceId_)
+		if (arg.substr(0, deviceId_.length()) == deviceId_)
 		{
-			wqueueName = argVect[i].substr(deviceId_.length() + 1, argVect[i].length());
+			wqueueName = arg.substr(deviceId_.length() + 1, arg.length());
 		}
-		else if (argVect[i].substr(0, logging_.length()) == logging_)
+		else if (arg.substr(0, logging_.length()) == logging_)
 		{
-			(argVect[i].substr(logging_.length() + 1, argVect[i].length()) == L"true") ?  isLogging = true : isLogging = false;
+			(arg.substr(logging_.length() + 1, arg.length()) == L"true") ?  isLogging = true : isLogging = false;
 		}
 	}
 

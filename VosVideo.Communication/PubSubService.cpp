@@ -1,12 +1,10 @@
 #include "stdafx.h"
 #include <ppltasks.h>
-#include <vosvideocommon/SeverityLoggerMacros.h>
 #include "PubSubService.h"
 
 using namespace std;
 using namespace vosvideo::communication;
 using namespace concurrency;
-
 
 void PubSubService::Publish(shared_ptr<vosvideo::data::ReceivedData> receivedData)
 {

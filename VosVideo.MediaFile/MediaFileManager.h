@@ -8,7 +8,7 @@ namespace vosvideo
 		{
 		public:
 			MediaFileManager();
-			~MediaFileManager();
+			virtual ~MediaFileManager();
 		};
 	}
 }

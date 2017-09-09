@@ -34,8 +34,8 @@ int32_t GSCameraPlayer::OpenURL(vosvideo::data::CameraConfMsg& cameraConf)
 	std::wstring wvideoUri;
 	std::wstring username;
 	std::wstring password;
-
 	std::wstring recordingOutfolder;
+
 	uint32_t recordingLength;
 	vosvideo::data::CameraVideoRecording recordingType;
 
@@ -68,7 +68,8 @@ int32_t GSCameraPlayer::OpenURL(vosvideo::data::CameraConfMsg& cameraConf)
 	return S_OK;
 }
 
-void GSCameraPlayer::GetWebRtcCapability(webrtc::VideoCaptureCapability& webRtcCapability){
+void GSCameraPlayer::GetWebRtcCapability(webrtc::VideoCaptureCapability& webRtcCapability)
+{
 	LOG_TRACE("GSCameraPlayer GetWebRtcCapability called");
 	_pipeline->GetWebRtcCapability(webRtcCapability);
 }
@@ -78,48 +79,57 @@ int32_t GSCameraPlayer::Play(){
 	return E_FAIL;
 }
 
-int32_t GSCameraPlayer::Pause(){
+int32_t GSCameraPlayer::Pause()
+{
 	LOG_TRACE("GSCameraPlayer Paused called");
 	return E_FAIL;
 }
 
-int32_t GSCameraPlayer::Stop(){
+int32_t GSCameraPlayer::Stop()
+{
 	LOG_TRACE("GSCameraPlayer Stop called");
 	return E_FAIL;
 }
 
-int32_t GSCameraPlayer::Shutdown(){
+int32_t GSCameraPlayer::Shutdown()
+{
 	LOG_TRACE("GSCameraPlayer Shutdown called");
 	return E_FAIL;
 }
 
-PlayerState GSCameraPlayer::GetState(std::shared_ptr<vosvideo::data::SendData>& lastErrMsg) const{
+PlayerState GSCameraPlayer::GetState(std::shared_ptr<vosvideo::data::SendData>& lastErrMsg) const
+{
 	LOG_TRACE("GSCameraPlayer GetState(shared_ptr) called");
 	return _state;
 }
 
-PlayerState GSCameraPlayer::GetState() const{
+PlayerState GSCameraPlayer::GetState() const
+{
 	LOG_TRACE("GSCameraPlayer GetState called");
 	return _state;
 }
 
 // Probably most important method, through it camera communicates to WebRTC
-void GSCameraPlayer::SetExternalCapturer(webrtc::VideoCaptureExternal* captureObserver){
+void GSCameraPlayer::SetExternalCapturer(webrtc::VideoCaptureExternal* captureObserver)
+{
 	LOG_TRACE("GSCameraPlayer SetExternalCapturer called");
 	_pipeline->AddExternalCapturer(captureObserver);
 }
 
-void GSCameraPlayer::RemoveExternalCapturers(){
+void GSCameraPlayer::RemoveExternalCapturers()
+{
 	LOG_TRACE("GSCameraPlayer RemoveExternalCapturers called");	
 	_pipeline->RemoveAllExternalCapturers();
 }
 
-void GSCameraPlayer::RemoveExternalCapturer(webrtc::VideoCaptureExternal* captureObserver){
+void GSCameraPlayer::RemoveExternalCapturer(webrtc::VideoCaptureExternal* captureObserver)
+{
 	LOG_TRACE("GSCameraPlayer RemoveExternalCapturer called");
 	_pipeline->RemoveExternalCapturer(captureObserver);
 }
 
-uint32_t GSCameraPlayer::GetDeviceId() const{
+uint32_t GSCameraPlayer::GetDeviceId() const
+{
 	LOG_TRACE("GSCameraPlayer GetDeviceId called");
 	return this->_deviceId;
 }

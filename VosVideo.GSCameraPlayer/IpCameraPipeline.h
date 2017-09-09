@@ -1,12 +1,15 @@
 #pragma once
 #include "GSPipelineBase.h"
 
-namespace vosvideo{
-	namespace cameraplayer{
-		class IpCameraPipeline : public GSPipelineBase{
+namespace vosvideo
+{
+	namespace cameraplayer
+	{
+		class IpCameraPipeline : public GSPipelineBase
+		{
 		public:
 			IpCameraPipeline(const std::string& uri, const std::wstring& username, const std::wstring& password);
-			~IpCameraPipeline();
+			virtual ~IpCameraPipeline();
 		protected:
 			GstElement* CreateSource();
 		private:

@@ -12,8 +12,6 @@ namespace vosvideo
 			WebRtcMessageWrapper(std::shared_ptr<T> receivedData) : 
 				receivedData_(receivedData){}
 
-			~WebRtcMessageWrapper(){}
-
 			std::shared_ptr<T> GetData()
 			{
 				return receivedData_;

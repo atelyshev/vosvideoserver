@@ -9,7 +9,7 @@ namespace vosvideo
 		{
 		public:
 			InterprocessComm(std::shared_ptr<InterprocessCommEngine> engine);
-			~InterprocessComm();
+			virtual ~InterprocessComm();
 
 			void OpenAsParent();
 			void OpenAsChild();

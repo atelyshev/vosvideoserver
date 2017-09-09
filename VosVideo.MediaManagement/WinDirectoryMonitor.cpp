@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include <boost/filesystem.hpp>
-#include <vosvideocommon/StringUtil.h>
+
 #include "DirectoryChangesNotifier.h"
 #include "WinDirectoryMonitor.h"
 

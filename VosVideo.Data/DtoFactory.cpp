@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include <vosvideocommon/SeverityLoggerMacros.h>
 #include "DtoFactory.h"
 #include "CameraConfMsg.h"
 #include "WebsocketConnectionOpenedMsg.h"

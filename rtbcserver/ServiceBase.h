@@ -18,9 +18,6 @@
 
 #pragma once
 
-#include <windows.h>
-
-
 class ServiceBase
 {
 public:
@@ -41,7 +38,7 @@ public:
 		BOOL fCanPauseContinue = FALSE);
 
 	// Service object destructor. 
-	virtual ~ServiceBase(void);
+	virtual ~ServiceBase();
 
 	// Stop the service.
 	void Stop();

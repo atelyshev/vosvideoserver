@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include <talk/media/devices/win32devicemanager.h>
+//#include <webrtc/media/devices/win32devicemanager.h>
 
 #include <atlbase.h>
 #include <dbt.h>
@@ -22,12 +22,10 @@
 #include <webrtc/base/thread.h>
 #include <webrtc/base/win32.h>  // ToUtf8
 #include <webrtc/base/win32window.h>
-#include <talk/media/base/mediacommon.h>
-#include <talk/media/webrtc/webrtcvideocapturer.h>
+#include <webrtc/media/engine/webrtcvideocapturer.h>
 #include <Poco/Process.h>
-#include <vosvideocommon/StringUtil.h>
-#include <vosvideocommon/NativeErrorsManager.h>
 
+#include "VosVideo.Common/NativeErrorsManager.h"
 #include "VosVideo.Communication/TypeInfoWrapper.h"
 #include "VosVideo.Data/WebRtcIceCandidateMsg.h"
 #include "VosVideo.Data/DeletePeerConnectionRequestMsg.h"
@@ -36,6 +34,7 @@
 #include "VosVideo.Data/SdpAnswerMsg.h"
 #include "VosVideo.Data/RtbcDeviceErrorOutMsg.h"
 #include "VosVideo.Data/IceCandidateResponseMsg.h"
+
 #include "CameraDeviceManager.h"
 #include "CameraVideoCapturer.h"
 
@@ -166,10 +165,9 @@ void CameraDeviceManager::Shutdown()
 	for_each (cameraProcess_.begin(), cameraProcess_.end(), [](pair<int, std::shared_ptr<CameraPlayerProcess> > p)
 	{
 		p.second->Shutdown();
-	}
-	);
+	});
 
-	if (initialized())
+//	if (initialized())
 	{
 		Terminate();
 	}
@@ -493,38 +491,37 @@ void CameraDeviceManager::Terminate()
 {
 }
 
-bool CameraDeviceManager::GetDefaultVideoCaptureDevice(Device* device)
-{
-	bool ret = false;
-	// If there are multiple capture devices, we want the first USB one.
-	// This avoids issues with defaulting to virtual cameras or grabber cards.
-	if (!cameraPlayers_.empty())
-	{
-		CameraPlayersMap::iterator iter = cameraPlayers_.begin();
-		string camId;
-		try
-		{
-			camId = lexical_cast<string>(iter->first); 
-		}
-		catch(bad_lexical_cast&)
-		{
-			LOG_ERROR("Couldn't cast camera id from number to string");
-			return false;
-		}
-		device = new Device(camId, camId);
-		ret = true;
-	}
-	return ret;
-}
+//bool CameraDeviceManager::GetDefaultVideoCaptureDevice(cricket::Device* device)
+//{
+//	bool ret = false;
+//	// If there are multiple capture devices, we want the first USB one.
+//	// This avoids issues with defaulting to virtual cameras or grabber cards.
+//	if (!cameraPlayers_.empty())
+//	{
+//		CameraPlayersMap::iterator iter = cameraPlayers_.begin();
+//		string camId;
+//		try
+//		{
+//			camId = lexical_cast<string>(iter->first); 
+//		}
+//		catch(bad_lexical_cast&)
+//		{
+//			LOG_ERROR("Couldn't cast camera id from number to string");
+//			return false;
+//		}
+//		device = new cricket::Device(camId, camId);
+//		ret = true;
+//	}
+//	return ret;
+//}
 
-bool CameraDeviceManager::GetAudioDevices(bool input, std::vector<Device>* devs)
+bool CameraDeviceManager::GetAudioDevices(bool input, std::vector<cricket::Device>* devs)
 {
 	devs->clear();
-
 	return false;
 }
 
-bool CameraDeviceManager::GetVideoCaptureDevices(std::vector<Device>* devices)
+bool CameraDeviceManager::GetVideoCaptureDevices(std::vector<cricket::Device>* devices)
 {
 	devices->clear();
 	if (!cameraPlayers_.empty())
@@ -541,7 +538,7 @@ bool CameraDeviceManager::GetVideoCaptureDevices(std::vector<Device>* devices)
 				LOG_ERROR("Couldn't cast camera id from number to string");
 				return;
 			}
-			devices->push_back(Device(camId, camId));
+			devices->push_back(cricket::Device(camId, camId));
 		}
 		);
 
@@ -565,7 +562,7 @@ bool CameraDeviceManager::IsVideoCaptureDeviceExists(int devId)
 	return false;
 }
 
-bool CameraDeviceManager::IsVideoCaptureDeviceReady(int devId, shared_ptr<SendData>& lastErrMsg)
+bool CameraDeviceManager::IsVideoCaptureDeviceReady(int devId, std::shared_ptr<SendData>& lastErrMsg)
 {
 	lock_guard<std::mutex> lock(mutex_);
 
@@ -580,7 +577,7 @@ bool CameraDeviceManager::IsVideoCaptureDeviceReady(int devId, shared_ptr<SendDa
 	return false;
 }
 
-bool CameraDeviceManager::GetVideoCaptureDevice(int devId, Device& device)
+bool CameraDeviceManager::GetVideoCaptureDevice(int devId, cricket::Device& device)
 {
 	lock_guard<std::mutex> lock(mutex_);
 
@@ -599,14 +596,14 @@ bool CameraDeviceManager::GetVideoCaptureDevice(int devId, Device& device)
 			return false;
 		}
 
-		device = Device(camId, camId);
+		device = cricket::Device(camId, camId);
 		return true;
 	}
 
 	return false;
 }
 
-VideoCapturer* CameraDeviceManager::CreateVideoCapturer(const Device& device) const
+VideoCapturer* CameraDeviceManager::CreateVideoCapturer(const cricket::Device& device) const
 {
 	int camId = 0;
 	try
@@ -616,21 +613,21 @@ VideoCapturer* CameraDeviceManager::CreateVideoCapturer(const Device& device) co
 	catch (bad_lexical_cast&)
 	{
 		LOG_ERROR("Couldn't cast camera id from string to number: " << device.id);
-		return NULL;
+		return nullptr;
 	}
 	
-	CameraPlayersMap::const_iterator iter =  cameraPlayers_.find(camId);
+	CameraPlayersMap::const_iterator iter = cameraPlayers_.find(camId);
 	// Probably impossible but lets make sure
 	if (iter == cameraPlayers_.end())
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	CameraVideoCapturer* capturer = new CameraVideoCapturer();
 	if (!capturer->Init(iter->first, iter->second)) 
 	{
 		delete capturer;
-		return NULL;
+		return nullptr;
 	}
 	return capturer;
 }

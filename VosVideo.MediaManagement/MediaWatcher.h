@@ -20,7 +20,7 @@ namespace vosvideo
 			virtual ~MediaWatcher();
 			virtual void GetCatalog();
 			virtual void GetCameraCatalog(uint32_t cameraId);
-			virtual void OnMessageReceived(const std::shared_ptr<vosvideo::data::ReceivedData> receivedMessage);
+			virtual void OnMessageReceived(std::shared_ptr<vosvideo::data::ReceivedData> receivedMessage);
 
 		protected:
 			void OnArchiveChanged(const std::wstring& path);

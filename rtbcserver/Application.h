@@ -7,7 +7,7 @@ class Application
 {
 public:
 	Application(const std::vector<std::wstring>& argVect);
-	~Application();
+	virtual ~Application();
 
 	bool Start();
 	bool Main();
@@ -30,17 +30,17 @@ private:
 	bool runApplication_;
 	bool runAsService_;
 
-	static std::wstring strInstall_;
-	static std::wstring strUnInstall_;
-	static std::wstring strService_;
-	static std::wstring strDevWorker_;
+	const std::wstring strInstall_   = L"-install";
+	const std::wstring strUnInstall_ = L"-uninstall";
+	const std::wstring strService_   = L"-service";
+	const std::wstring strDevWorker_ = L"deviceworker.exe";
 	// For development purposes
-	static std::wstring strUname_;
-	static std::wstring strPass_;
-	static std::wstring strMutexName_;
+	const std::wstring strUname_     = L"-u=";
+	const std::wstring strPass_      = L"-p=";
+	const std::wstring strMutexName_ = L"rtbcserver";
 	// Wakeup timer
-	Concurrency::timer<Application*>* wakeupTimer_; 
-	const static int wakeupTimeout_ = 60000;
+	Concurrency::timer<Application*>* wakeupTimer_ = nullptr; 
+	static const int wakeupTimeout_ = 60000;
 	HANDLE hHandle_;
 };
 

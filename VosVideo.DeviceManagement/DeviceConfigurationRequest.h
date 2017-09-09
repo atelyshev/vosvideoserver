@@ -10,10 +10,11 @@ namespace vosvideo
 		public:
 			DeviceConfigurationRequest();
 			DeviceConfigurationRequest(const std::wstring& accountid, const std::wstring& siteid);
-			~DeviceConfigurationRequest();			
-			virtual void ToJsonValue(web::json::value& obj) const;
-			virtual void FromJsonValue(web::json::value& obj);
-			virtual std::wstring ToString() const;
+			virtual ~DeviceConfigurationRequest();		
+
+			virtual void ToJsonValue(web::json::value& obj) const override;
+			virtual void FromJsonValue(web::json::value& obj) override;
+			virtual std::wstring ToString() const override;
 
 			const std::wstring& GetAccountId() const;
 			const std::wstring& GetSiteId() const;

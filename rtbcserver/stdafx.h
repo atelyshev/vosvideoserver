@@ -5,15 +5,13 @@
 
 #pragma once
 #define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 
-#include <cstdio>
-#include <tchar.h>
-
-// reference additional headers your program requires here
+#include <windows.h>
 #include <strsafe.h>
 #include <atlstr.h>
-#include <windows.h>
 
+#include <cstdio>
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -31,9 +29,10 @@
 #include <boost/signals2.hpp>
 #include <boost/filesystem.hpp>
 
-#include <vosvideocommon/EventLogLogger.h>
-#include <vosvideocommon/SeverityLogger.h>
-#include <vosvideocommon/SeverityLoggerMacros.h>
+#include "VosVideo.Common/StringUtil.h"
+#include "vosvideo.common/EventLogLogger.h"
+#include "vosvideo.common/SeverityLogger.h"
+#include "vosvideo.common/SeverityLoggerMacros.h"
 
 #pragma warning(disable: 4251)
 #pragma warning(disable: 4275)

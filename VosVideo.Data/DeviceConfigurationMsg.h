@@ -11,9 +11,9 @@ namespace vosvideo
 			DeviceConfigurationMsg();
 			virtual ~DeviceConfigurationMsg();
 
-			virtual void ToJsonValue(web::json::value& obj) const;
-			virtual void FromJsonValue(web::json::value& obj);
-			virtual std::wstring ToString() const;
+			virtual void ToJsonValue(web::json::value& obj) const override;
+			virtual void FromJsonValue(web::json::value& obj) override;
+			virtual std::wstring ToString() const override;
 		};
 	}
 }

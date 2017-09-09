@@ -9,9 +9,9 @@ namespace vosvideo
 		{
 		public:
 			WebsocketConnectionClosedMsg();
-			~WebsocketConnectionClosedMsg();
+			virtual ~WebsocketConnectionClosedMsg();
 
-			virtual void FromJsonValue(web::json::value& obj);
+			virtual void FromJsonValue(web::json::value& obj) override;
 		};
 	}
 }

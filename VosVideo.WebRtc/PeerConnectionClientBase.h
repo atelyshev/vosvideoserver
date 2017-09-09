@@ -1,14 +1,14 @@
 #pragma once
-
+/*
 #include <boost/asio/detail/config.hpp>
-#include "webrtc/base/nethelpers.h"
-#include "webrtc/base/signalthread.h"
-#include "webrtc/base/sigslot.h"
-#include "webrtc/base/physicalsocketserver.h"
-#include "webrtc/base/scoped_ptr.h"
+#include <webrtc/base/nethelpers.h>
+#include <webrtc/base/signalthread.h>
+#include <webrtc/base/sigslot.h>
+#include <webrtc/base/physicalsocketserver.h>
+//#include <webrtc/base/scoped_ptr.h>
 #include "PeerConnectionObserver.h"
-
-
+*/
+/*
 namespace vosvideo
 {
 	namespace vvwebrtc
@@ -58,3 +58,4 @@ namespace vosvideo
 	}
 }
 
+*/

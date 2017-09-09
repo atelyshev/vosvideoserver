@@ -1,6 +1,5 @@
 #include "stdafx.h"
-#include <Vosvideo.Communication/WebsocketClientException.h>
-#include <vosvideocommon/StringUtil.h>
+#include "Vosvideo.Communication/WebsocketClientException.h"
 #include "CbWebsocketClientEngine.h"
 
 using namespace std;
@@ -11,7 +10,8 @@ using namespace web::web_sockets::client;
 
 const string CbWebsocketClientEngine::Closed = "closed";
 
-CbWebsocketClientEngine::CbWebsocketClientEngine(std::shared_ptr<PubSubService> pubsubService) : WebsocketClientEngine(pubsubService)
+CbWebsocketClientEngine::CbWebsocketClientEngine(std::shared_ptr<PubSubService> pubsubService) : 
+	WebsocketClientEngine(pubsubService)
 {
 }
 

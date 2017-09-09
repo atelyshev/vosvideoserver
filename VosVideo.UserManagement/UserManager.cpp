@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include <boost/format.hpp>
-#include <vosvideocommon/StringUtil.h>
-#include <vosvideocommon/SeverityLogger.h>
-#include <vosvideocommon/SeverityLoggerMacros.h>
+
 #include "VosVideo.Data/WebsocketConnectionOpenedMsg.h"
 #include "VosVideo.Data/WebsocketConnectionClosedMsg.h"
 #include "VosVideo.Communication/TypeInfoWrapper.h"

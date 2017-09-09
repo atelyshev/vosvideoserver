@@ -12,8 +12,8 @@ namespace vosvideo
 		class PubSubService final
 		{
 		public:
-			PubSubService(void) : subscribercount_(0){};
-			~PubSubService(void){};
+			PubSubService() : subscribercount_(0){};
+			virtual ~PubSubService(){};
 
 			int GetSubscriberCount(){ return subscribercount_;}
 

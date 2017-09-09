@@ -3,10 +3,8 @@
 
 #include "stdafx.h"
 #include <memory>
-#include <string>
 #include <webrtc/base/scoped_ref_ptr.h>
-#include <talk/app/webrtc/peerconnectioninterface.h>
-#include <vosvideocommon/StringUtil.h>
+#include <webrtc/api/peerconnectioninterface.h>
 #include "VosVideo.WebRtc/WebRtcPeerConnection.h"
 #include "VosVideo.Data/DtoFactory.h"
 #include "VosVideo.Data/LiveVideoOfferMsg.h"
@@ -84,7 +82,7 @@ TEST(VosVideoWebRtcPeerConnection, Create)
 //	EXPECT_TRUE(pc.get()!=NULL);
 }
 
-int _tmain(int argc, _TCHAR* argv[])
+int main(int argc, char* argv[])
 {
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();

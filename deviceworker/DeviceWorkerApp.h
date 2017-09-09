@@ -6,7 +6,7 @@ class DeviceWorkerApp
 {
 public:
 	DeviceWorkerApp(const std::wstring& wqueueName, bool isLogging);
-	~DeviceWorkerApp();
+	virtual ~DeviceWorkerApp();
 
 	bool Start();
 

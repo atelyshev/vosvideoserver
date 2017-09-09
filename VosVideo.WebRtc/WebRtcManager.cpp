@@ -29,9 +29,10 @@ using namespace vosvideo::cameraplayer;
 using boost::format;
 using boost::wformat;
 
-WebRtcManager::WebRtcManager(std::shared_ptr<vosvideo::communication::PubSubService> pubsubService, 
-									   std::shared_ptr<vosvideo::communication::InterprocessQueueEngine> queueEng) :
-pubSubService_(pubsubService), queueEng_(queueEng), inShutdown_(false)
+WebRtcManager::WebRtcManager(
+    std::shared_ptr<vosvideo::communication::PubSubService> pubsubService, 
+	std::shared_ptr<vosvideo::communication::InterprocessQueueEngine> queueEng) 
+    : pubSubService_(pubsubService), queueEng_(queueEng), inShutdown_(false)
 {
 	vector<TypeInfoWrapper> interestedTypes;
 
@@ -54,7 +55,6 @@ pubSubService_(pubsubService), queueEng_(queueEng), inShutdown_(false)
 	interestedTypes.push_back(typeInfo);
 
 	pubSubService_->Subscribe(interestedTypes, *this);
-
 	// Prepare timer
 	auto callback = new call<WebRtcManager*>([this](WebRtcManager*)
 	{
@@ -65,18 +65,18 @@ pubSubService_(pubsubService), queueEng_(queueEng), inShutdown_(false)
 	});
 	isaliveTimer_ = new Concurrency::timer<WebRtcManager*>(isaliveTimeout_, 0, callback, true);
 
-	// First check if peer conn can be created
-	CreatePeerConnectionFactory();
-	physicalSocketServer_ = new rtc::PhysicalSocketServer();
-	mainThread_ = new rtc::AutoThread(physicalSocketServer_);
-	mainThread_->Start();
+    rtc::AutoThread auto_thread;
+    physicalSocketServer_ = new rtc::PhysicalSocketServer();
+    mainThread_ = new rtc::Thread(physicalSocketServer_);
+    rtc::InitializeSSL();
+    mainThread_->Start();
 }
 
 WebRtcManager::~WebRtcManager()
 {
 }
 
-void WebRtcManager::OnMessageReceived(const shared_ptr<ReceivedData> receivedMessage)
+void WebRtcManager::OnMessageReceived(std::shared_ptr<ReceivedData> receivedMessage)
 {	
 	// Dont accept any connections if in Shutdown
 	if (inShutdown_)
@@ -88,7 +88,6 @@ void WebRtcManager::OnMessageReceived(const shared_ptr<ReceivedData> receivedMes
 	wstring clientPeer;
 	receivedMessage->GetFromPeer(clientPeer);
 	receivedMessage->GetToPeer(srvPeer);
-
 	// We cant make sure that SDP comes first, just create entry and then init is 
 	// once something comes (SDP or ICE). Generally speaking SDP is not interesting for us
 	lock_guard<std::mutex> lock(mutex_);
@@ -135,8 +134,8 @@ void WebRtcManager::OnMessageReceived(const shared_ptr<ReceivedData> receivedMes
 		shared_ptr<LiveVideoOfferMsg> liveVideoDto = dynamic_pointer_cast<LiveVideoOfferMsg>(receivedMessage);
 
 		LOG_TRACE("Create new peer connection with key:" << StringUtil::ToString(clientPeerKey));
-		conn = new rtc::RefCountedObject<WebRtcPeerConnection>(clientPeer, srvPeer, player_, peer_connection_factory_, queueEng_);
-		conn->SetCurrentThread(mainThread_);
+        conn = new rtc::RefCountedObject<WebRtcPeerConnection>(clientPeer, srvPeer, player_, queueEng_);
+        conn->SetCurrentThread(mainThread_);
 
 		// Check if peer with camera id doesnt exists. 
 		// If exists current should be moved to deleted collection

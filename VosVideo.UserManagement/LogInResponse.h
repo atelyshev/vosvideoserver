@@ -10,10 +10,10 @@ namespace vosvideo{
 		{
 		public:
 			LogInResponse();
-			~LogInResponse();
-			virtual void ToJsonValue(web::json::value& obj) const;
-			virtual void FromJsonValue(web::json::value& obj);
-			virtual std::wstring ToString() const;
+			virtual ~LogInResponse();
+			virtual void ToJsonValue(web::json::value& obj) const override;
+			virtual void FromJsonValue(web::json::value& obj) override;
+			virtual std::wstring ToString() const override;
 
 			vosvideo::communication::Peer const& GetPeer() const;
 			void SetPeer(vosvideo::communication::Peer& peer);

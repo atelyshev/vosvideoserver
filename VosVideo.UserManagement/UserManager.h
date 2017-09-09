@@ -18,17 +18,18 @@ namespace vosvideo
 			UserManager(std::shared_ptr<vosvideo::communication::CommunicationManager> communicationManager, 
 				        std::shared_ptr<vosvideo::configuration::ConfigurationManager> configurationManager,
 						std::shared_ptr<vosvideo::communication::PubSubService> pubsubService);
-			~UserManager();
+			virtual ~UserManager();
+
 			concurrency::task<LogInResponse> LogInAsync(LogInRequest const& loginRequest);
 
-			virtual void OnMessageReceived(const std::shared_ptr<vosvideo::data::ReceivedData> receivedMessage);
+			virtual void OnMessageReceived(std::shared_ptr<vosvideo::data::ReceivedData> receivedMessage) override;
 
 			std::wstring& GetAccountId();
 			// Broadcast message to all connected peers 
 			void NotifyAllUsers(std::shared_ptr<vosvideo::data::SendData>);
 
 		private:
-			bool logInInProgress_;
+			bool logInInProgress_ = false;
 			LogInRequest loginRequest_;
 			concurrency::task_completion_event<LogInResponse> wsOpenedCompletionEvent_;
 			LogInResponse logInResponse_;

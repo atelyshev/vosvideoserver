@@ -11,8 +11,8 @@ namespace vosvideo
 			DeletePeerConnectionRequestMsg();
 			virtual ~DeletePeerConnectionRequestMsg();
 
-			virtual void ToJsonValue(web::json::value& obj) const;
-			virtual void FromJsonValue(web::json::value& obj);
+			virtual void ToJsonValue(web::json::value& obj) const override;
+			virtual void FromJsonValue(web::json::value& obj) override;
 		};
 	}
 }

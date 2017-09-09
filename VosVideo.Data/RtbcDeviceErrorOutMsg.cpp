@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include <boost/format.hpp>
-#include <vosvideocommon/NativeErrorsManager.h>
+#include "VosVideo.Common/NativeErrorsManager.h"
 #include "RtbcDeviceErrorOutMsg.h"
 
 using namespace std;

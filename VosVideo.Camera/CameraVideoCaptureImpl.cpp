@@ -1,35 +1,37 @@
 #include "stdafx.h"
-#include "CameraVideoCaptureImpl.h"
 #include "VosVideo.CameraPlayer/CameraPlayerBase.h"
-#include "ref_count.h"
-#include <Unknwn.h>
+#include "CameraVideoCaptureImpl.h"
 
 using namespace webrtc;
-
 using vosvideo::camera::CameraVideoCaptureImpl;
 using vosvideo::cameraplayer::CameraPlayerBase;
 
 
-CameraVideoCaptureImpl::CameraVideoCaptureImpl(const int32_t id, CameraPlayerBase* player) : 
-	webrtc::videocapturemodule::VideoCaptureImpl(id),
+CameraVideoCaptureImpl::CameraVideoCaptureImpl(CameraPlayerBase* player) : 
+	webrtc::videocapturemodule::VideoCaptureImpl(),
 	player_(player),
 	startedCapture_(false)
 {
-	//Check if it derives from IUnknown
-	IUnknown* iUnknownPlayer = dynamic_cast<IUnknown*>(player_);
-	if(iUnknownPlayer)
-		iUnknownPlayer->AddRef();
 }
 
+int32_t CameraVideoCaptureImpl::AddRef() const
+{
+	return ++ref_count_;
+}
+
+int32_t CameraVideoCaptureImpl::Release() const
+{
+	int count = --ref_count_;
+	if (!count)
+	{
+		delete this;
+	}
+	return count;
+}
 
 CameraVideoCaptureImpl::~CameraVideoCaptureImpl()
 {
-	//Check if it derives from IUnknown
-	IUnknown* iUnknownPlayer = dynamic_cast<IUnknown*>(player_);
-	if(iUnknownPlayer)
-		iUnknownPlayer->Release();
 }
-
 
 int32_t CameraVideoCaptureImpl::StartCapture(const webrtc::VideoCaptureCapability& capability)
 {	

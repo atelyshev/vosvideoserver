@@ -29,7 +29,7 @@ void LiveVideoOfferMsg::GetMediaInfo(web::json::value& mi)
 	ToJsonValue(jmessage);
 
 	auto arr = jmessage.as_array();
-	for (web::json::array::iterator iter1 = arr.begin(); iter1 != arr.end(); iter1++)
+	for (web::json::array::iterator iter1 = arr.begin(); iter1 != arr.end(); ++iter1)
 	{
 		auto lvl2 = *iter1;
 		if (lvl2.has_field(U("media_info")))

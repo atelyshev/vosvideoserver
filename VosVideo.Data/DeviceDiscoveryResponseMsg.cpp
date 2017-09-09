@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include <vosvideocommon/StringUtil.h>
 #include "DeviceDiscoveryResponseMsg.h"
 
 using namespace std;

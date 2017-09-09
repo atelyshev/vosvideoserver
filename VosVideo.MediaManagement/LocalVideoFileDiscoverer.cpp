@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include <vosvideocommon/StringUtil.h>
 #include "VideoFileDiscovererException.h"
 #include "LocalVideoFileDiscoverer.h"
 
@@ -10,7 +9,7 @@ using namespace vosvideo::archive;
 
 LocalVideoFileDiscoverer::LocalVideoFileDiscoverer()
 {
-	GError *err = nullptr;
+/*	GError *err = nullptr;
 	// Instantiate the Discoverer 
 	data_.discoverer = gst_discoverer_new(5 * GST_SECOND, &err);
 	if (!data_.discoverer)
@@ -24,7 +23,7 @@ LocalVideoFileDiscoverer::LocalVideoFileDiscoverer()
 	g_signal_connect(data_.discoverer, "discovered", G_CALLBACK(&LocalVideoFileDiscoverer::on_discovered_cb), &data_);
 	g_signal_connect(data_.discoverer, "finished", G_CALLBACK(&LocalVideoFileDiscoverer::on_finished_cb), &data_);
 	// Start the discoverer process (nothing to do yet) 
-	gst_discoverer_start(data_.discoverer);
+	gst_discoverer_start(data_.discoverer);*/
 }
 
 LocalVideoFileDiscoverer::~LocalVideoFileDiscoverer()

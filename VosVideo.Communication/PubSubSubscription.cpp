@@ -3,7 +3,7 @@
 
 using namespace vosvideo::communication;
 
-PubSubSubscription::PubSubSubscription(std::vector<TypeInfoWrapper> types, MessageReceiver& messageReceiver) : 
+PubSubSubscription::PubSubSubscription(const std::vector<TypeInfoWrapper>& types, MessageReceiver& messageReceiver) : 
 	types_(types), messageReceiver_(messageReceiver)
 {
 }

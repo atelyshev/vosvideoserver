@@ -12,7 +12,7 @@ namespace vosvideo
 		{
 		public:
 			GSCameraPlayer();
-			~GSCameraPlayer();
+			virtual ~GSCameraPlayer();
 
 			int32_t OpenURL(vosvideo::data::CameraConfMsg&);
 

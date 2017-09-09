@@ -9,8 +9,10 @@ namespace vosvideo
 		{
 		public:
 			IceCandidateResponseMsg();
-			IceCandidateResponseMsg(const std::wstring& srvPeer, const std::wstring& clientPeer, const std::wstring& sdp, int devId);
-			~IceCandidateResponseMsg();
+			IceCandidateResponseMsg(const std::wstring& srvPeer, 
+				const std::wstring& clientPeer, 
+				const std::wstring& sdp, int devId);
+			virtual ~IceCandidateResponseMsg();
 
 			virtual void FromJsonValue(web::json::value& obj);
 			virtual std::wstring ToString() const;
