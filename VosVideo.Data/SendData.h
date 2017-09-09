@@ -16,7 +16,7 @@ namespace vosvideo
 			virtual void GetAsJsonString(std::wstring& jsonStr) = 0;
 
 		protected:
-			MsgType msgType_;
+			MsgType msgType_ = MsgType::EmptyMsg;
 			std::wstring msgText_;
 			// Represents object name used at the beginning json string
 			static std::wstring objName_;

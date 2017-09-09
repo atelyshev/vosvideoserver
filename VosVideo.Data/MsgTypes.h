@@ -6,6 +6,7 @@ namespace vosvideo
 	{
 		enum class MsgType
 		{
+			EmptyMsg = 0,
 			ConnectionOpenedMsg = 1,
 			ConnectionClosedMsg,
 			LiveVideoOfferMsg,

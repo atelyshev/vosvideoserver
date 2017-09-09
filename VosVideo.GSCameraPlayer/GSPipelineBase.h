@@ -3,7 +3,7 @@
 #include <unordered_map>
 #include <gst/gst.h>
 #include <gst/video/video.h>
-#include <modules/video_capture/include/video_capture_defines.h>
+#include <webrtc/modules/video_capture/video_capture_defines.h>
 
 namespace vosvideo
 {
@@ -39,7 +39,7 @@ namespace vosvideo
 			static void NewBufferHandler(GstElement *sink, GSPipelineBase *cameraPlayer);
 			static gboolean BusWatchHandler(GstBus *bus, GstMessage *msg, gpointer data);
 			static GstVideoFormat GetGstVideoFormatFromCaps(GstCaps* caps);
-			static webrtc::RawVideoType GetRawVideoTypeFromGsVideoFormat(const GstVideoFormat& videoFormat);
+			static webrtc::VideoType GetRawVideoTypeFromGsVideoFormat(const GstVideoFormat& videoFormat);
 			static void PrintCaps(const GstCaps * caps, const gchar * pfx);
 			static gboolean PrintField(GQuark field, const GValue * value, gpointer pfx);
 
@@ -63,7 +63,7 @@ namespace vosvideo
 			GstElement *_pipeline;
 			GMainLoop *_mainLoop;
 
-			webrtc::RawVideoType _rawVideoType;
+			webrtc::VideoType _rawVideoType;
 
 			boost::shared_mutex _mutex;
 			std::unordered_map<uint32_t, webrtc::VideoCaptureExternal*> _webRtcVideoCapturers;

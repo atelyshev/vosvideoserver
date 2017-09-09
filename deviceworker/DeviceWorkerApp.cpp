@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include <boost/interprocess/ipc/message_queue.hpp>
-#include <VosVideoCommon/StringUtil.h>
+
 #include "VosVideo.Communication/PubSubService.h"
 #include "VosVideo.Communication.InterprocessQueue/InterprocessQueueEngine.h"
 #include "VosVideo.Camera/CameraPlayerFactory.h"
+
 #include "DeviceWorkerApp.h"
 
 using namespace std;
@@ -14,7 +15,7 @@ using namespace vosvideo::vvwebrtc;
 using namespace vosvideo::camera;
 
 DeviceWorkerApp::DeviceWorkerApp(const wstring& wqueueName, bool isLogging)
-{
+{	
 	if (isLogging)
 	{
 		wstring prefix = L"deviceworker_" + wqueueName;

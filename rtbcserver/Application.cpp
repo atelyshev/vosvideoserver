@@ -6,7 +6,6 @@
 #include <boost/signals2.hpp>
 #include <webrtc/base/win32socketinit.h>
 #include <webrtc/base/win32socketserver.h>
-#include <vosvideocommon/StringUtil.h>
 
 #include "VosVideo.WebRtc/PeerConnectionClientManager.h"
 #include "VosVideo.Configuration/ConfigurationManager.h"
@@ -38,20 +37,11 @@ using namespace vosvideo::camera;
 using namespace vosvideo::devicemanagement;
 using namespace vosvideo::archive;
 
-std::wstring Application::strMutexName_ = L"rtbcserver";
-std::wstring Application::strInstall_   = L"-install";
-std::wstring Application::strUnInstall_ = L"-uninstall";
-std::wstring Application::strService_   = L"-service";
-std::wstring Application::strDevWorker_ = L"deviceworker.exe";
-// this parameters for development only, in real life they will never be passed
-std::wstring Application::strUname_   = L"-u=";
-std::wstring Application::strPass_   = L"-p=";
-
 // Settings of the service
 // Internal name of the service
 #define SERVICE_NAME             L"RtbcService"
 // Displayed name of the service
-#define SERVICE_DISPLAY_NAME     L"Vos Video RTBC video service"
+#define SERVICE_DISPLAY_NAME     L"Vos Video media service"
 // Service start options.
 #define SERVICE_START_TYPE       SERVICE_DEMAND_START
 // List of service dependencies - "dep1\0dep2\0\0"
@@ -72,29 +62,29 @@ Application::Application(const std::vector<std::wstring>& argVect) :
 
 	wstring userName, userPass;
 
-	for(unsigned int i = 0 ; i < argVect.size(); i++)
+	for(const auto& arg : argVect)
 	{
-		if (argVect[i] == strInstall_)
+		if (arg == strInstall_)
 		{
 			runApplication_ = false;
 			Install();
 		}
-		else if (argVect[i] == strUnInstall_)
+		else if (arg == strUnInstall_)
 		{
 			runApplication_ = false;
 			UnInstall();
 		}
-		else if (argVect[i] == strService_)
+		else if (arg == strService_)
 		{
 			runAsService_ = true;
 		}
-		else if (argVect[i].substr(0, strUname_.length()) == strUname_)
+		else if (arg.substr(0, strUname_.length()) == strUname_)
 		{
-			userName = argVect[i].substr(strUname_.length(), argVect[i].length());
+			userName = arg.substr(strUname_.length(), arg.length());
 		}
-		else if (argVect[i].substr(0, strPass_.length()) == strPass_)
+		else if (arg.substr(0, strPass_.length()) == strPass_)
 		{
-			userPass = argVect[i].substr(strPass_.length(), argVect[i].length());
+			userPass = arg.substr(strPass_.length(), arg.length());
 		}
 	}
 
@@ -220,7 +210,7 @@ bool Application::Main()
 	}
 
 	// Initialize GStreamer 
-	gst_init(nullptr, nullptr);
+//	gst_init(nullptr, nullptr);
 
 	std::shared_ptr<ConfigurationManager> configManager;
 
@@ -347,7 +337,7 @@ bool Application::CreateLoginRequest(LogInRequest& logInRequest)
 	try
 	{
 		ServiceCredentialsManager credMgr;
-		credMgr.GetCredentials(userName, userPass);	
+		tie(userName, userPass) = credMgr.GetCredentials();
 		LogInRequest tmpLogInRequest(userName, userPass);
 		logInRequest = tmpLogInRequest;
 	}
@@ -384,7 +374,7 @@ void Application::KillProcessByName(const wstring& filename)
 	HANDLE hSnapShot = CreateToolhelp32Snapshot(TH32CS_SNAPALL, NULL);
 	PROCESSENTRY32 pEntry;
 	pEntry.dwSize = sizeof (pEntry);
-	BOOL hRes = Process32First(hSnapShot, &pEntry);
+	int32_t hRes = Process32First(hSnapShot, &pEntry);
 	while (hRes)
 	{
 		wstring found(pEntry.szExeFile);
@@ -392,7 +382,7 @@ void Application::KillProcessByName(const wstring& filename)
 		if (found == filename)
 		{
 			HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, 0,
-				(DWORD) pEntry.th32ProcessID);
+				(uint32_t) pEntry.th32ProcessID);
 			if (hProcess != NULL)
 			{
 				TerminateProcess(hProcess, 9);

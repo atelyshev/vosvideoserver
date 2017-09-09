@@ -7,8 +7,8 @@ namespace vosvideo
 		class ConfigurationManager final
 		{
 		public:
-			ConfigurationManager(void);
-			~ConfigurationManager(void);
+			ConfigurationManager();
+			virtual ~ConfigurationManager();
 			std::wstring GetRestServiceUri() const;
 			std::wstring GetWebSiteUri() const;
 			std::wstring GetWebsocketUri() const;
@@ -17,19 +17,20 @@ namespace vosvideo
 			bool IsLoggerOn() const;
 
 		private:
-			const std::wstring FindConfValue(std::wstring) const;
-			void GetConfigurationFilePath(std::wstring& confFilePath);
+			std::wstring FindConfValue(const std::wstring& wKey) const;
+			std::wstring GetConfigurationFilePath();
 
-			static std::wstring configFileName_;
 			std::unordered_map<std::wstring, std::wstring> keyValConf_;
 
-			static std::wstring vosVideoWebUriKey_;
-			static std::wstring restServiceUriKey_;
-			static std::wstring websocketUriKey_;
-			static std::wstring siteIdKey_;
-			static std::wstring siteNameKey_;
-			static std::wstring loggerKey_;
-			static std::wstring archivePathKey_;
+			const std::wstring configFileName_ = L"rtbcserver.config.xml";
+			const std::wstring webUriKey_ = L"VosVideoWebUri";
+			const std::wstring restServiceUriKey_ = L"RestServiceUri";
+			const std::wstring websocketUriKey_ = L"WebsocketUri";
+			const std::wstring siteIdKey_ = L"SiteId";
+			const std::wstring siteNameKey_ = L"SiteName";
+			const std::wstring loggerKey_ = L"Logging";
+			const std::wstring archivePathKey_ = L"ArchivePath";
+			const std::wstring instDir_ = L"VosVideoServer";
 		};
 	}
 }

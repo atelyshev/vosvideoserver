@@ -1,10 +1,10 @@
 #include "stdafx.h"
-#include <windows.h>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/filesystem.hpp>
-#include <vosvideocommon/StringUtil.h>
+
 #include "VosVideo.Communication/TypeInfoWrapper.h"
 #include "VosVideo.Data/ArchiveCatalogRequestMsg.h"
+
 #include "DirectoryChangesNotifier.h"
 #include "MediaWatcher.h"
 
@@ -86,7 +86,7 @@ void MediaWatcher::AddToCatalog(shared_ptr<VideoFile> videoFile)
 	}
 }
 
-void MediaWatcher::OnMessageReceived(const std::shared_ptr<vosvideo::data::ReceivedData> receivedMessage)
+void MediaWatcher::OnMessageReceived(std::shared_ptr<vosvideo::data::ReceivedData> receivedMessage)
 {
 	wstring srvPeer;
 	wstring clientPeer;

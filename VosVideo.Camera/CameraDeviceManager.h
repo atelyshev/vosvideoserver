@@ -2,7 +2,8 @@
 
 #include <webrtc/base/sigslot.h>
 #include <webrtc/base/stringencode.h>
-#include <talk/media/devices/devicemanager.h>
+#include <webrtc/media/base/device.h>
+#include <webrtc/media/base/videocapturer.h>
 #include <agents.h>
 #include "VosVideo.Configuration/ConfigurationManager.h"
 #include "VosVideo.DeviceManagement/DeviceConfigurationManager.h"
@@ -17,7 +18,7 @@ namespace vosvideo
 {
 	namespace camera
 	{
-		class CameraDeviceManager : public cricket::DeviceManager,  public vosvideo::communication::MessageReceiver
+		class CameraDeviceManager : /*public cricket::DeviceManager,  */public vosvideo::communication::MessageReceiver
 		{
 		public:
 			CameraDeviceManager();
@@ -44,9 +45,9 @@ namespace vosvideo
 			// This method adds camera into manager and immediately starts it according passed configuration
 			// Throws exception in case problem occurred
 			void AddIpCam(web::json::value& camParms);
-			void RemoveIpCam(int camId); 
+//			void RemoveIpCam(int camId);
 
-			virtual void OnMessageReceived(const std::shared_ptr<vosvideo::data::ReceivedData> receivedMessage);
+			virtual void OnMessageReceived(std::shared_ptr<vosvideo::data::ReceivedData> receivedMessage);
 
 			// It knows how to find device Id from Json 
 			static void GetDeviceIdFromJson(int& camId, web::json::value& camParms);
@@ -54,9 +55,9 @@ namespace vosvideo
 		private:
 			// This map contains collection of running topologies. Topology is always up, 
 			// but WebRTC can "take attention" of topology passing callback
-			typedef std::unordered_map<int, vosvideo::cameraplayer::CameraPlayerBase* > CameraPlayersMap;
-			typedef std::unordered_map<int, std::shared_ptr<CameraPlayerProcess> > CameraPlayerProcessMap;
-			typedef std::unordered_map<int, std::pair<vosvideo::data::CameraConfMsg, vosvideo::devicemanagement::DeviceConfigurationFlag>> CameraConfsMap;
+			using CameraPlayersMap = std::unordered_map<int, vosvideo::cameraplayer::CameraPlayerBase* >;
+			using CameraPlayerProcessMap = std::unordered_map<int, std::shared_ptr<CameraPlayerProcess> >;
+			using CameraConfsMap = std::unordered_map<int, std::pair<vosvideo::data::CameraConfMsg, vosvideo::devicemanagement::DeviceConfigurationFlag>>;
 
 			std::shared_ptr<vosvideo::communication::CommunicationManager> commManager_;
 			std::shared_ptr<vosvideo::devicemanagement::DeviceConfigurationManager> devConfMgr_;
@@ -65,14 +66,14 @@ namespace vosvideo
 			std::shared_ptr<vosvideo::communication::PubSubService> pubSubService_;
 
 			virtual bool GetAudioDevices(bool input, std::vector<cricket::Device>* devs);
-			virtual bool GetDefaultVideoCaptureDevice(cricket::Device* device);
+//			virtual bool GetDefaultVideoCaptureDevice(cricket::Device* device);
 			// Shortcut for real notification
 			void NotifyAllUsers(const vosvideo::data::CameraConfMsg& conf, const CameraException& e);
 
 			// Signal reactions
 			void OnCameraUpdate(web::json::value& resp);
-			void OnCameraStartTest(web::json::value& resp);
-			void OnCameraStopTest(web::json::value& resp);
+//			void OnCameraStartTest(web::json::value& resp);
+//			void OnCameraStopTest(web::json::value& resp);
 
 			void DeletePlayerProcess(int devId);
 			void CreatePlayerProcess(vosvideo::data::CameraConfMsg& conf);
@@ -80,7 +81,7 @@ namespace vosvideo
 			// Try to recreate camera id it has status stopped. It gives us chance dynamically add-remove cameras
 			void ReconnectCamera();
 			void PassMessage(web::json::value& json, const std::wstring& payload );
-			Concurrency::timer<CameraDeviceManager*>* reconnectTimer_; 
+			Concurrency::timer<CameraDeviceManager*>* reconnectTimer_ = nullptr; 
 			CameraPlayersMap cameraPlayers_;
 			CameraPlayerProcessMap cameraProcess_;
 			CameraConfsMap cameraConfs_;

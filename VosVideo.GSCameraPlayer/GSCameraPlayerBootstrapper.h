@@ -5,12 +5,11 @@ namespace vosvideo
 {
 	namespace cameraplayer
 	{
-		class GSCameraPlayerBootstrapper : public CameraPlayerBootstrapper{
+		class GSCameraPlayerBootstrapper : public CameraPlayerBootstrapper
+		{
 		public:
-			GSCameraPlayerBootstrapper();
-			~GSCameraPlayerBootstrapper();
-			void Init(int* argc, char **argv[]);
-			void Shutdown();
+			void Init(int* argc, char **argv[]) override;
+			void Shutdown() override;
 		};
 	}
 }

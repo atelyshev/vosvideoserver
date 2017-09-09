@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -19,13 +19,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -50,14 +50,14 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..;$(THIRDPARTY_ROOT)\gtest-1.7.0\include;$(THIRDPARTY_ROOT)\libjingle\src\chromium\src\third_party;$(THIRDPARTY_ROOT)\casablanca\SDK\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WEBRTC_WIN;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\;..\..;$(THIRDPARTY_ROOT);$(THIRDPARTY_ROOT)\gtest-1.7.0\include;$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(THIRDPARTY_ROOT)\boost</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(THIRDPARTY_ROOT)\gtest-1.7.0\lib\Debug;$(THIRDPARTY_ROOT)\casablanca\SDK\lib\x86\Debug;$(THIRDPARTY_ROOT)\boost_1_56_0\stage\lib;$(VOSVIDEO_ROOT)\vosvideocommon\Debug;$(THIRDPARTY_ROOT)\libjingle\lib\Debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>VosVideoCommon.lib;gtestd.lib;cpprest120d_2_4.lib;libwebm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(THIRDPARTY_ROOT)\gtest-1.7.0\lib\Debug;$(THIRDPARTY_ROOT)\casablanca\SDK\lib\Debug;$(THIRDPARTY_ROOT)\boost\stage\lib;$(THIRDPARTY_ROOT)\libjingle\lib\Debug;$(THIRDPARTY_ROOT)\libwebm\lib\Debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>mkvparser.lib;gtestd.lib;cpprest140d_2_8.lib;libwebm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -67,16 +67,16 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;_VARIADIC_MAX=10;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..;$(THIRDPARTY_ROOT)\gtest-1.7.0\include;$(THIRDPARTY_ROOT)\libjingle\src\chromium\src\third_party;$(THIRDPARTY_ROOT)\casablanca\SDK\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WEBRTC_WIN;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;WIN32;_VARIADIC_MAX=10;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\;..\..;$(THIRDPARTY_ROOT);$(THIRDPARTY_ROOT)\gtest-1.7.0\include;$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(THIRDPARTY_ROOT)\boost</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>VosVideoCommon.lib;gtest.lib;cpprest120_2_4.lib;libwebm.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(THIRDPARTY_ROOT)\gtest-1.7.0\lib\Release;$(THIRDPARTY_ROOT)\casablanca\SDK\lib\x86\Release;$(THIRDPARTY_ROOT)\boost_1_56_0\stage\lib;$(VOSVIDEO_ROOT)\vosvideocommon\Release;$(THIRDPARTY_ROOT)\libjingle\lib\Release</AdditionalLibraryDirectories>
+      <AdditionalDependencies>mkvparser.lib;gtest.lib;cpprest140_2_8.lib;libwebm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(THIRDPARTY_ROOT)\gtest-1.7.0\lib\Release;$(THIRDPARTY_ROOT)\casablanca\SDK\lib\Release;$(THIRDPARTY_ROOT)\boost\stage\lib;$(THIRDPARTY_ROOT)\libjingle\lib\Release;$(THIRDPARTY_ROOT)\libwebm\lib\Release</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -90,6 +90,9 @@
     <ClCompile Include="WebmSegmenterTest.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\VosVideo.Common\VosVideo.Common.vcxproj">
+      <Project>{4a3e4d39-cefe-43ad-82d1-cc49f3f55b00}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\VosVideo.MediaFile\VosVideo.MediaFile.vcxproj">
       <Project>{71904b6f-6e27-449d-a0a2-63f97fb8252d}</Project>
     </ProjectReference>

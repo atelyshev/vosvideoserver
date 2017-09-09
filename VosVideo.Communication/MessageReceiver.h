@@ -8,10 +8,10 @@ namespace vosvideo
 		class MessageReceiver
 		{
 		public:
-			MessageReceiver(void);
-			virtual ~MessageReceiver(void);
+			MessageReceiver();
+			virtual ~MessageReceiver();
 
-			virtual void OnMessageReceived(const std::shared_ptr<vosvideo::data::ReceivedData> receivedMessage) = 0;
+			virtual void OnMessageReceived(std::shared_ptr<vosvideo::data::ReceivedData> receivedMessage) = 0;
 		};
 	}
 }

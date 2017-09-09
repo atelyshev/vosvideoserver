@@ -9,12 +9,12 @@ namespace vosvideo
 		{
 		public:
 			DeviceDiscoveryResponseMsg(web::json::value jobjVect);
-			~DeviceDiscoveryResponseMsg();
+			virtual ~DeviceDiscoveryResponseMsg();
 
 			void GetAsJsonString(std::wstring& jsonStr);
 
 		private:
-			const static MsgType msgType = MsgType::DeviceDiscoveryOutMsg;
+			static const MsgType msgType = MsgType::DeviceDiscoveryOutMsg;
 			web::json::value jobjVect_;
 		};
 	}

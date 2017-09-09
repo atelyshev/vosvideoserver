@@ -3,8 +3,10 @@
 
 using vosvideo::cameraplayer::WebCameraHelperBase;
 
-WebCameraHelperBase::WebCameraHelperBase(void){
+WebCameraHelperBase::WebCameraHelperBase()
+{
 }
 
-WebCameraHelperBase::~WebCameraHelperBase(void){
+WebCameraHelperBase::~WebCameraHelperBase()
+{
 }

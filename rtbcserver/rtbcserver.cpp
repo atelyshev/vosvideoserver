@@ -7,14 +7,15 @@
 #include "Application.h"
 
 using namespace std;
+using namespace util;
 
-int _tmain(int argc, _TCHAR* argv[])
+int main(int argc, char* argv[])
 {
 	vector<wstring> argVect;
 
 	for (int i = 0; i < argc; i++)
 	{
-		argVect.push_back(argv[i]);
+		argVect.push_back(StringUtil::ToWstring(argv[i]));
 	}
 
 	Application app(argVect);

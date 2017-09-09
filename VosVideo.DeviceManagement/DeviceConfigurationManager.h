@@ -26,16 +26,16 @@ namespace vosvideo
 								   	   std::shared_ptr<vosvideo::communication::PubSubService> pubsubService, 
 									   const std::wstring& accountId, 
 									   const std::wstring& siteId);
-			~DeviceConfigurationManager();
+			virtual ~DeviceConfigurationManager();
 
-			virtual void OnMessageReceived(const std::shared_ptr<vosvideo::data::ReceivedData> receivedMessage);
+			virtual void OnMessageReceived(std::shared_ptr<vosvideo::data::ReceivedData> receivedMessage) override;
 			concurrency::task<web::json::value> RequestDeviceConfigurationAsync();
-			void RunDeviceDiscoveryAsync(const std::shared_ptr<vosvideo::data::ReceivedData> msg);
+			void RunDeviceDiscoveryAsync(std::shared_ptr<vosvideo::data::ReceivedData> msg);
 
 			// Signals
 			boost::signals2::connection ConnectToDeviceUpdateSignal(boost::signals2::signal<void (web::json::value& confs)>::slot_function_type subscriber);
-			boost::signals2::connection ConnectToDeviceStartTestSignal(boost::signals2::signal<void (web::json::value& confs)>::slot_function_type subscriber);
-			boost::signals2::connection ConnectToDeviceStopTestSignal(boost::signals2::signal<void (web::json::value& confs)>::slot_function_type subscriber);
+//			boost::signals2::connection ConnectToDeviceStartTestSignal(boost::signals2::signal<void (web::json::value& confs)>::slot_function_type subscriber);
+//			boost::signals2::connection ConnectToDeviceStopTestSignal(boost::signals2::signal<void (web::json::value& confs)>::slot_function_type subscriber);
 
 		protected:
 			void ParseDeviceConfiguration(web::json::value& resp);
@@ -46,8 +46,8 @@ namespace vosvideo
 
 			std::shared_ptr<vosvideo::communication::PubSubService> pubSubService_;
 			std::shared_ptr<vosvideo::communication::CommunicationManager> communicationManager_;
-			bool devReqInProgress_;
-			bool devDiscoveryInProgress_;
+			bool devReqInProgress_ = false;
+			bool devDiscoveryInProgress_ = false;
 			DeviceConfigurationResponse devConfResponse_;
 			std::wstring accountId_;
 			std::wstring siteId_;

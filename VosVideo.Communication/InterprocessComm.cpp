@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include <stdint.h>
-#include <VosVideoCommon/StringUtil.h>
+
 #include "InterprocessComm.h"
 #include "InterprocessCommException.h"
 

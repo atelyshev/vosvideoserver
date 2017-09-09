@@ -6,12 +6,18 @@
 #pragma once
 
 #include "targetver.h"
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 
+#include <windows.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <tchar.h>
+
+#include <string>
 #include <gtest/gtest.h>
 
-
+#include "VosVideo.Common/StringUtil.h"
+#include "VosVideo.Common/SeverityLogger.h"
+#include "VosVideo.Common/SeverityLoggerMacros.h"
 
 // TODO: reference additional headers your program requires here

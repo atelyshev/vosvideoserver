@@ -12,7 +12,7 @@ namespace vosvideo
 		{
 		public:
 			CommunicationManager(std::shared_ptr<HttpClient> httpClient, std::shared_ptr<WebsocketClient> websocketClient);	
-			~CommunicationManager(void);
+			virtual ~CommunicationManager();
 
 			concurrency::task<web::json::value> HttpGet(std::wstring const& path);
 			concurrency::task<web::json::value> HttpPost(std::wstring const& path, web::json::value const& payload);

@@ -6,24 +6,19 @@
 #pragma once
 
 #include "targetver.h"
-// reference additional headers your program requires here
-//#include <strsafe.h>
-//#include <atlstr.h>
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 
-#include <tchar.h>
-#include <WinSock2.h>
-#include <WS2tcpip.h>
-#include <Windows.h>
-
+#include <windows.h>
+#include <stdint.h>
 #include <stdio.h>
-//#include <tchar.h>
 #include <Mfapi.h>
+
 #include <string>
 #include <vector>
-#include <stdint.h>
 
-#include <vosvideocommon/SeverityLogger.h>
-#include <vosvideocommon/SeverityLoggerMacros.h>
-#include <vosvideocommon/StringUtil.h>
+#include "VosVideo.Common/StringUtil.h"
+#include "VosVideo.Common/SeverityLogger.h"
+#include "VosVideo.Common/SeverityLoggerMacros.h"
 
 // TODO: reference additional headers your program requires here

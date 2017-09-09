@@ -7,7 +7,9 @@
 
 #include "targetver.h"
 
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+
 // Windows Header Files:
 #include <windows.h>
 
@@ -16,7 +18,8 @@
 #include <boost/math/tools/rational.hpp>
 #include <boost/signals2.hpp>
 
-#include <vosvideocommon/SeverityLoggerMacros.h>
-#include <vosvideocommon/StringUtil.h>
+#include "VosVideo.Common/StringUtil.h"
+#include "VosVideo.Common/SeverityLogger.h"
+#include "VosVideo.Common/SeverityLoggerMacros.h"
 
 // TODO: reference additional headers your program requires here

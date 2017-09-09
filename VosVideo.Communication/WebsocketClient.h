@@ -12,7 +12,7 @@ namespace vosvideo
 			friend class CommunicationManager;
 
 			WebsocketClient(std::shared_ptr<WebsocketClientEngine> websocketClientEngine);
-			~WebsocketClient(void);
+			virtual ~WebsocketClient();
 			void Connect(std::wstring const & url) const;
 			void Send(const std::string &msg);
 			void Close();

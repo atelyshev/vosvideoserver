@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include <boost/format.hpp>
-#include <vosvideocommon/StringUtil.h>
 #include "CommunicationManager.h"
 
 using namespace std;

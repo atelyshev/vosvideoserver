@@ -5,21 +5,24 @@
 
 #pragma once
 
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 
 #include <windows.h>
 #include <atlstr.h>
 #include <stdint.h>
 
+#include <string>
 #include <memory>
 #include <vector>
 #include <list>
-#include <string>
 #include <map>
 #include <unordered_map>
 #include <thread>
-
 #include <pplx/pplxtasks.h>
-#include <vosvideocommon/SeverityLoggerMacros.h>
+
+#include "VosVideo.Common/StringUtil.h"
+#include "VosVideo.Common/SeverityLogger.h"
+#include "VosVideo.Common/SeverityLoggerMacros.h"
 
 // TODO: reference additional headers your program requires here

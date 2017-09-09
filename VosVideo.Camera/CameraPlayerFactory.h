@@ -5,14 +5,15 @@ namespace vosvideo
 {
 	namespace camera
 	{
-		class CameraPlayerFactory{
+		class CameraPlayerFactory
+		{
 		private:
 			CameraPlayerFactory();
-			~CameraPlayerFactory();
+			virtual ~CameraPlayerFactory();
 		public:
 			static void Init(int* argc, char **argv[]);
 			static void Shutdown();
-			static vosvideo::cameraplayer::CameraPlayerBase* CreateCameraPlayer();			
+			static vosvideo::cameraplayer::CameraPlayerBase* CreateCameraPlayer();
 		};
 	}
 }

@@ -25,7 +25,7 @@ class MessageReceiverStub final : public MessageReceiver
 			hWaitHandle_ = hWaitHandle;
 		}
 
-		virtual void OnMessageReceived(const std::shared_ptr<vosvideo::data::ReceivedData> receivedMessage)
+		virtual void OnMessageReceived(std::shared_ptr<vosvideo::data::ReceivedData> receivedMessage)
 		{
 			messageReceived_ = true;
 			SetEvent(hWaitHandle_);

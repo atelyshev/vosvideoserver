@@ -13,15 +13,15 @@ namespace vosvideo
 	{
 		class DtoFactory final
 		{
-		private:
-			typedef boost::function<ReceivedData*()> factory;
-			std::unordered_map<MsgType, factory> factories_;
-
 		public:
 			DtoFactory();
-			~DtoFactory();
+			virtual ~DtoFactory();
 
 			std::shared_ptr<ReceivedData> Create(MsgType);
+
+		private:
+			using factory = boost::function<ReceivedData*()>;
+			std::unordered_map<MsgType, factory> factories_;
 		};
 	}
 }

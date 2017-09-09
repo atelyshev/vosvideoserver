@@ -36,11 +36,12 @@ void CameraPlayerProcess::Init()
 	// start process and give it deice Id as starting point
 	Poco::Process::Args args;
 	args.push_back("-deviceid=" + to_string(cameraId));
-	//args.push_back("-debug");
+	args.push_back("-debug");
 	if (isLoggerOn_)
 	{
 		args.push_back("-logging=true");
 	}
+	
 	Poco::ProcessHandle ph = Poco::Process::launch("deviceworker.exe", args);
 	pid_ = ph.id();
 	LOG_TRACE("Camera player process for camera: " << cameraId << " started. Process Id: " << pid_);

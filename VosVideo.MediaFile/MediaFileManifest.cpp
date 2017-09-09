@@ -42,6 +42,6 @@ web::json::value MediaFileManifest::ToJsonObject()
 	}
 
 	manifestObj[L"clusters"] = web::json::value::array(clustArr);
-	auto str = manifestObj.to_string();
+	auto str = manifestObj.serialize();
 	return manifestObj;
 }

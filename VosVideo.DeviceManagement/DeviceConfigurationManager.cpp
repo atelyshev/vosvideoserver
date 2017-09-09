@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include <boost/format.hpp>
-#include <vosvideocommon/SeverityLoggerMacros.h>
+
 #include "VosVideo.Data/DeviceConfigurationMsg.h"
 #include "VosVideo.Data/DeviceDiscoveryRequestMsg.h"
 #include "VosVideo.Data/DeviceDiscoveryResponseMsg.h"
@@ -8,6 +8,7 @@
 #include "VosVideo.Communication/TypeInfoWrapper.h"
 #include "VosVideo.CameraPlayer/WebCameraHelperBase.h"
 #include "VosVideo.GSCameraPlayer/GSWebCameraHelper.h"
+
 #include "DeviceConfigurationManager.h"
 
 using namespace std;

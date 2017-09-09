@@ -10,8 +10,8 @@ namespace vosvideo
 		class PubSubSubscription final
 		{
 		public:
-			PubSubSubscription(std::vector<TypeInfoWrapper> types, MessageReceiver& messageReceiver);
-			~PubSubSubscription(void);
+			PubSubSubscription(const std::vector<TypeInfoWrapper>& types, MessageReceiver& messageReceiver);
+			virtual ~PubSubSubscription();
 
 			std::vector<TypeInfoWrapper>const & GetTypes() const;
 			MessageReceiver& GetMessageReceiver() const;

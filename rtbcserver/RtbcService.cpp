@@ -20,9 +20,8 @@
 #pragma region Includes
 #include "stdafx.h"
 #include <boost/format.hpp>
-#include <vosvideocommon/StringUtil.h>
-#include <VosVideo.Configuration/ServiceCredentialsManager.h>
-#include <VosVideo.Configuration/CredentialsException.h>
+#include "VosVideo.Configuration/ServiceCredentialsManager.h"
+#include "VosVideo.Configuration/CredentialsException.h"
 #include "RtbcService.h"
 #include "ThreadPool.h"
 #pragma endregion
@@ -85,7 +84,7 @@ RtbcService::~RtbcService()
 //   other solution is to spawn a new thread to perform the main service 
 //   functions, which is demonstrated in this code sample.
 //
-void RtbcService::OnStart(DWORD dwArgc, LPWSTR *lpszArgv)
+void RtbcService::OnStart(DWORD dwArgc, PWSTR *lpszArgv)
 {
     // Log a service start message to the Application log.
     EventLogLogger::WriteInformation(L"RtbcService in OnStart");

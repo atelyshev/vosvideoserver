@@ -37,12 +37,13 @@
 #include <unistd.h>
 #endif
 
-#include "webrtc/base/common.h"
+//#include <webrtc/base/common.h>
+#include <webrtc/base/arraysize.h>
 
 const char kAudioLabel[] = "audio_label";
 const char kVideoLabel[] = "video_label";
 const char kStreamLabel[] = "stream_label";
-const uint16 kDefaultServerPort = 8888;
+const uint16_t kDefaultServerPort = 8888;
 
 std::string GetEnvVarOrDefault(const char* env_var_name,
                                const char* default_value)
@@ -71,7 +72,7 @@ std::string GetDefaultServerName()
 std::string GetPeerName()
 {
     char computer_name[256];
-    if (gethostname(computer_name, ARRAY_SIZE(computer_name)) != 0)
+    if (gethostname(computer_name, arraysize(computer_name)) != 0)
         strcpy(computer_name, "host");
     std::string ret(GetEnvVarOrDefault("USERNAME", "user"));
     ret += '@';

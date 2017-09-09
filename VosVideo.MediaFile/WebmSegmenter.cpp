@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include <vosvideocommon/StringUtil.h>
 #include "MediaFileException.h"
 #include "WebmSegmenter.h"
 

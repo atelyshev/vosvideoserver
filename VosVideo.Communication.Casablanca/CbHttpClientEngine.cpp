@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include <cpprest/http_client.h>
 #include <cpprest/http_client.h>
-#include <vosvideocommon/StringUtil.h>
-#include <VosVideo.Communication/HttpClientException.h>
+
+#include "VosVideo.Communication/HttpClientException.h"
 #include "CbHttpClientEngine.h"
 
 using namespace std;

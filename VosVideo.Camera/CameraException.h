@@ -1,6 +1,5 @@
 #pragma once
 #include <stdexcept>
-#include <vosvideocommon/SeverityLoggerMacros.h>
 
 namespace vosvideo
 {
@@ -13,8 +12,6 @@ namespace vosvideo
 			{
 				LOG_ERROR(msg);
 			}
-
-			virtual ~CameraException(){}
 		};
 	}
 }

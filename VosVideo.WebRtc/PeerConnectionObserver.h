@@ -6,7 +6,7 @@ namespace vosvideo
 {
 	namespace vvwebrtc
 	{
-		typedef std::unordered_map<int, std::string> PeersMap;
+		using PeersMap = std::unordered_map<int, std::string>;
 
 		class PeerConnectionClientObserver 
 		{

@@ -1,7 +1,4 @@
 #include "stdafx.h"
-#include <VosVideoCommon/StringUtil.h>
-#include <vosvideocommon/SeverityLogger.h>
-#include <vosvideocommon/SeverityLoggerMacros.h>
 #include "VosVideo.Data/DtoParseException.h"
 #include "VosVideo.Data/WebSocketMessageParser.h"
 #include "VosVideo.Data/DtoFactory.h"
@@ -44,8 +41,8 @@ void InterprocessQueueEngine::OpenAsParent()
 		Close();
 
 		LOG_TRACE("Create queues from parent process: " <<  queueFromParentName_ << " and " << queueToParentName_);
-		mqFromParent_.reset(new boost::interprocess::message_queue(boost::interprocess::create_only, queueFromParentName_.c_str(), 100, maxMsgSize_));
-		mqToParent_.reset(new boost::interprocess::message_queue(boost::interprocess::create_only, queueToParentName_.c_str(), 100, maxMsgSize_));
+		mqFromParent_.reset(new boost::interprocess::message_queue(boost::interprocess::create_only, queueFromParentName_.c_str(), 1000, maxMsgSize_));
+		mqToParent_.reset(new boost::interprocess::message_queue(boost::interprocess::create_only, queueToParentName_.c_str(), 1000, maxMsgSize_));
 	}
 	catch(interprocess_exception &ex)
 	{

@@ -7,8 +7,7 @@
 #include <boost/property_tree/detail/xml_parser_error.hpp>
 #include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
-#include <vosvideocommon/SeverityLoggerMacros.h>
-#include <vosvideocommon/StringUtil.h>
+
 #include "ConfigurationParserException.h"
 #include "ConfigurationManager.h"
 
@@ -20,16 +19,6 @@ using boost::property_tree::ptree;
 using vosvideo::configuration::ConfigurationManager;
 using boost::format;
 
-// This file generated at build process and located in RTBC local folder
-wstring ConfigurationManager::configFileName_ = L"rtbcserver.config.xml";
-wstring ConfigurationManager::restServiceUriKey_ = L"RestServiceUri";
-wstring ConfigurationManager::vosVideoWebUriKey_ = L"VosVideoWebUri";
-wstring ConfigurationManager::websocketUriKey_ = L"WebsocketUri";
-wstring ConfigurationManager::siteIdKey_ = L"SiteId";
-wstring ConfigurationManager::siteNameKey_ = L"SiteName";
-wstring ConfigurationManager::loggerKey_ = L"Logging";
-wstring ConfigurationManager::archivePathKey_ = L"ArchivePath";
-
 ConfigurationManager::ConfigurationManager()
 {
 	ptree pt;
@@ -37,8 +26,7 @@ ConfigurationManager::ConfigurationManager()
 
 	try
 	{
-		wstring wconfFilePath;
-		GetConfigurationFilePath(wconfFilePath);
+		wstring wconfFilePath = GetConfigurationFilePath();
 		confFilePath = StringUtil::ToString(wconfFilePath);
 
 		LOG_TRACE("Open configuration file: " << confFilePath);
@@ -54,11 +42,11 @@ ConfigurationManager::ConfigurationManager()
 
 	if (!pt.empty())
 	{
-		BOOST_FOREACH(const ptree::value_type & f, formats)
+		for(const ptree::value_type & f : formats)
 		{
 			const ptree & attributes = f.second.get_child("<xmlattr>");
 			vector <wstring> tmpPair;
-			BOOST_FOREACH(const ptree::value_type &v, attributes)
+			for(const ptree::value_type &v : attributes)
 			{
 				wstring wString = StringUtil::ToWstring(v.second.data());
 				tmpPair.push_back(wString);
@@ -72,7 +60,7 @@ ConfigurationManager::ConfigurationManager()
 				throw ConfigurationParserException("Configuration element is not complete. Check your configuration file.");
 			}
 
-			if (tmpPair[0] != vosVideoWebUriKey_ &&
+			if (tmpPair[0] != webUriKey_ &&
 				tmpPair[0] != restServiceUriKey_ &&
 				tmpPair[0] != websocketUriKey_ && 
 				tmpPair[0] != siteIdKey_ && 
@@ -85,7 +73,6 @@ ConfigurationManager::ConfigurationManager()
 			}
 
 			keyValConf_.insert(make_pair(tmpPair[0], tmpPair[1]));
-			tmpPair.clear();
 		}
 	}
 	LOG_DEBUG("Configuration successfully parsed.");
@@ -96,11 +83,11 @@ ConfigurationManager::~ConfigurationManager()
 {
 }
 
-void ConfigurationManager::GetConfigurationFilePath(wstring& configFile)
+wstring ConfigurationManager::GetConfigurationFilePath()
 {
 #ifndef _DEBUG
 	// Identify path to and read configuration then
-	PWSTR progData;
+	wchar_t* progData;
 	HRESULT hr = SHGetKnownFolderPath(FOLDERID_ProgramData, 0, NULL, &progData);
 	if (hr != S_OK)
 	{
@@ -108,10 +95,7 @@ void ConfigurationManager::GetConfigurationFilePath(wstring& configFile)
 		throw ConfigurationParserException(errmsg);
 	}
 
-	// Take current folder and attach to standard ProgramData folder
-	// It is going to be configuration location for Release mode
-	wstring currFolder = boost::filesystem::current_path().leaf().wstring();		
-	path configFilePath = path(progData) / currFolder / configFileName_; // appends
+	path configFilePath = path(progData) / instDir_ / configFileName_; // appends
 
 	// RTBC only consumes that file, ask user to execute Dashboard first
 	if (!exists(configFilePath))
@@ -119,15 +103,15 @@ void ConfigurationManager::GetConfigurationFilePath(wstring& configFile)
 		string errmsg = "Server configuration folder doesn't exists in ProgramData. Start Vos Video Dashboard first to create configuration.";
 		throw ConfigurationParserException(errmsg);
 	}
-	configFile = configFilePath.wstring();
+	return configFilePath.wstring();
 #else
-	configFile = configFileName_;
+	return configFileName_;
 #endif
 }
 
 wstring ConfigurationManager::GetWebSiteUri() const
 {
-	return FindConfValue(vosVideoWebUriKey_);
+	return FindConfValue(webUriKey_);
 }
 
 wstring ConfigurationManager::GetRestServiceUri() const
@@ -157,7 +141,7 @@ bool ConfigurationManager::IsLoggerOn() const
 	return (wsVal == L"true");
 }
 
-const wstring ConfigurationManager::FindConfValue(wstring wKey) const
+wstring ConfigurationManager::FindConfValue(const wstring& wKey) const
 {
 	unordered_map<wstring, wstring>::const_iterator iter = keyValConf_.find(wKey);
 

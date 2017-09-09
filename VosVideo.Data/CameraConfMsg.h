@@ -68,7 +68,7 @@ namespace vosvideo
 
 		private:
 			void SetFields(const web::json::value& json);
-			bool isActive_;
+			bool isActive_ = false;
 			CameraType cameraType_;
 			CameraVideoFormat videoFormat_;
 			int cameraId_; 

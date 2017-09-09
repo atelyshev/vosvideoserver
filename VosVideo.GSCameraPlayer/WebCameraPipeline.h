@@ -1,12 +1,15 @@
 #pragma once
 #include "GSPipelineBase.h"
 
-namespace vosvideo{
-	namespace cameraplayer{
-		class WebCameraPipeline : public GSPipelineBase{
+namespace vosvideo
+{
+	namespace cameraplayer
+	{
+		class WebCameraPipeline : public GSPipelineBase
+		{
 		public:
 			WebCameraPipeline();
-			~WebCameraPipeline();
+			virtual ~WebCameraPipeline();
 		protected:
 			GstElement* CreateSource();
 			gboolean LinkElements();

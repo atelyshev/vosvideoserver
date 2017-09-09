@@ -9,9 +9,9 @@ namespace vosvideo
 		{
 		public:
 			RtbcDeviceErrorOutMsg(int32_t cameraId, const std::wstring& msgText, int32_t hr = 0 );
-			~RtbcDeviceErrorOutMsg();
+			virtual ~RtbcDeviceErrorOutMsg();
 
-			virtual void GetAsJsonString(std::wstring& jsonStr);
+			virtual void GetAsJsonString(std::wstring& jsonStr) override;
 
 		private:
 			const static MsgType msgType = MsgType::RtbcDeviceErrorOutMsg;

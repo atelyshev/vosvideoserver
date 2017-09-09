@@ -1,6 +1,6 @@
 #pragma once
 // libwebm parser includes
-#include <libwebm/source/mkvreader.hpp>
+#include <libwebm/mkvreader.hpp>
 #include "FileSegmenter.h"
 
 namespace vosvideo
@@ -11,7 +11,7 @@ namespace vosvideo
 		{
 		public:
 			WebmSegmenter(const std::wstring& path);
-			~WebmSegmenter();
+			virtual ~WebmSegmenter();
 
 			std::shared_ptr<MediaFileManifest> GetManifest();
 

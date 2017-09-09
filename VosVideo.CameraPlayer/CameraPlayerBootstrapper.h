@@ -1,9 +1,11 @@
+#pragma once
 
 namespace vosvideo
 {
 	namespace cameraplayer
 	{
-		class CameraPlayerBootstrapper{
+		class CameraPlayerBootstrapper
+		{
 		public:
 			CameraPlayerBootstrapper();
 			virtual ~CameraPlayerBootstrapper();

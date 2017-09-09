@@ -9,9 +9,9 @@ namespace vosvideo
 		class TypeInfoWrapper
 		{
 		public:
-			TypeInfoWrapper(void);
+			TypeInfoWrapper();
 			TypeInfoWrapper(const std::type_info&);
-			~TypeInfoWrapper(void);
+			virtual ~TypeInfoWrapper();
 
 			// Access for the wrapped std::type_info
 			const std::type_info& Get() const;
@@ -27,7 +27,7 @@ namespace vosvideo
 		    friend bool operator<=(const TypeInfoWrapper& lhs, const TypeInfoWrapper& rhs);		    
 		    friend bool operator>=(const TypeInfoWrapper& lhs, const TypeInfoWrapper& rhs);		    
 		private:
-			 const std::type_info* tInfo_;
+			 const std::type_info* tInfo_ = nullptr;
 		};
 	}
 }

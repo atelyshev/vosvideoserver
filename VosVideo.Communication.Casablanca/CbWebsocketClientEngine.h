@@ -17,11 +17,11 @@ namespace vosvideo
 			public:
 
 				CbWebsocketClientEngine(std::shared_ptr<PubSubService> communicationMessageBroker);
-				~CbWebsocketClientEngine(void);
+				virtual ~CbWebsocketClientEngine();
 
-				virtual void Connect(std::wstring const& url);
-				virtual void Send(std::string const& msg);
-				virtual void Close();
+				virtual void Connect(std::wstring const& url) override;
+				virtual void Send(std::string const& msg) override;
+				virtual void Close() override;
 
 				const static std::string Closed;
 			private:

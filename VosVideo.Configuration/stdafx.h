@@ -4,20 +4,21 @@
 //
 
 #pragma once
-#define WIN32_LEAN_AND_MEAN
-
 #include "targetver.h"
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 
-#include <cstdio>
-#include <tchar.h>
-
-// reference additional headers your program requires here
+#include <windows.h>
 #include <strsafe.h>
 #include <atlstr.h>
-#include <windows.h>
 
+#include <cstdio>
 #include <string>
 #include <vector>
 #include <unordered_map>
 #include <memory>
-#include <stdexcept>
+
+#include "VosVideo.Common/StringUtil.h"
+#include "VosVideo.Common/EventLogLogger.h"
+#include "VosVideo.Common/SeverityLogger.h"
+#include "VosVideo.Common/SeverityLoggerMacros.h"

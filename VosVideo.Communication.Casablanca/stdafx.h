@@ -6,9 +6,17 @@
 #pragma once
 
 #include "targetver.h"
-#include <vosvideocommon/SeverityLoggerMacros.h>
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+
+#include <windows.h>
+
+#include <string>
 #include <pplx/pplxtasks.h>
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+
+#include "VosVideo.Common/StringUtil.h"
+#include "VosVideo.Common/SeverityLogger.h"
+#include "VosVideo.Common/SeverityLoggerMacros.h"
 
 
 

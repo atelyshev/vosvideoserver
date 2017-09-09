@@ -1,7 +1,5 @@
 #pragma once
-#include <windows.h>
 #include <wincred.h>
-#include <tchar.h>
 
 // Use cases: 
 // set new credentials: SetCredentials calls VerifyCredentials pass user and password, verify with REST service and save them if confirmed
@@ -17,17 +15,17 @@ namespace vosvideo
 			virtual ~ServiceCredentialsManager();
 
 			// Locally saves in password storage
-			void SetCredentials(std::wstring& userName, std::wstring& password);
+			void SetCredentials(const std::wstring& userName, const std::wstring& password);
 			bool HasCredentials();
-			void GetCredentials(std::wstring& userName, std::wstring& password);
+			std::tuple<std::wstring, std::wstring> GetCredentials();
 
 			// verify if credentials fine
-			bool VerifyCredentials(std::wstring& userName, std::wstring& password);
+			bool VerifyCredentials(const std::wstring& userName, const std::wstring& password);
 			bool VerifyCredentials();
 		private:
-			bool VerifyCredentialsWithService(std::wstring& userName, std::wstring& password);
+			bool VerifyCredentialsWithService(const std::wstring& userName, const std::wstring& password);
 
-			static LPWSTR targetName_;
+			wchar_t* targetName_ = L"vosvideo.com/account";
 		};
 
 	}

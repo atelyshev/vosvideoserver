@@ -10,10 +10,11 @@ namespace vosvideo
 		public:
 			LogInRequest();
 			LogInRequest(const std::wstring& username, const std::wstring& password);
-			~LogInRequest();			
-			virtual void ToJsonValue(web::json::value& obj) const;
-			virtual void FromJsonValue(web::json::value& obj);
-			virtual std::wstring ToString() const;
+			virtual ~LogInRequest();	
+
+			virtual void ToJsonValue(web::json::value& obj) const override;
+			virtual void FromJsonValue(web::json::value& obj) override;
+			virtual std::wstring ToString() const override;
 
 			std::wstring const& GetUserName() const;
 		private:

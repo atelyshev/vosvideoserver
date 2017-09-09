@@ -1,15 +1,12 @@
 #include "stdafx.h"
-#include <vosvideocommon/StringUtil.h>
-#include <vosvideocommon/SystemUtil.h>
-#include <vosvideocommon/EventLogLogger.h>
+#include "VosVideo.Common/SystemUtil.h"
+
 #include "CredentialsException.h"
 #include "ServiceCredentialsManager.h"
 
 using namespace std;
 using namespace util;
 using vosvideo::configuration::ServiceCredentialsManager;
-
-LPWSTR ServiceCredentialsManager::targetName_ = L"vosvideo.com/account"; 
 
 ServiceCredentialsManager::ServiceCredentialsManager()
 {
@@ -26,7 +23,7 @@ bool ServiceCredentialsManager::HasCredentials()
 	wstring password;
 	try
 	{
-		GetCredentials(userName, password);
+		tie(userName, password) = GetCredentials();
 	}
 	catch(CredentialsException)
 	{
@@ -36,9 +33,9 @@ bool ServiceCredentialsManager::HasCredentials()
 	return true;
 }
 
-void ServiceCredentialsManager::SetCredentials(wstring& userName, wstring& password)
+void ServiceCredentialsManager::SetCredentials(const wstring& userName, const wstring& password)
 {
-	DWORD cbCreds = password.length() * sizeof(wchar_t) + 1;
+	uint32_t cbCreds = password.length() * sizeof(wchar_t) + 1;
 
 	CREDENTIALW cred = {0};
 	cred.Type = CRED_TYPE_GENERIC;
@@ -55,7 +52,7 @@ void ServiceCredentialsManager::SetCredentials(wstring& userName, wstring& passw
 	}
 }
 
-void ServiceCredentialsManager::GetCredentials(wstring& userName, wstring& password)
+tuple<wstring, wstring> ServiceCredentialsManager::GetCredentials()
 {
 	PCREDENTIALW pcred;
 
@@ -66,10 +63,11 @@ void ServiceCredentialsManager::GetCredentials(wstring& userName, wstring& passw
 		throw CredentialsException(errMsg);
 	}
 
-	password = wstring((wchar_t*)pcred->CredentialBlob);
-	userName = pcred->UserName;
+	auto password = wstring((wchar_t*)pcred->CredentialBlob);
+	auto userName = pcred->UserName;
 	// must free memory allocated by CredRead()!
 	::CredFree (pcred);
+	return make_tuple(userName, password);
 }
 
 bool ServiceCredentialsManager::VerifyCredentials()
@@ -78,20 +76,20 @@ bool ServiceCredentialsManager::VerifyCredentials()
 	wstring password;
 
 	// Retrieve credentials from local repository
-	GetCredentials(userName, password);
+	tie(userName, password) = GetCredentials();
 	// Verify with REST service
 	VerifyCredentialsWithService(userName, password);
 	return true;
 }
 
-bool ServiceCredentialsManager::VerifyCredentials(wstring& userName, wstring& password)
+bool ServiceCredentialsManager::VerifyCredentials(const wstring& userName, const wstring& password)
 {
 	// Verify with REST service
 	VerifyCredentialsWithService(userName, password);
 	return true;
 }
 
-bool ServiceCredentialsManager::VerifyCredentialsWithService(wstring& userName, wstring& password)
+bool ServiceCredentialsManager::VerifyCredentialsWithService(const wstring& userName, const wstring& password)
 {
 	// TODO: implement verification with REST service
 	return true;

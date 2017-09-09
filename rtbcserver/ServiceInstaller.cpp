@@ -17,7 +17,6 @@
 #pragma region "Includes"
 #include "stdafx.h"
 #include <stdio.h>
-#include <windows.h>
 #include "ServiceInstaller.h"
 #pragma endregion
 

@@ -1,8 +1,7 @@
 #pragma once
+#include <webrtc/modules/video_capture/video_capture_defines.h>
 #include "VosVideo.Data/CameraConfMsg.h"
 #include "VosVideo.Data/SendData.h"
-#include <modules/video_capture/include/video_capture_defines.h>
-#include <Windows.h>
 
 namespace vosvideo
 {
@@ -23,7 +22,6 @@ namespace vosvideo
 		class CameraPlayerBase
 		{
 		public:
-			CameraPlayerBase();
 			virtual ~CameraPlayerBase();
 
 			// Playback control
