@@ -27,11 +27,7 @@ WebSocketMessageParser::WebSocketMessageParser(const string& msg)
 	}
 }
 
-WebSocketMessageParser::~WebSocketMessageParser()
-{
-}
-
-MsgType WebSocketMessageParser::GetMessageType(web::json::value& jpayload)
+MsgType WebSocketMessageParser::GetMessageType(const web::json::value& jpayload)
 {
 	return static_cast<MsgType>(jpayload.at(U("mt")).as_integer());
 }
@@ -51,18 +47,18 @@ void WebSocketMessageParser::GetPayload(web::json::value& jpayload)
 	jpayload = jpayload_;
 }
 
-void WebSocketMessageParser::GetMessage(std::wstring& message)
+std::wstring WebSocketMessageParser::GetMessage()
 {
-	message = originalMsg_;
+	return originalMsg_;
 }
 
-void WebSocketMessageParser::GetToPeer(std::wstring& toPeer)
+std::wstring WebSocketMessageParser::GetToPeer()
 {
-	toPeer = toPeer_;
+	return toPeer_;
 }
 
-void WebSocketMessageParser::GetFromPeer(std::wstring& fromPeer)
+std::wstring WebSocketMessageParser::GetFromPeer()
 {
-	fromPeer = fromPeer_;
+	return fromPeer_;
 }
 

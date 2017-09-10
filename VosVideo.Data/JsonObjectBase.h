@@ -11,8 +11,8 @@ namespace vosvideo
 		public:
 			JsonObjectBase(){};
 			virtual ~JsonObjectBase(){};
-			virtual void ToJsonValue(web::json::value& obj) const = 0;
-			virtual void FromJsonValue(web::json::value& obj) = 0;
+			virtual web::json::value ToJsonValue() const = 0;
+			virtual void FromJsonValue(const web::json::value& obj) = 0;
 			virtual std::wstring ToString() const = 0;
 		};
 	}

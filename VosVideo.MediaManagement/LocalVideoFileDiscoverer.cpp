@@ -50,9 +50,9 @@ vector<shared_ptr<VideoFile> > LocalVideoFileDiscoverer::Discover(vector<wstring
 {
 	vector<shared_ptr<VideoFile>> outInfo;
 
-	for (auto iter = vectPath.begin(); iter != vectPath.end(); ++iter)
+	for (const auto& vp : vectPath)
 	{
-		string strPath = "file:///" + StringUtil::ToString(*iter);
+		string strPath = "file:///" + StringUtil::ToString(vp);
 		const gchar *uri = strPath.c_str();
 //		data_.fileInfo.reset(new LocalVideoFile(*iter));
 

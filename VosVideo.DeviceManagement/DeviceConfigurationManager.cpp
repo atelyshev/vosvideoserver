@@ -86,12 +86,12 @@ void DeviceConfigurationManager::RunDeviceDiscoveryAsync(const shared_ptr<vosvid
 			wph.CreateVideoCaptureDevices(wcl);
 			web::json::value jobjVect;
 			int i = 0;
-			for (WebCameraHelperBase::WebCamsList::const_iterator iter = wcl.begin(); iter != wcl.end(); ++iter)
+			for (const auto& wcd : wcl)
 			{
 				web::json::value jObj;
 				jObj[L"modeltype"] = web::json::value::number(static_cast<int>(CameraType::WEBCAM));
-				jObj[L"friendlyname"] = web::json::value::string(iter->FriendlyName);
-				jObj[L"url"] = web::json::value::string(iter->SymLink);
+				jObj[L"friendlyname"] = web::json::value::string(wcd.FriendlyName);
+				jObj[L"url"] = web::json::value::string(wcd.SymLink);
 				jobjVect[i++] = jObj;
 			}
 

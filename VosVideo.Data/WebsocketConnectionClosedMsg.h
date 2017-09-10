@@ -11,7 +11,7 @@ namespace vosvideo
 			WebsocketConnectionClosedMsg();
 			virtual ~WebsocketConnectionClosedMsg();
 
-			virtual void FromJsonValue(web::json::value& obj) override;
+			virtual void FromJsonValue(const web::json::value& obj) override;
 		};
 	}
 }

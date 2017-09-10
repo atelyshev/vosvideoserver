@@ -44,7 +44,7 @@ class ReceivedDataStub final : public ReceivedData
 
 		virtual void GetMessage(std::wstring& payload){}
 		virtual void GetMessage(web::json::value& jmessage){}
-		virtual void ToJsonValue(web::json::value& obj) const{}
-		virtual void FromJsonValue(web::json::value& obj){}
+		virtual web::json::value ToJsonValue() const override { web::json::value jObj; return jObj; }
+		virtual void FromJsonValue(const web::json::value& obj) override {}
 		virtual std::wstring ToString() const {return L"";}
 };

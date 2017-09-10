@@ -14,7 +14,7 @@ namespace vosvideo
 				const std::wstring& sdp, int devId);
 			virtual ~IceCandidateResponseMsg();
 
-			virtual void FromJsonValue(web::json::value& obj);
+			virtual void FromJsonValue(const web::json::value& obj) override;
 			virtual std::wstring ToString() const;
 			web::json::value jObj_;
 		};

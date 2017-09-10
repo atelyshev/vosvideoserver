@@ -164,8 +164,9 @@ bool CameraConfMsg::GetIsActive()
 	return isActive_;
 }
 
-void CameraConfMsg::ToJsonValue(web::json::value& jObj) const
+web::json::value CameraConfMsg::ToJsonValue() const
 {
+	web::json::value jObj;
 	jObj[L"mt"] = web::json::value::number(static_cast<int>(vosvideo::data::MsgType::CameraConfMsg));
 	jObj[L"isActive"] = web::json::value::boolean(isActive_);
 	jObj[L"cameraType"] = web::json::value::number(static_cast<int>(cameraType_));
@@ -179,17 +180,17 @@ void CameraConfMsg::ToJsonValue(web::json::value& jObj) const
 	jObj[L"audiouri"] = web::json::value::string(audiouri_);
 	jObj[L"username"] = web::json::value::string(username_);
 	jObj[L"pass"] = web::json::value::string(pass_);
+	return jObj;
 }
 
-void CameraConfMsg::FromJsonValue(web::json::value& jpayload)
+void CameraConfMsg::FromJsonValue(const web::json::value& jpayload)
 {
 	SetFields(jpayload);
 }
 
 wstring CameraConfMsg::ToString() const
 {
-	web::json::value jObj;
-	ToJsonValue(jObj);
+	auto jObj = ToJsonValue();
 	return jObj.serialize();
 }
 

@@ -12,11 +12,13 @@ DeletePeerConnectionRequestMsg::~DeletePeerConnectionRequestMsg()
 {
 }
 
-void DeletePeerConnectionRequestMsg::ToJsonValue( web::json::value& obj ) const
+web::json::value DeletePeerConnectionRequestMsg::ToJsonValue() const
 {
+	web::json::value jObj;
+	return jObj;
 }
 
-void DeletePeerConnectionRequestMsg::FromJsonValue( web::json::value& obj )
+void DeletePeerConnectionRequestMsg::FromJsonValue(const web::json::value& obj )
 {
 }
 

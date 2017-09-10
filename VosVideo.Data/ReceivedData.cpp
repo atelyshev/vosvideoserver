@@ -37,25 +37,27 @@ wstring ReceivedData::ToString() const
 
 	if(parser_)
 	{
-		parser_->GetMessage(msg);
+		msg = parser_->GetMessage();
 	}
 
 	return msg;
 }
 
-void ReceivedData::ToJsonValue(web::json::value& jmessage) const
+web::json::value ReceivedData::ToJsonValue() const
 {
+	web::json::value jObj;
 	if(parser_)
 	{
-		parser_->GetPayload(jmessage);
+		parser_->GetPayload(jObj);
 	}
+	return jObj;
 }
 
 void ReceivedData::GetFromPeer(std::wstring& fromPeer)
 {
 	if(parser_)
 	{
-		parser_->GetFromPeer(fromPeer);
+		fromPeer = parser_->GetFromPeer();
 	}
 }
 
@@ -63,6 +65,6 @@ void ReceivedData::GetToPeer(std::wstring& toPeer)
 {
 	if(parser_)
 	{
-		parser_->GetToPeer(toPeer);
+		toPeer = parser_->GetToPeer();
 	}
 }

@@ -11,7 +11,7 @@ namespace vosvideo
 			IceCandidateMsg(){}
 			virtual ~IceCandidateMsg(){}
 
-			virtual void GetIceCandidate(std::wstring& iceCandidate) = 0;
+			virtual std::wstring GetIceCandidate() = 0;
 		};
 	}
 }

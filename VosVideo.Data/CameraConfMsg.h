@@ -61,10 +61,9 @@ namespace vosvideo
 			CameraConfMsg& operator=(const CameraConfMsg& other);
 
 			virtual void Init(std::shared_ptr<WebSocketMessageParser> parser);
-			virtual void ToJsonValue(web::json::value& obj) const;
-			virtual void FromJsonValue(web::json::value& obj);
+			virtual web::json::value ToJsonValue() const override;
+			virtual void FromJsonValue(const web::json::value& obj) override;
 			virtual std::wstring ToString() const;
-			static void ToObject(const std::wstring& jsonStr, CameraConfMsg& objRef);
 
 		private:
 			void SetFields(const web::json::value& json);

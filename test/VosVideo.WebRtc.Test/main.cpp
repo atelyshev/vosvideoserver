@@ -70,11 +70,9 @@ TEST(VosVideoWebRtcPeerConnection, Create)
 	DtoFactory dtoFactory;
 	shared_ptr<WebSocketMessageParser> msgParser(new WebSocketMessageParser(testSdpMsg));
 	auto dto = dtoFactory.Create(msgParser->GetMessageType());
-	dto->Init(msgParser);
-	wstring srvPeer;
-	wstring clientPeer;
-	msgParser->GetFromPeer(clientPeer);
-	msgParser->GetToPeer(srvPeer);
+	dto->Init(msgParser);	
+	auto clientPeer = msgParser->GetFromPeer();
+	auto srvPeer = msgParser->GetToPeer();
 
 //	talk_base::scoped_refptr<WebRtcPeerConnection>pc = 
 //		new talk_base::RefCountedObject<WebRtcPeerConnection>(clientPeer, srvPeer, peer_connection_factory, std::shared_ptr<vosvideo::communication::CommunicationManager>());

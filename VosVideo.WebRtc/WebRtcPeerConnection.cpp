@@ -97,9 +97,8 @@ void WebRtcPeerConnection::OnMessage(rtc::Message* message)
 
 void WebRtcPeerConnection::InitSdp(std::shared_ptr<SdpOffer> sdp)
 {
-	wstring wpayload;
-	sdp->GetSdpOffer(wpayload);
-	string sdpPayload = StringUtil::ToString(wpayload);
+	auto wpayload = sdp->GetSdpOffer();
+	auto sdpPayload = StringUtil::ToString(wpayload);
 	commandThr_->Send(RTC_FROM_HERE, this, static_cast<uint32_t>(PeerConnectionMessages::DoInitSdp),
 		new rtc::TypedMessageData<string>(sdpPayload));
 }
@@ -129,9 +128,8 @@ void WebRtcPeerConnection::InitSdp_r(const std::string& sdpPayload)
 
 void WebRtcPeerConnection::InitIce(std::shared_ptr<vosvideo::data::WebRtcIceCandidateMsg> iceMsg)
 {
-	wstring wpayload;
-	iceMsg->GetIceCandidate(wpayload);
-	string payload = StringUtil::ToString(wpayload);
+	auto wpayload = iceMsg->GetIceCandidate();
+	auto payload = StringUtil::ToString(wpayload);
 
 	Json::Reader reader;
 	Json::Value jmessage;
@@ -235,9 +233,9 @@ void WebRtcPeerConnection::OnSignalingChange(webrtc::PeerConnectionInterface::Si
 {
 	if (peer_connection_->signaling_state() == webrtc::PeerConnectionInterface::SignalingState::kClosed)
 	{
-		for (MediaStreamMap::iterator iter = active_streams_.begin(); iter != active_streams_.end(); ++iter)
+		for (const auto& as : active_streams_)
 		{
-			peer_connection_->RemoveStream(iter->second);
+			peer_connection_->RemoveStream(as.second);
 		}
 
 		active_streams_.clear();

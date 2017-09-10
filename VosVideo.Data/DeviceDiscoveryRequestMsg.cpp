@@ -13,11 +13,13 @@ DeviceDiscoveryRequestMsg::~DeviceDiscoveryRequestMsg()
 {
 }
 
-void DeviceDiscoveryRequestMsg::ToJsonValue( web::json::value& obj ) const
+web::json::value DeviceDiscoveryRequestMsg::ToJsonValue() const
 {
+	web::json::value jObj;
+	return jObj;
 }
 
-void DeviceDiscoveryRequestMsg::FromJsonValue( web::json::value& obj )
+void DeviceDiscoveryRequestMsg::FromJsonValue(const web::json::value& obj)
 {
 }
 

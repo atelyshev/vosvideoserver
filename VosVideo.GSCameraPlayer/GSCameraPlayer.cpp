@@ -27,7 +27,7 @@ int32_t GSCameraPlayer::OpenURL(vosvideo::data::CameraConfMsg& cameraConf)
 		_state == PlayerState::Stopped ||
 		_state == PlayerState::Closing)
 	{
-		return E_FAIL;
+		return -1;
 	}
 
 	std::wstring waudioUri;
@@ -65,7 +65,7 @@ int32_t GSCameraPlayer::OpenURL(vosvideo::data::CameraConfMsg& cameraConf)
 	//this->_appThread->detach();
 
 	_state = PlayerState::OpenPending;
-	return S_OK;
+	return 0;
 }
 
 void GSCameraPlayer::GetWebRtcCapability(webrtc::VideoCaptureCapability& webRtcCapability)
@@ -76,25 +76,25 @@ void GSCameraPlayer::GetWebRtcCapability(webrtc::VideoCaptureCapability& webRtcC
 
 int32_t GSCameraPlayer::Play(){
 	LOG_TRACE("GSCameraPlayer Play called");
-	return E_FAIL;
+	return -1;
 }
 
 int32_t GSCameraPlayer::Pause()
 {
 	LOG_TRACE("GSCameraPlayer Paused called");
-	return E_FAIL;
+	return -1;
 }
 
 int32_t GSCameraPlayer::Stop()
 {
 	LOG_TRACE("GSCameraPlayer Stop called");
-	return E_FAIL;
+	return -1;
 }
 
 int32_t GSCameraPlayer::Shutdown()
 {
 	LOG_TRACE("GSCameraPlayer Shutdown called");
-	return E_FAIL;
+	return -1;
 }
 
 PlayerState GSCameraPlayer::GetState(std::shared_ptr<vosvideo::data::SendData>& lastErrMsg) const

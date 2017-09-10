@@ -13,7 +13,7 @@ WebsocketConnectionClosedMsg::~WebsocketConnectionClosedMsg()
 {
 }
 
-void WebsocketConnectionClosedMsg::FromJsonValue( web::json::value& obj )
+void WebsocketConnectionClosedMsg::FromJsonValue(const web::json::value& obj )
 {
 }
 

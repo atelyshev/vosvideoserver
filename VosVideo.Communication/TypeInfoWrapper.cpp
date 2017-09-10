@@ -4,7 +4,7 @@
 
 using vosvideo::communication::TypeInfoWrapper;
 
-TypeInfoWrapper::TypeInfoWrapper(void)
+TypeInfoWrapper::TypeInfoWrapper()
 {
 	class Nil {};
 	tInfo_ = &typeid(Nil);	
@@ -17,7 +17,7 @@ TypeInfoWrapper::TypeInfoWrapper(const std::type_info& tInfo) : tInfo_(&tInfo)
 }
 
 
-TypeInfoWrapper::~TypeInfoWrapper(void)
+TypeInfoWrapper::~TypeInfoWrapper()
 {
 }
 

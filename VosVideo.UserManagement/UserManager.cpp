@@ -64,8 +64,7 @@ void UserManager::ReLoginAsync()
 void UserManager::ReAuthAsync()
 {
 	LOG_DEBUG("Login requested");
-	web::json::value jsonVal;
-	loginRequest_.ToJsonValue(jsonVal);
+	auto jsonVal = loginRequest_.ToJsonValue();
 	communicationManager_->HttpPost(L"/auth?format=json", jsonVal).wait();
 }
 
@@ -80,8 +79,7 @@ concurrency::task<LogInResponse> UserManager::LogInAsync(LogInRequest const& log
 	logInInProgress_ = true;
 	LOG_DEBUG("Login requested");
 
-	web::json::value jsonVal;
-	loginRequest.ToJsonValue(jsonVal);
+	auto jsonVal = loginRequest.ToJsonValue();
 
 	// Authenticate by REST task
 	auto loginToRestServiceTask = communicationManager_->HttpPost(L"/auth?format=json", jsonVal);
@@ -143,8 +141,7 @@ void UserManager::OnMessageReceived(const shared_ptr<vosvideo::data::ReceivedDat
 	if(dynamic_pointer_cast<WebsocketConnectionOpenedMsg>(receivedMessage))
 	{
 		shared_ptr<WebsocketConnectionOpenedMsg> openedMsg = dynamic_pointer_cast<WebsocketConnectionOpenedMsg>(receivedMessage);
-		web::json::value jsonMsg;
-		receivedMessage->ToJsonValue(jsonMsg);
+		auto jsonMsg = receivedMessage->ToJsonValue();
 		GetClientPeersFromJson(jsonMsg, clientPeers);
 		lock_guard<mutex> lock(mutex_);
 
@@ -153,14 +150,13 @@ void UserManager::OnMessageReceived(const shared_ptr<vosvideo::data::ReceivedDat
 	else if(dynamic_pointer_cast<WebsocketConnectionClosedMsg>(receivedMessage))
 	{
 		shared_ptr<WebsocketConnectionClosedMsg> closedMsg = dynamic_pointer_cast<WebsocketConnectionClosedMsg>(receivedMessage);
-		web::json::value jsonMsg;
-		receivedMessage->ToJsonValue(jsonMsg);
+		auto jsonMsg = receivedMessage->ToJsonValue();
 		GetClientPeersFromJson(jsonMsg, clientPeers);
 		lock_guard<mutex> lock(mutex_);
 
-		for (set<wstring>::iterator iter = clientPeers.begin(); iter != clientPeers.end(); ++iter)
+		for (const auto& cp : clientPeers)
 		{
-			clientPeers_.erase(*iter);
+			clientPeers_.erase(cp);
 		}
 	}
 }
@@ -170,10 +166,10 @@ void UserManager::NotifyAllUsers(shared_ptr<SendData> outMsg)
 {
 	lock_guard<mutex> lock(mutex_);
 
-	for (set<wstring>::iterator iter = clientPeers_.begin(); iter != clientPeers_.end(); ++iter)
+	for (const auto& cp : clientPeers_)
 	{
 		string respRtbc;
-		CommunicationManager::CreateWebsocketMessageString(logInResponse_.GetPeer().GetPeerId(), *iter, outMsg, respRtbc);
+		CommunicationManager::CreateWebsocketMessageString(logInResponse_.GetPeer().GetPeerId(), cp, outMsg, respRtbc);
 		communicationManager_->WebsocketSend(respRtbc);
 	}
 }
@@ -190,9 +186,9 @@ std::wstring UserManager::GetByKeyFromJson(web::json::value& jval, wstring key)
 
 void UserManager::SetAccountIdFromUserJson( web::json::value& jval)
 {
-	for (auto& firstVal : jval.at(U("UserList")).as_array())
+	for (const auto& firstVal : jval.at(U("UserList")).as_array())
 	{
-		for (auto& p : firstVal.as_object())
+		for (const auto& p : firstVal.as_object())
 		{
 			if (p.first == L"AccountId")
 			{
@@ -210,14 +206,14 @@ void UserManager::GetTokenFromJson( web::json::value& jval, vosvideo::communicat
 	peer = vosvideo::communication::Peer(val);
 }	
 
-void UserManager::GetClientPeersFromJson(web::json::value& jval, set<wstring>& clientPeers)
+void UserManager::GetClientPeersFromJson(const web::json::value& jval, set<wstring>& clientPeers)
 {
 	if (jval.type() == web::json::value::Array)
 	{
 		auto arr = jval.as_array();
-		for (web::json::array::iterator iter = arr.begin(); iter != arr.end(); ++iter)
+		for (const auto& a : arr)
 		{
-			GetClientPeerFromJson(*iter, clientPeers);
+			GetClientPeerFromJson(a, clientPeers);
 		}
 	}
 	else
@@ -226,7 +222,7 @@ void UserManager::GetClientPeersFromJson(web::json::value& jval, set<wstring>& c
 	}
 }
 
-void UserManager::GetClientPeerFromJson(web::json::value& jval, set<wstring>& clientPeers)
+void UserManager::GetClientPeerFromJson(const web::json::value& jval, set<wstring>& clientPeers)
 {
 	wstring peerId;
 	wstring connType;

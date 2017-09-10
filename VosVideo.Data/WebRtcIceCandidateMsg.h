@@ -13,11 +13,11 @@ namespace vosvideo
 			WebRtcIceCandidateMsg();
 			virtual ~WebRtcIceCandidateMsg();
 
-			virtual void FromJsonValue(web::json::value& obj) override;
+			virtual void FromJsonValue(const web::json::value& obj) override;
 			// from IceCandidateMsg interface
-			virtual void GetIceCandidate(std::wstring& iceCandidate) override;
+			virtual std::wstring GetIceCandidate() override;
 			// from MediaInfoMsg interface
-			virtual void GetMediaInfo(web::json::value& mi) override;
+			virtual web::json::value GetMediaInfo() override;
 		};
 	}
 }

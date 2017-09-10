@@ -108,9 +108,9 @@ void WebRtcManager::OnMessageReceived(std::shared_ptr<ReceivedData> receivedMess
 			shared_ptr<CameraConfMsg> cameraConf = dynamic_pointer_cast<CameraConfMsg>(receivedMessage);			
 			// COM pointer can not use shared_ptr
 			player_ = CameraPlayerFactory::CreateCameraPlayer();
-			HRESULT hr = player_->OpenURL(*cameraConf.get());		
+			auto hr = player_->OpenURL(*cameraConf.get());		
 
-			if (hr != S_OK)
+			if (hr != 0)
 			{
 				LOG_CRITICAL("Failed to create camera");
 			}
@@ -183,9 +183,8 @@ void WebRtcManager::OnMessageReceived(std::shared_ptr<ReceivedData> receivedMess
 	}
 	else if(dynamic_pointer_cast<WebsocketConnectionClosedMsg>(receivedMessage))
 	{
-		web::json::value jsonMsg;
-		receivedMessage->ToJsonValue(jsonMsg);
-		wstring fromPeer = jsonMsg.at(U("p")).as_string();
+		auto jsonMsg = receivedMessage->ToJsonValue();
+		auto fromPeer = jsonMsg.at(U("p")).as_string();
 		DeletePeerConnection(fromPeer);
 	}
 	else if(dynamic_pointer_cast<DeletePeerConnectionRequestMsg>(receivedMessage))
@@ -227,12 +226,12 @@ void WebRtcManager::DeleteAllPeerConnections()
 {
 	LOG_TRACE("Query for deletion all peer connections");	
 
-	for (auto iter = peer_connections_.begin(); iter != peer_connections_.end(); ++iter)
+	for (const auto& pc : peer_connections_)
 	{
 		// command close active streams and remove from collection after
-		iter->second->Close();
-		LOG_TRACE("Query for deletion peer connection with key:" << StringUtil::ToString(iter->first));
-		finishing_peer_connections_.push_back(iter->second);
+		pc.second->Close();
+		LOG_TRACE("Query for deletion peer connection with key:" << StringUtil::ToString(pc.first));
+		finishing_peer_connections_.push_back(pc.second);
 	}
 
 	peer_connections_.clear();

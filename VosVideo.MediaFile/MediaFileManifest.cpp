@@ -31,10 +31,10 @@ web::json::value MediaFileManifest::ToJsonObject()
 	manifestObj[L"filename"] = web::json::value::string(filename_);
 	vector<web::json::value> clustArr;
 
-	for (auto iter = clusters_.begin(); iter != clusters_.end(); iter++)
+	for (auto& cl : clusters_)
 	{
 		int64_t timeCode, offset;
-		iter->GetClusterData(timeCode, offset);
+		cl.GetClusterData(timeCode, offset);
 		web::json::value cluster;
 		cluster[L"timecode"] = web::json::value::number((double)timeCode);
 		cluster[L"offset"] = web::json::value::number((double)offset);

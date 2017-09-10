@@ -11,7 +11,7 @@ namespace vosvideo
 			ShutdownCameraProcessRequestMsg();
 			virtual ~ShutdownCameraProcessRequestMsg();
 
-			virtual void FromJsonValue(web::json::value& obj) override;
+			virtual void FromJsonValue(const web::json::value& obj) override;
 			virtual std::wstring ToString() const override;
 
 		private:

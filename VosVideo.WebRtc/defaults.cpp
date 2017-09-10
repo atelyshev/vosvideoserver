@@ -37,7 +37,6 @@
 #include <unistd.h>
 #endif
 
-//#include <webrtc/base/common.h>
 #include <webrtc/base/arraysize.h>
 
 const char kAudioLabel[] = "audio_label";

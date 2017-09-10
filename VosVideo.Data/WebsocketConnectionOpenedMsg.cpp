@@ -13,7 +13,7 @@ WebsocketConnectionOpenedMsg::~WebsocketConnectionOpenedMsg()
 {
 }
 
-void WebsocketConnectionOpenedMsg::FromJsonValue( web::json::value& obj )
+void WebsocketConnectionOpenedMsg::FromJsonValue(const web::json::value& obj )
 {
 }
 

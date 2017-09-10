@@ -11,7 +11,7 @@ namespace vosvideo
 			MediaInfo(){}
 			virtual ~MediaInfo(){}
 
-			virtual void GetMediaInfo(web::json::value& mi) = 0;
+			virtual web::json::value GetMediaInfo() = 0;
 		};
 	}
 }

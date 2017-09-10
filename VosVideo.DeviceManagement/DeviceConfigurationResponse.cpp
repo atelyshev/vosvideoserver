@@ -15,11 +15,13 @@ DeviceConfigurationResponse::~DeviceConfigurationResponse()
 }
 
 
-void DeviceConfigurationResponse::ToJsonValue(web::json::value& obj) const
+web::json::value DeviceConfigurationResponse::ToJsonValue() const
 {
+	web::json::value jObj;
+	return jObj;
 }
 
-void DeviceConfigurationResponse::FromJsonValue(web::json::value& obj)
+void DeviceConfigurationResponse::FromJsonValue(const web::json::value& obj)
 {
 }
 

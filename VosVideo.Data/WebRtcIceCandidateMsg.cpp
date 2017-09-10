@@ -13,30 +13,29 @@ WebRtcIceCandidateMsg::~WebRtcIceCandidateMsg()
 {
 }
 
-void WebRtcIceCandidateMsg::FromJsonValue( web::json::value& obj )
+void WebRtcIceCandidateMsg::FromJsonValue(const web::json::value& obj )
 {
 }
 
-void WebRtcIceCandidateMsg::GetIceCandidate(wstring& iceCandidate)
+wstring WebRtcIceCandidateMsg::GetIceCandidate()
 {
-	web::json::value jmessage;
-	ToJsonValue(jmessage);
-	iceCandidate = jmessage[0].serialize();
+	auto jmessage = ToJsonValue();
+	return jmessage[0].serialize();
 }
 
-void WebRtcIceCandidateMsg::GetMediaInfo(web::json::value& mi)
+web::json::value WebRtcIceCandidateMsg::GetMediaInfo()
 {
-	web::json::value jmessage;
-	ToJsonValue(jmessage);
-
+	auto jmessage = ToJsonValue();
 	auto arr = jmessage.as_array();
-	for (web::json::array::iterator iter1 = arr.begin(); iter1 != arr.end(); ++iter1)
+	web::json::value mi;
+
+	for (const auto& a : arr)
 	{
-		auto lvl2 = *iter1;
-		if (lvl2.has_field(U("media_info")))
+		if (a.has_field(U("media_info")))
 		{
-			mi = lvl2.at(U("media_info"));
-			return;
+			mi = a.at(U("media_info"));
+			break;
 		}
 	}
+	return mi;
 }
