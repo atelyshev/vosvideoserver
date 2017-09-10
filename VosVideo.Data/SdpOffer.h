@@ -11,7 +11,7 @@ namespace vosvideo
 			SdpOffer(){}
 			virtual ~SdpOffer(){}
 
-			virtual void GetSdpOffer(std::wstring& sdpOffer) = 0;
+			virtual std::wstring GetSdpOffer() = 0;
 		};
 	}
 }

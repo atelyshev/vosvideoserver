@@ -15,11 +15,13 @@ LogInResponse::~LogInResponse()
 }
 
 
-void LogInResponse::ToJsonValue(web::json::value& obj) const
+web::json::value LogInResponse::ToJsonValue() const
 {
+	web::json::value jObj;
+	return jObj;
 }
 
-void LogInResponse::FromJsonValue(web::json::value& obj)
+void LogInResponse::FromJsonValue(const web::json::value& obj)
 {
 }
 

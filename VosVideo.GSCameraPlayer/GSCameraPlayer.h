@@ -14,23 +14,23 @@ namespace vosvideo
 			GSCameraPlayer();
 			virtual ~GSCameraPlayer();
 
-			int32_t OpenURL(vosvideo::data::CameraConfMsg&);
+			int32_t OpenURL(vosvideo::data::CameraConfMsg&) override;
 
-			void GetWebRtcCapability(webrtc::VideoCaptureCapability& webRtcCapability);
-			int32_t Play();
-			int32_t Pause();
-			int32_t Stop();
-			int32_t Shutdown();
+			void GetWebRtcCapability(webrtc::VideoCaptureCapability& webRtcCapability) override;
+			int32_t Play() override;
+			int32_t Pause() override;
+			int32_t Stop() override;
+			int32_t Shutdown() override;
 
-			PlayerState GetState(std::shared_ptr<vosvideo::data::SendData>& lastErrMsg) const;
-			PlayerState GetState() const;
+			PlayerState GetState(std::shared_ptr<vosvideo::data::SendData>& lastErrMsg) const  override;
+			PlayerState GetState() const override;
 
 			// Probably most important method, through it camera communicates to WebRTC
-			void SetExternalCapturer(webrtc::VideoCaptureExternal* captureObserver);
-			void RemoveExternalCapturers();
-			void RemoveExternalCapturer(webrtc::VideoCaptureExternal* captureObserver);
+			void SetExternalCapturer(webrtc::VideoCaptureExternal* captureObserver) override;
+			void RemoveExternalCapturers() override;
+			void RemoveExternalCapturer(webrtc::VideoCaptureExternal* captureObserver) override;
 
-			uint32_t GetDeviceId() const;			
+			uint32_t GetDeviceId() const override;
 
 		private:			
 			PlayerState  _state;

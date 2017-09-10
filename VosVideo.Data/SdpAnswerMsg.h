@@ -12,7 +12,7 @@ namespace vosvideo
 			SdpAnswerMsg(const std::wstring& srvPeer, const std::wstring& clientPeer, const std::wstring& sdp, int devId);
 			virtual ~SdpAnswerMsg();
 
-			virtual void FromJsonValue(web::json::value& obj) override;
+			virtual void FromJsonValue(const web::json::value& obj) override;
 			virtual std::wstring ToString() const override;
 			web::json::value jObj_;
 		};

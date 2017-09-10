@@ -18,13 +18,15 @@ DeviceConfigurationRequest::~DeviceConfigurationRequest()
 {
 }
 
-void DeviceConfigurationRequest::ToJsonValue(web::json::value& obj) const
+web::json::value DeviceConfigurationRequest::ToJsonValue() const
 {
-	obj[U("AccountId")] = web::json::value::string(userAccountId_);
-	obj[U("SiteId")] = web::json::value::string(siteId_);
+	web::json::value jObj;
+	jObj[U("AccountId")] = web::json::value::string(userAccountId_);
+	jObj[U("SiteId")] = web::json::value::string(siteId_);
+	return jObj;
 }
 
-void DeviceConfigurationRequest::FromJsonValue(web::json::value& obj )
+void DeviceConfigurationRequest::FromJsonValue(const web::json::value& obj)
 {
 }
 

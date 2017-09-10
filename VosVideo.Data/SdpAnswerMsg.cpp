@@ -26,7 +26,7 @@ SdpAnswerMsg::~SdpAnswerMsg()
 {
 }
 
-void SdpAnswerMsg::FromJsonValue( web::json::value& obj )
+void SdpAnswerMsg::FromJsonValue(const web::json::value& obj )
 {
 }
 
@@ -35,9 +35,7 @@ wstring SdpAnswerMsg::ToString() const
 {
 	if (jObj_.is_null())
 	{
-		wstring msg;
-		parser_->GetMessage(msg);
-		return msg;
+		return parser_->GetMessage();
 	}
 	return jObj_.serialize();
 }

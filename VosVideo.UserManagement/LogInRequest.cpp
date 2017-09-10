@@ -19,13 +19,15 @@ LogInRequest::~LogInRequest(void)
 {
 }
 
-void LogInRequest::ToJsonValue(web::json::value& obj) const
+web::json::value LogInRequest::ToJsonValue() const
 {
-	obj[U("UserName")] = web::json::value::string(username_);
-	obj[U("Password")] = web::json::value::string(password_);
+	web::json::value jObj;
+	jObj[U("UserName")] = web::json::value::string(username_);
+	jObj[U("Password")] = web::json::value::string(password_);
+	return jObj;
 }
 
-void vosvideo::usermanagement::LogInRequest::FromJsonValue(web::json::value& obj )
+void vosvideo::usermanagement::LogInRequest::FromJsonValue(const web::json::value& obj )
 {
 }
 

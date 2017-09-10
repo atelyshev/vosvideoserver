@@ -13,12 +13,12 @@ namespace vosvideo
 			LiveVideoOfferMsg();
 			virtual ~LiveVideoOfferMsg();
 
-			virtual void FromJsonValue(web::json::value& obj);
+			virtual void FromJsonValue(const web::json::value& obj) override;
 
 			// from SdpOfferMsg interface
-			virtual void GetSdpOffer(std::wstring& sdpOffer);
+			virtual std::wstring GetSdpOffer() override;
 			// from MediaInfoMsg interface
-			virtual void GetMediaInfo(web::json::value& mi);
+			virtual web::json::value GetMediaInfo() override;
 		};
 	}
 }

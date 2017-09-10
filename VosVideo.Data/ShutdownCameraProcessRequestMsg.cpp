@@ -14,7 +14,7 @@ ShutdownCameraProcessRequestMsg::~ShutdownCameraProcessRequestMsg()
 {
 }
 
-void ShutdownCameraProcessRequestMsg::FromJsonValue( web::json::value& obj )
+void ShutdownCameraProcessRequestMsg::FromJsonValue(const web::json::value& obj )
 {
 }
 

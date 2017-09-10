@@ -10,18 +10,18 @@ namespace vosvideo
 		{
 		public:
 			WebSocketMessageParser(const std::string& msg);
-			virtual ~WebSocketMessageParser();
+			virtual ~WebSocketMessageParser() {}
 
 			MsgType GetMessageType();
-			void GetFromPeer(std::wstring& fromPeer);
-			void GetToPeer(std::wstring& toPeer);
+			std::wstring GetFromPeer();
+			std::wstring GetToPeer();
 
 			void GetPayload(std::wstring& message);
 			void GetPayload(web::json::value& jmessage);
-			void GetMessage(std::wstring& message);
+			std::wstring GetMessage();
 
 		private:
-			MsgType GetMessageType(web::json::value& jpayload);
+			MsgType GetMessageType(const web::json::value& jpayload);
 
 			web::json::value jpayload_;
 			MsgType messageType_;

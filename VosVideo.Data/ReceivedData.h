@@ -13,8 +13,7 @@ namespace vosvideo
 			virtual ~ReceivedData();
 			virtual void Init(std::shared_ptr<WebSocketMessageParser> parser);
 
-			virtual void ToJsonValue(web::json::value& obj) const;
-			virtual void FromJsonValue(web::json::value& obj) = 0;
+			virtual web::json::value ToJsonValue() const override;
 			// Takes payload only, not whole message
 			virtual std::wstring GetPayload();
 			// Takes whole message, for serialization and retransmit 

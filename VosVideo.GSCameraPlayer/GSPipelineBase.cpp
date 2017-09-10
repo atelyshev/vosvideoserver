@@ -273,14 +273,13 @@ void GSPipelineBase::NewBufferHandler(GstElement *sink, GSPipelineBase *pipeline
 		webRtcCap.height = GSPipelineBase::FRAME_HEIGHT;
 		webRtcCap.maxFPS = GSPipelineBase::FRAMERATE_NUMERATOR;
 
-//		webRtcCap.rawType = pipelineBase->_rawVideoType;
 		webRtcCap.videoType = pipelineBase->_rawVideoType;
 
 		{
 			boost::shared_lock<boost::shared_mutex> lock(pipelineBase->_mutex);
-			for (auto iter = pipelineBase->_webRtcVideoCapturers.begin(); iter != pipelineBase->_webRtcVideoCapturers.end(); ++iter)
+			for (const auto& cap : pipelineBase->_webRtcVideoCapturers)
 			{
-				iter->second->IncomingFrame(data, size, webRtcCap);
+				cap.second->IncomingFrame(data, size, webRtcCap);
 			}
 		}
 

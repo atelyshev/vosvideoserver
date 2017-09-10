@@ -41,9 +41,9 @@ namespace vosvideo
 			std::mutex mutex_;
 
 			// List of peers, clients connected to RTBC via WebSocket
-			void GetClientPeersFromJson(web::json::value& jval, std::set<std::wstring>& clientPeers);
+			void GetClientPeersFromJson(const web::json::value& jval, std::set<std::wstring>& clientPeers);
 			// Single peer, clients connected to RTBC via WebSocket
-			void GetClientPeerFromJson(web::json::value& jval, std::set<std::wstring>& clientPeers);
+			void GetClientPeerFromJson(const web::json::value& jval, std::set<std::wstring>& clientPeers);
 			// Peers for WebSocket communication
 			void GetTokenFromJson(web::json::value& jval, vosvideo::communication::Peer& p);
 			void SetAccountIdFromUserJson( web::json::value& jval);

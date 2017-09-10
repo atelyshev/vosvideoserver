@@ -26,7 +26,7 @@ IceCandidateResponseMsg::~IceCandidateResponseMsg()
 {
 }
 
-void IceCandidateResponseMsg::FromJsonValue( web::json::value& obj )
+void IceCandidateResponseMsg::FromJsonValue(const web::json::value& obj )
 {
 }
 
@@ -34,9 +34,7 @@ wstring IceCandidateResponseMsg::ToString() const
 {
 	if (jObj_.is_null())
 	{
-		wstring msg;
-		parser_->GetMessage(msg);
-		return msg;
+		return parser_->GetMessage();
 	}
 	return jObj_.serialize();
 }

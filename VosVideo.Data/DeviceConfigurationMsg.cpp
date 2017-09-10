@@ -12,11 +12,13 @@ DeviceConfigurationMsg::~DeviceConfigurationMsg()
 {
 }
 
-void DeviceConfigurationMsg::ToJsonValue( web::json::value& obj ) const
+web::json::value DeviceConfigurationMsg::ToJsonValue() const
 {
+	web::json::value jObj;
+	return jObj;
 }
 
-void DeviceConfigurationMsg::FromJsonValue( web::json::value& obj )
+void DeviceConfigurationMsg::FromJsonValue(const web::json::value& obj)
 {
 }
 

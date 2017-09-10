@@ -13,11 +13,13 @@ ArchiveCatalogRequestMsg::~ArchiveCatalogRequestMsg()
 {
 }
 
-void ArchiveCatalogRequestMsg::ToJsonValue( web::json::value& obj ) const
+web::json::value ArchiveCatalogRequestMsg::ToJsonValue() const
 {
+	web::json::value jObj;
+	return jObj;
 }
 
-void ArchiveCatalogRequestMsg::FromJsonValue( web::json::value& obj )
+void ArchiveCatalogRequestMsg::FromJsonValue(const web::json::value& obj )
 {
 }
 

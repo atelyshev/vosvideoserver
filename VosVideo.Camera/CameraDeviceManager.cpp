@@ -104,15 +104,15 @@ void CameraDeviceManager::OnMessageReceived(const shared_ptr<ReceivedData> recei
 
 	wstring msgBody = receivedMessage->ToString();
 	int devId;
-	web::json::value mediaObj;
 
 	if(dynamic_pointer_cast<LiveVideoOfferMsg>(receivedMessage) ||
 	   dynamic_pointer_cast<WebRtcIceCandidateMsg>(receivedMessage))
 	{
 		shared_ptr<MediaInfo> msgPtr = dynamic_pointer_cast<MediaInfo>(receivedMessage);
-		msgPtr->GetMediaInfo(mediaObj);
+		auto mediaObj = msgPtr->GetMediaInfo();
 		GetDeviceIdFromJson(devId, mediaObj);
-		CameraPlayerProcessMap::iterator iter = cameraProcess_.find(devId);
+		auto iter = cameraProcess_.find(devId);
+		
 		if (iter != cameraProcess_.end())
 		{
 			iter->second->Send(msgBody);
@@ -121,9 +121,10 @@ void CameraDeviceManager::OnMessageReceived(const shared_ptr<ReceivedData> recei
 	else if (dynamic_pointer_cast<WebRtcIceCandidateMsg>(receivedMessage))
 	{
 		shared_ptr<WebRtcIceCandidateMsg> msgPtr = dynamic_pointer_cast<WebRtcIceCandidateMsg>(receivedMessage);
-		msgPtr->GetMediaInfo(mediaObj);
+		auto mediaObj = msgPtr->GetMediaInfo();
 		GetDeviceIdFromJson(devId, mediaObj);
-		CameraPlayerProcessMap::iterator iter = cameraProcess_.find(devId);
+		auto iter = cameraProcess_.find(devId);
+		
 		if (iter != cameraProcess_.end())
 		{
 			iter->second->Send(msgBody);
@@ -132,9 +133,9 @@ void CameraDeviceManager::OnMessageReceived(const shared_ptr<ReceivedData> recei
 	else if(dynamic_pointer_cast<WebsocketConnectionClosedMsg>(receivedMessage) ||
 		    dynamic_pointer_cast<DeletePeerConnectionRequestMsg>(receivedMessage))
 	{
-		for(CameraPlayerProcessMap::iterator iter = cameraProcess_.begin(); iter != cameraProcess_.end(); ++iter)
+		for(const auto& cp : cameraProcess_)
 		{
-			iter->second->Send(msgBody);
+			cp.second->Send(msgBody);
 		}
 	}
 	else if(dynamic_pointer_cast<SdpAnswerMsg>(receivedMessage) ||
@@ -167,10 +168,7 @@ void CameraDeviceManager::Shutdown()
 		p.second->Shutdown();
 	});
 
-//	if (initialized())
-	{
-		Terminate();
-	}
+	Terminate();
 }
 
 CameraDeviceManager::~CameraDeviceManager()
@@ -468,18 +466,19 @@ void CameraDeviceManager::ReconnectCamera()
 {
 	lock_guard<std::mutex> lock(mutex_);
 
-	for (CameraPlayerProcessMap::iterator iter = cameraProcess_.begin(); iter != cameraProcess_.end(); ++iter)
+	for (const auto& cp : cameraProcess_)
 	{
 		// Internally check if process is dead
-		iter->second->Reconnect();
+		cp.second->Reconnect();
 	}
 }
 
 void CameraDeviceManager::DeletePlayerProcess(int devId)
 {
 	LOG_TRACE("Shutdown camera with id: " << devId);
+	lock_guard<std::mutex> lock(mutex_);
 
-	CameraPlayerProcessMap::iterator processIter = cameraProcess_.find(devId);
+	auto processIter = cameraProcess_.find(devId);
 	if (processIter != cameraProcess_.end())
 	{
 		processIter->second->Shutdown();
@@ -529,15 +528,7 @@ bool CameraDeviceManager::GetVideoCaptureDevices(std::vector<cricket::Device>* d
 		for_each (cameraPlayers_.begin(), cameraPlayers_.end(), [devices](pair<int, CameraPlayerBase*>p)
 		{
 			string camId;
-			try
-			{
-				camId = lexical_cast<string>(p.first); 
-			}
-			catch(bad_lexical_cast&)
-			{
-				LOG_ERROR("Couldn't cast camera id from number to string");
-				return;
-			}
+			camId = to_string(p.first); 		
 			devices->push_back(cricket::Device(camId, camId));
 		}
 		);
