@@ -5,6 +5,7 @@ Little bit of history. This project was born to fill the gap between commertial 
 In general it has no limitation in number of attched cameras, it is matter of media servers you are runnig this moment. Jast install server, register under web profile on vosvodeo.com and assign next camera to that server.
 
 Future plans:
+* Upgrade to latest gstreamer
 * Write video on disk
 * Show recorded video on Web console (vosvideo.com)
 * Implement DASH for recorded video
