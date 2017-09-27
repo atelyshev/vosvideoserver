@@ -51,12 +51,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WEBRTC_WIN;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;WIN32;_VARIADIC_MAX=10;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\;..\..\;$(THIRDPARTY_ROOT)\gtest-1.7.0\include;$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(THIRDPARTY_ROOT)\boost</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\..\;$(THIRDPARTY_ROOT)\gtest\include;$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(THIRDPARTY_ROOT)\boost</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(THIRDPARTY_ROOT)\gtest-1.7.0\lib\Debug;$(THIRDPARTY_ROOT)\casablanca\SDK\lib\Debug;$(THIRDPARTY_ROOT)\boost\stage\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(THIRDPARTY_ROOT)\gtest\lib\Debug;$(THIRDPARTY_ROOT)\casablanca\SDK\lib\Debug;$(THIRDPARTY_ROOT)\boost\stage\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>wmcodecdspuuid.lib;Mfplat.lib;Mf.lib;gtestd.lib;cpprest140d_2_8.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -68,14 +68,14 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WEBRTC_WIN;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;WIN32;_VARIADIC_MAX=10;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\;..\..\;$(THIRDPARTY_ROOT)\gtest-1.7.0\include;$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(THIRDPARTY_ROOT)\boost</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\;..\..\;$(THIRDPARTY_ROOT)\gtest\include;$(THIRDPARTY_ROOT)\casablanca\SDK\include;$(THIRDPARTY_ROOT)\boost</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(THIRDPARTY_ROOT)\gtest-1.7.0\lib\Release;$(THIRDPARTY_ROOT)\casablanca\SDK\lib\Release;$(THIRDPARTY_ROOT)\boost\stage\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(THIRDPARTY_ROOT)\gtest\lib\Release;$(THIRDPARTY_ROOT)\casablanca\SDK\lib\Release;$(THIRDPARTY_ROOT)\boost\stage\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>wmcodecdspuuid.lib;Mfplat.lib;Mf.lib;gtest.lib;cpprest140_2_8.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

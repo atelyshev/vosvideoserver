@@ -1,0 +1,1 @@
+b2 --build-dir=./x86 toolset=msvc-14.0 --build-type=complete stage link=shared threading=multi variant=release debug 
