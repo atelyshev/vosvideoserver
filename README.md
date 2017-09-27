@@ -1,6 +1,6 @@
 # vosvideoserver
 Live streaming server built on top WebRTC.Supports IP cameras and Web cameras so far.
-Little bit of history. This project was born to fill the gap between commertial camera streamming systems and "home made" port forwarding solutions. as result we have hybrid multiuser survillence system. 
+Little bit of history. This project was born to fill the gap between commertial camera streamming systems and "home made" port forwarding solutions. as result we have hybrid multiuser surveillance system. 
 
 In general it has no limitation in number of attched cameras, it is matter of media servers you are runnig this moment. Jast install server, register under web profile on vosvodeo.com and assign next camera to that server.
 
