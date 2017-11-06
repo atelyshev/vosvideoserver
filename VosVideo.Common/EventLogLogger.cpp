@@ -55,9 +55,9 @@ void EventLogLogger::WriteAuditFailure(const std::wstring& errMessage)
 void EventLogLogger::WriteEventLogEntry(const wstring& errMessage, WORD wType)
 {
 	HANDLE hEventSource = NULL;
-	LPCWSTR lpszStrings[2] = { NULL, NULL };
+	LPCWSTR lpszStrings[2] = { nullptr, nullptr };
 
-	hEventSource = RegisterEventSource(NULL, eventSource_.c_str());
+	hEventSource = RegisterEventSource(nullptr, eventSource_.c_str());
 	if (hEventSource)
 	{
 		lpszStrings[0] = eventSource_.c_str();
@@ -67,11 +67,11 @@ void EventLogLogger::WriteEventLogEntry(const wstring& errMessage, WORD wType)
 			wType,                 // Event type
 			0,                     // Event category
 			0,                     // Event identifier
-			NULL,                  // No security identifier
+			nullptr,                  // No security identifier
 			2,                     // Size of lpszStrings array
 			0,                     // No binary data
 			lpszStrings,           // Array of strings
-			NULL                   // No binary data
+			nullptr                   // No binary data
 			);
 
 		DeregisterEventSource(hEventSource);

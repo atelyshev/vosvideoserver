@@ -3,7 +3,7 @@ var shell = new ActiveXObject("WScript.Shell");
  
 var outFile = fso.CreateTextFile("hg_version.h", true);
  
-var hgRevNum               = shell.Exec("hg identify --num");
+var hgRevNum               = shell.Exec("git rev-parse HEAD");
 var rev                    = hgRevNum.StdOut.ReadAll();
 var hg_revision            = String(rev).replace(/\n/g,"").replace(/\+/g,"");
 var hg_local_modifications = 0
@@ -17,11 +17,10 @@ outFile.WriteLine( "#define HG_LOCAL_MODIFICATIONS    " + hg_local_modifications
 var hgChangeset  = shell.Exec("hg parents --template \"{node}\"");
 var changeset    = hgChangeset.StdOut.ReadAll();
 var hg_changeset = "Vos Video RTBC media server";
-outFile.WriteLine( "#define HG_CHANGESET              \"" + hg_changeset +"\"" );
+outFile.WriteLine( "#define HG_CHANGESET              " +'"' + hg_changeset + '"' );
  
 var hgChangesetShort    = shell.Exec("hg parents --template \"{node|short}\"");
 var changeset_short     = hgChangesetShort.StdOut.ReadAll();
-var hg_changeset_short  = "#define HG_CHANGESET_SHORT        \"" + String(changeset_short).replace(/\n/g,"") + "\"";
-outFile.WriteLine( hg_changeset_short );
+outFile.WriteLine( "#define HG_CHANGESET_SHORT        " + '"' + hg_revision + '"');
  
 outFile.Close();

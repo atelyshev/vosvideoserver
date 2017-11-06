@@ -47,9 +47,9 @@ using namespace vosvideo::archive;
 // List of service dependencies - "dep1\0dep2\0\0"
 #define SERVICE_DEPENDENCIES     L""
 // The name of the account under which the service should run
-#define SERVICE_ACCOUNT          NULL
+#define SERVICE_ACCOUNT          nullptr
 // The password to the service account name
-#define SERVICE_PASSWORD         NULL
+#define SERVICE_PASSWORD         nullptr
 
 Application::Application(const std::vector<std::wstring>& argVect) : 
 	runApplication_(true), 
@@ -161,7 +161,7 @@ void Application::UnInstall()
 bool Application::Start()
 {
 	// Prevent multiple copies of server to run
-	hHandle_ = CreateMutex( NULL, TRUE, strMutexName_.c_str());
+	hHandle_ = CreateMutex(nullptr, TRUE, strMutexName_.c_str());
 	if( ERROR_ALREADY_EXISTS == GetLastError() )
 	{
 		wstring werr = L"RTBC server already running. Only one instance of server is allowed";
@@ -203,7 +203,7 @@ bool Application::Main()
 	LOG_DEBUG("Rtbc server started");
 	// initialize COM
 	HRESULT hr = S_OK;
-	if (hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED) != S_OK)
+	if (hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED) != S_OK)
 	{
 		LOG_DEBUG("Rtbc server failed to start, CoInitializeEx returned: " << hr);
 		return false;
@@ -371,7 +371,7 @@ void Application::Wait()
 
 void Application::KillProcessByName(const wstring& filename)
 {
-	HANDLE hSnapShot = CreateToolhelp32Snapshot(TH32CS_SNAPALL, NULL);
+	HANDLE hSnapShot = CreateToolhelp32Snapshot(TH32CS_SNAPALL, 0);
 	PROCESSENTRY32 pEntry;
 	pEntry.dwSize = sizeof (pEntry);
 	int32_t hRes = Process32First(hSnapShot, &pEntry);
@@ -383,7 +383,7 @@ void Application::KillProcessByName(const wstring& filename)
 		{
 			HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, 0,
 				(uint32_t) pEntry.th32ProcessID);
-			if (hProcess != NULL)
+			if (hProcess != nullptr)
 			{
 				TerminateProcess(hProcess, 9);
 				CloseHandle(hProcess);

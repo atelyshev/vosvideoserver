@@ -54,7 +54,7 @@ void InstallService(PWSTR pszServiceName,
 	SC_HANDLE schSCManager = nullptr;
 	SC_HANDLE schService = nullptr;
 
-	if (GetModuleFileName(NULL, szPath, ARRAYSIZE(szPath)) == 0)
+	if (GetModuleFileName(nullptr, szPath, ARRAYSIZE(szPath)) == 0)
 	{
 		wprintf(L"GetModuleFileName failed w/err 0x%08lx\n", GetLastError());
 		goto Cleanup;
@@ -80,8 +80,8 @@ void InstallService(PWSTR pszServiceName,
 		dwStartType,                    // Service start type
 		SERVICE_ERROR_NORMAL,           // Error control type
 		strPath.c_str(),                // Service's binary
-		NULL,                           // No load ordering group
-		NULL,                           // No tag identifier
+		nullptr,                           // No load ordering group
+		nullptr,                           // No tag identifier
 		pszDependencies,                // Dependencies
 		pszAccount,                     // Service running account
 		pszPassword                     // Password of the account
@@ -99,8 +99,8 @@ void InstallService(PWSTR pszServiceName,
 	SC_ACTION actions;
 
 	sfa.dwResetPeriod = INFINITE;
-	sfa.lpCommand = NULL;
-	sfa.lpRebootMsg = NULL;
+	sfa.lpCommand = nullptr;
+	sfa.lpRebootMsg = nullptr;
 	sfa.cActions = 1;
 	sfa.lpsaActions = &actions;
 
@@ -147,7 +147,7 @@ void UninstallService(PWSTR pszServiceName)
 	SERVICE_STATUS ssSvcStatus = {};
 
 	// Open the local default service control manager database
-	schSCManager = OpenSCManager(NULL, NULL, SC_MANAGER_CONNECT);
+	schSCManager = OpenSCManager(nullptr, nullptr, SC_MANAGER_CONNECT);
 	if (schSCManager == nullptr)
 	{
 		wprintf(L"OpenSCManager failed w/err 0x%08lx\n", GetLastError());

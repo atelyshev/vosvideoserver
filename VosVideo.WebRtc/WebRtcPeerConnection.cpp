@@ -114,7 +114,7 @@ void WebRtcPeerConnection::InitSdp_r(const std::string& sdpPayload)
 	pcmc.SetAllowDtlsSctpDataChannels();
 	//pcmc.AddOptional(webrtc::MediaConstraintsInterface::kLeakyBucket, "true");
     CreatePeerConnectionFactory();
-	peer_connection_ = peer_connection_factory_->CreatePeerConnection(config, &pcmc, NULL, NULL, this);
+	peer_connection_ = peer_connection_factory_->CreatePeerConnection(config, &pcmc, nullptr, nullptr, this);
 
 	if (!peer_connection_.get()) 
 	{
@@ -282,7 +282,7 @@ void WebRtcPeerConnection::ProcessSdpMessage(const string& message)
 
 		if (session_description->type() == webrtc::SessionDescriptionInterface::kOffer) 
 		{
-			peer_connection_->CreateAnswer(this, NULL);
+			peer_connection_->CreateAnswer(this, nullptr);
 		}
 	}
 }
@@ -320,7 +320,7 @@ void WebRtcPeerConnection::AddStreams_r()
 	}
 
 	rtc::scoped_refptr<webrtc::VideoTrackInterface> 
-		video_track(peer_connection_factory_->CreateVideoTrack(kVideoLabel,peer_connection_factory_->CreateVideoSource(videoCapturer_, NULL)));
+		video_track(peer_connection_factory_->CreateVideoTrack(kVideoLabel,peer_connection_factory_->CreateVideoSource(videoCapturer_, nullptr)));
 
 	rtc::scoped_refptr<webrtc::MediaStreamInterface> stream = peer_connection_factory_->CreateLocalMediaStream(kStreamLabel);
 

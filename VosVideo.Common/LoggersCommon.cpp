@@ -21,7 +21,7 @@ LoggersCommon::LoggersCommon(const wstring& wlogPath)
 
 LoggersCommon::~LoggersCommon()
 {
-	if (_pSink != NULL)
+	if (_pSink != nullptr)
 	{
 		_pSink->stop();
 		_pSink->feed_records();

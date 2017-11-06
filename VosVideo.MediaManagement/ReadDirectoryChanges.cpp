@@ -39,7 +39,7 @@ using namespace ReadDirectoryChangesPrivate;
 CReadDirectoryChanges::CReadDirectoryChanges(int nMaxCount)
 	: m_Notifications(nMaxCount)
 {
-	m_hThread	= NULL;
+	m_hThread	= nullptr;
 	m_dwThreadId= 0;
 	m_pServer	= new CReadChangesServer(this);
 }
@@ -56,7 +56,7 @@ void CReadDirectoryChanges::Init()
 	// Kick off the worker thread, which will be
 	// managed by CReadChangesServer.
 	//
-	m_hThread = (HANDLE)_beginthreadex(NULL,
+	m_hThread = (HANDLE)_beginthreadex(nullptr,
 		0,
 		CReadChangesServer::ThreadStartProc,
 		m_pServer,
@@ -73,7 +73,7 @@ void CReadDirectoryChanges::Terminate()
 		::WaitForSingleObjectEx(m_hThread, 10000, true);
 		::CloseHandle(m_hThread);
 
-		m_hThread = NULL;
+		m_hThread = nullptr;
 		m_dwThreadId = 0;
 	}
 }

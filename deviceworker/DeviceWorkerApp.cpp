@@ -28,7 +28,7 @@ DeviceWorkerApp::DeviceWorkerApp(const wstring& wqueueName, bool isLogging)
 	interprocCommManager_.reset(new InterprocessComm(queueEngine));
 
 	HRESULT hr = S_OK;
-	if (hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED) != S_OK)
+	if (hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED) != S_OK)
 	{
 		string errMsg = "DeviceWorker server failed to start, CoInitializeEx returned: " + hr;
 		LOG_CRITICAL(errMsg);

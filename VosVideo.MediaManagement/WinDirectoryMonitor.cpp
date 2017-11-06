@@ -21,7 +21,7 @@ WinDirectoryMonitor::WinDirectoryMonitor(std::shared_ptr<ConfigurationManager> c
 		configManager_(configManager),
 		inRemovingState_(false)
 {
-	thrHandle_ = CreateThread(NULL, 0, &LocalDirectoryMonitorStarter, this, 0, nullptr);
+	thrHandle_ = CreateThread(nullptr, 0, &LocalDirectoryMonitorStarter, this, 0, nullptr);
 }
 
 WinDirectoryMonitor::~WinDirectoryMonitor()
@@ -53,7 +53,7 @@ void WinDirectoryMonitor::DoMonitorArchiveDirectory()
 	CReadDirectoryChanges changes;
 	changes.AddDirectory(configManager_->GetArchivePath(), false, dwNotificationFlags);
 	endLocalDirectoryEvent_ = CreateEvent(
-		NULL,               // default security attributes
+		nullptr,               // default security attributes
 		TRUE,               // manual-reset event
 		FALSE,              // initial state is nonsignaled
 		TEXT("WriteEvent")  // object name

@@ -64,7 +64,7 @@ vector<shared_ptr<VideoFile> > LocalVideoFileDiscoverer::Discover(vector<wstring
 		else
 		{
 			/* Create a GLib Main Loop and set it to run, so we can wait for the signals */
-			data_.loop = g_main_loop_new(NULL, FALSE);
+			data_.loop = g_main_loop_new(nullptr, FALSE);
 			g_main_loop_run(data_.loop);
 			outInfo.push_back(data_.fileInfo);
 		}

@@ -88,7 +88,7 @@ wstring ConfigurationManager::GetConfigurationFilePath()
 #ifndef _DEBUG
 	// Identify path to and read configuration then
 	wchar_t* progData;
-	HRESULT hr = SHGetKnownFolderPath(FOLDERID_ProgramData, 0, NULL, &progData);
+	HRESULT hr = SHGetKnownFolderPath(FOLDERID_ProgramData, 0, nullptr, &progData);
 	if (hr != S_OK)
 	{
 		string errmsg = "Failed to get ProgramData folder path.";

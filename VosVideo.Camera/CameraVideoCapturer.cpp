@@ -96,7 +96,7 @@ CameraVideoCapturer::~CameraVideoCapturer()
 
 bool CameraVideoCapturer::Init(int camId, CameraPlayerBase* device) 
 {
-	if (videoCapturerImpl_ != NULL)
+	if (videoCapturerImpl_ != nullptr)
 	{
 		LOG(LS_ERROR) << "The capturer is already initialized";
 		return false;
@@ -184,7 +184,7 @@ void CameraVideoCapturer::Stop()
 		string camera_id(GetId());
 		LOG(LS_INFO) << "Camera '" << camera_id << "' stopped after capturing "<< captured_frames_ << " frames and dropping "<< drop_ratio << "%";
 	}
-	SetCaptureFormat(NULL);
+	SetCaptureFormat(nullptr);
 }
 
 bool CameraVideoCapturer::IsRunning() 

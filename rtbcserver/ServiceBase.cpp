@@ -54,7 +54,7 @@ BOOL ServiceBase::Run(ServiceBase &service)
 	SERVICE_TABLE_ENTRY serviceTable[] = 
 	{
 		{ service.m_name, ServiceMain },
-		{ NULL, NULL }
+		{ nullptr, nullptr }
 	};
 
 	// Connects the main thread of a service process to the service control 

@@ -27,8 +27,25 @@ namespace vosvideo
 		protected:
 			virtual GstElement* CreateSource() = 0;
 			virtual gboolean LinkElements();
-			GstElement *VideoRate;
-			GstElement *SourceElement;
+			static void PrintCaps(const GstCaps * caps, const gchar * pfx);
+			static gboolean PrintField(GQuark field, const GValue * value, gpointer pfx);
+
+			GstElement *_sourceElement = nullptr;
+			GstElement *_videoRate = nullptr;
+			GstElement *_videoConverter = nullptr;
+			GstElement *_videoScale = nullptr;
+			GstElement *_videoScaleCapsFilter = nullptr;
+			GstElement *_videoRateCapsFilter = nullptr;
+			GstElement *_autoVideoSink = nullptr;
+			GstElement *_appSinkQueue = nullptr;
+			GstElement *_appSink = nullptr;
+			GstElement *_pipeline = nullptr;
+
+			static const int FRAME_WIDTH = 528;
+			static const int FRAME_HEIGHT = 384;
+			static const int FRAMERATE_NUMERATOR = 10;
+			static const int FRAMERATE_DENOMINATOR = 1;
+
 		private:
 			void AppThreadStart();
 
@@ -36,32 +53,17 @@ namespace vosvideo
 
 			static gboolean CreateGStreamerPipeline(gpointer data);
 			static bool ChangeElementState(GstElement *element, GstState state);
-			static void NewBufferHandler(GstElement *sink, GSPipelineBase *cameraPlayer);
+			static GstFlowReturn NewSampleHandler(GstElement *sink, GSPipelineBase *cameraPlayer);
 			static gboolean BusWatchHandler(GstBus *bus, GstMessage *msg, gpointer data);
 			static GstVideoFormat GetGstVideoFormatFromCaps(GstCaps* caps);
 			static webrtc::VideoType GetRawVideoTypeFromGsVideoFormat(const GstVideoFormat& videoFormat);
-			static void PrintCaps(const GstCaps * caps, const gchar * pfx);
-			static gboolean PrintField(GQuark field, const GValue * value, gpointer pfx);
-
+			static bool CheckElements(GSPipelineBase* pipelineBase);
 			void SetWebRtcRawVideoType();
 
-			static const int FRAME_WIDTH = 528;
-			static const int FRAME_HEIGHT = 384;
-			static const int FRAMERATE_NUMERATOR = 10;
-			static const int FRAMERATE_DENOMINATOR = 1;
+			std::unique_ptr<std::thread> _appThread;
 
-			boost::thread *_appThread;
-
-			guint _busWatchId;
-			GstElement *_videoConverter;
-			GstElement *_videoScale;
-			GstElement *_videoScaleCapsFilter;
-			GstElement *_videoRateCapsFilter;
-			GstElement *_autoVideoSink;
-			GstElement *_appSinkQueue;
-			GstElement *_appSink;
-			GstElement *_pipeline;
-			GMainLoop *_mainLoop;
+			guint _busWatchId = 0;
+			GMainLoop *_mainLoop = nullptr;
 
 			webrtc::VideoType _rawVideoType;
 

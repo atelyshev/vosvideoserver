@@ -72,7 +72,7 @@ bool Publish()
 	std::shared_ptr<ReceivedDataStub> receivedData(new ReceivedDataStub());
 
 	MessageReceiverStub messageReceiverStub;
-	HANDLE hWaitHandle = CreateEvent(NULL, true, false, L"PublishEvent");
+	HANDLE hWaitHandle = CreateEvent(nullptr, true, false, L"PublishEvent");
 	messageReceiverStub.SetWaitHandle(hWaitHandle);
 	TypeInfoWrapper subcriptionTypeStub(typeid(ReceivedDataStub));
 	std::vector<TypeInfoWrapper> types;

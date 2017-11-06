@@ -76,11 +76,11 @@ bool CReadChangesRequest::OpenDirectory()
 		FILE_SHARE_READ						// share mode
 		| FILE_SHARE_WRITE
 		| FILE_SHARE_DELETE,
-		NULL,                               // security descriptor
+		nullptr,                               // security descriptor
 		OPEN_EXISTING,                      // how to create
 		FILE_FLAG_BACKUP_SEMANTICS			// file attributes
 		| FILE_FLAG_OVERLAPPED,
-		NULL);                              // file with attributes to copy
+		nullptr);                              // file with attributes to copy
 
 	if (m_hDirectory == INVALID_HANDLE_VALUE)
 	{

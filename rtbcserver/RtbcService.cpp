@@ -41,7 +41,7 @@ RtbcService::RtbcService(Application* appPtr,
 {
     // Create a manual-reset event that is not signaled at first to indicate 
     // the stopped signal of the service.
-    m_hStoppedEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+    m_hStoppedEvent = CreateEvent(nullptr, TRUE, FALSE, nullptr);
     if (m_hStoppedEvent == nullptr)
     {
         throw GetLastError();
