@@ -7,3 +7,4 @@ IF NOT EXIST %1Release\opencv_videoio310.dll copy %THIRDPARTY_ROOT%\opencv\bin\R
 IF NOT EXIST %1Release\opencv_imgcodecs310.dll copy %THIRDPARTY_ROOT%\opencv\bin\Release\opencv_imgcodecs310.dll %1Release
 IF NOT EXIST %1Release\opencv_imgproc310.dll copy %THIRDPARTY_ROOT%\opencv\bin\Release\opencv_imgproc310.dll %1Release
 IF NOT EXIST %1Release\cpprest140_2_8.dll copy %THIRDPARTY_ROOT%\casablanca\SDK\lib\Release\cpprest140_2_8.dll %1Release
+IF NOT EXIST %1Release\libgstreamer-1.0-0.dll copy %GSTREAMER_1_0_ROOT_X86%\bin\*.dll %1Release

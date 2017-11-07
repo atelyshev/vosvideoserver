@@ -50,7 +50,7 @@ namespace vosvideo
 			virtual void OnMessageReceived(std::shared_ptr<vosvideo::data::ReceivedData> receivedMessage);
 
 			// It knows how to find device Id from Json 
-			static void GetDeviceIdFromJson(int& camId, web::json::value& camParms);
+			static void GetDeviceIdFromJson(int& camId, const web::json::value& camParms);
 
 		private:
 			// This map contains collection of running topologies. Topology is always up, 
@@ -77,7 +77,7 @@ namespace vosvideo
 
 			void DeletePlayerProcess(int devId);
 			void CreatePlayerProcess(vosvideo::data::CameraConfMsg& conf);
-			void CreateCameraConfFromJson(int& camId, vosvideo::data::CameraConfMsg& conf, web::json::value& camParms);
+			void CreateCameraConfFromJson(int& camId, vosvideo::data::CameraConfMsg& conf, const web::json::value& camParms);
 			// Try to recreate camera id it has status stopped. It gives us chance dynamically add-remove cameras
 			void ReconnectCamera();
 			void PassMessage(web::json::value& json, const std::wstring& payload );

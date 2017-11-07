@@ -10,17 +10,16 @@ void PubSubService::Publish(shared_ptr<vosvideo::data::ReceivedData> receivedDat
 {
 	LOG_TRACE("Publishing data: " << receivedData->ToString());
 
-	for_each(subscriptions_.begin(), subscriptions_.end(), 
-			[receivedData](std::shared_ptr<PubSubSubscription> subscription)
+	for(auto s : subscriptions_)
 	{
-		concurrency::task<void> publishTask([receivedData, subscription]() 
-		{ 
-			auto types = subscription->GetTypes();
-			for(const auto& type : types)
+		concurrency::task<void> publishTask([receivedData, s]()
+		{
+			auto types = s->GetTypes();
+			for (const auto& type : types)
 			{
-				if(type.Get() == typeid(*receivedData))
+				if (type.Get() == typeid(*receivedData))
 				{
-					MessageReceiver& receiver = subscription->GetMessageReceiver();
+					MessageReceiver& receiver = s->GetMessageReceiver();
 					try
 					{
 						receiver.OnMessageReceived(receivedData);
@@ -35,7 +34,7 @@ void PubSubService::Publish(shared_ptr<vosvideo::data::ReceivedData> receivedDat
 				}
 			}
 		});
-	});
+	}
 }
 
 

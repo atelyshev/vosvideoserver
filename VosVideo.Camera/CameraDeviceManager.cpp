@@ -183,12 +183,12 @@ void CameraDeviceManager::AddIpCam(web::json::value& camParms)
 	CreatePlayerProcess(conf);
 }
 
-void CameraDeviceManager::GetDeviceIdFromJson(int& camId, web::json::value& camParms)
+void CameraDeviceManager::GetDeviceIdFromJson(int& camId, const web::json::value& camParms)
 {
 	camId = camParms.at(U("DeviceId")).as_integer();
 }
 
-void CameraDeviceManager::CreateCameraConfFromJson(int& camId, CameraConfMsg& conf, web::json::value& camParms)
+void CameraDeviceManager::CreateCameraConfFromJson(int& camId, CameraConfMsg& conf, const web::json::value& camParms)
 {
 	vector<wstring> strVideoUri(3);
 	wstring customUri;
@@ -335,11 +335,11 @@ void CameraDeviceManager::OnCameraUpdate(web::json::value& camArr)
 	}
 
 	// STEP 2: Mark with actual status
-	for(camIter = arr.begin(); camIter != arr.end(); ++camIter)
+	for(const auto& a : arr)
 	{
 		int camId;
 		CameraConfMsg ipConf;
-		CreateCameraConfFromJson(camId, ipConf, *camIter);
+		CreateCameraConfFromJson(camId, ipConf, a);
 		//
 		// Here we implementing very simple algo
 		// All new cam conf has flag NEW
@@ -348,7 +348,7 @@ void CameraDeviceManager::OnCameraUpdate(web::json::value& camArr)
 		// On next step all this flags get turned to PROCESSED
 		// Next time if processed flag found it means camera was removed
 		//
-		CameraConfsMap::iterator iter = cameraConfs_.find(camId);
+		auto iter = cameraConfs_.find(camId);
 
 		// Camera exists and no changes found, nothing to do
 		if (iter != cameraConfs_.end() && (*iter).second.first == ipConf) // NOCHANGE
@@ -371,7 +371,7 @@ void CameraDeviceManager::OnCameraUpdate(web::json::value& camArr)
 
 
 	// STEP 3: Activate accordingly STEP 2
-	CameraConfsMap::iterator confIter = cameraConfs_.begin();
+	auto confIter = cameraConfs_.begin();
 	while (confIter != cameraConfs_.end()) 
 	{
 		if ((*confIter).second.second == DeviceConfigurationFlag::ADDED)
@@ -407,7 +407,7 @@ void CameraDeviceManager::OnCameraUpdate(web::json::value& camArr)
 
 	// STEMP 4: Remove unknown cameras
 	// Whatever is left marked as REMOVED should go away
-	CameraConfsMap::iterator removeIter = cameraConfs_.begin();
+	auto removeIter = cameraConfs_.begin();
 	while (removeIter != cameraConfs_.end()) 
 	{
 		if (removeIter->second.second == DeviceConfigurationFlag::REMOVED)// Removed camera, need to stop it and remove
@@ -476,8 +476,6 @@ void CameraDeviceManager::ReconnectCamera()
 void CameraDeviceManager::DeletePlayerProcess(int devId)
 {
 	LOG_TRACE("Shutdown camera with id: " << devId);
-	lock_guard<std::mutex> lock(mutex_);
-
 	auto processIter = cameraProcess_.find(devId);
 	if (processIter != cameraProcess_.end())
 	{
