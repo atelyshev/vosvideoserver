@@ -5,7 +5,6 @@ Little bit of history. This project was born to fill the gap between commercial 
 In general it has no limitation in number of attched cameras, it is matter of media servers you are running this moment. Just install server, register under web profile on http://vosvideo.com and assign next camera to that server.
 
 Future plans:
-* Upgrade to latest gstreamer 1.0
 * Write video on disk
 * Show recorded video on Web console (vosvideo.com)
 * Implement DASH for recorded video
@@ -97,6 +96,8 @@ Build libraries. To properly build the server you have to do next steps:
     //  static_assert(Size == N || Size == impl::kArrayViewVarSize,  
     //                "Array size must match ArrayView size");  
     //}  
-    
     BTW if anyone can figure out what is wrong with this template please let me know!
     atelyshev@vosvideo.com
+11. Finally Take latest gstreamer https://gstreamer.freedesktop.org/data/pkg/windows/
+
+    
