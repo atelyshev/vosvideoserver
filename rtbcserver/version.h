@@ -57,7 +57,7 @@
 #endif
 #define VER_INTERNAL_NAME_STR       VER_ORIGINAL_FILENAME_STR
 
-#define VER_COPYRIGHT_STR           "Copyright (C) 2014 Vos Video LLC"
+#define VER_COPYRIGHT_STR           "Copyright (C) 2017 Vos Video LLC"
 
 #ifdef _DEBUG
 #define VER_VER_DEBUG             VS_FF_DEBUG

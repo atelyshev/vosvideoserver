@@ -5,7 +5,8 @@ var outFile = fso.CreateTextFile("hg_version.h", true);
  
 var hgRevNum               = shell.Exec("git rev-parse HEAD");
 var rev                    = hgRevNum.StdOut.ReadAll();
-var hg_revision            = String(rev).replace(/\n/g,"").replace(/\+/g,"");
+var hg_revision            = String(rev).replace(/\n/g,"").replace(/\+/g,"").replace(/[^\d.-]/g, '');
+var hg_changeset_shoet     = String(rev).replace(/\n/g,"").replace(/\+/g,"");
 var hg_local_modifications = 0
 if( String(rev).replace(/\n/g, "").indexOf("+") != -1 )
 {
@@ -21,6 +22,6 @@ outFile.WriteLine( "#define HG_CHANGESET              " +'"' + hg_changeset + '"
  
 var hgChangesetShort    = shell.Exec("hg parents --template \"{node|short}\"");
 var changeset_short     = hgChangesetShort.StdOut.ReadAll();
-outFile.WriteLine( "#define HG_CHANGESET_SHORT        " + '"' + hg_revision + '"');
+outFile.WriteLine( "#define HG_CHANGESET_SHORT        " + '"' + hg_changeset_shoet + '"');
  
 outFile.Close();

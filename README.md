@@ -99,5 +99,7 @@ Build libraries. To properly build the server you have to do next steps:
     BTW if anyone can figure out what is wrong with this template please let me know!
     atelyshev@vosvideo.com
 11. Finally Take latest gstreamer https://gstreamer.freedesktop.org/data/pkg/windows/
-
+  
+Questions ? 
+atelyshev@vosvideo.com
     

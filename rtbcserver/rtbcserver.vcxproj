@@ -121,6 +121,7 @@ $(SolutionDir)copythirdparty_release.bat $(SolutionDir)</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="hg_version.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RtbcService.h" />
     <ClInclude Include="ServiceBase.h" />
