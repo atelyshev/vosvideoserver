@@ -209,9 +209,6 @@ bool Application::Main()
 		return false;
 	}
 
-	// Initialize GStreamer 
-//	gst_init(nullptr, nullptr);
-
 	std::shared_ptr<ConfigurationManager> configManager;
 
 	if (!CreateConfigurationManager(configManager))

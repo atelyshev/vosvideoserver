@@ -6,14 +6,6 @@ namespace vosvideo
 {
 	namespace data
 	{
-		enum class CameraVideoFormat
-		{
-			UNKNOWN = -1,
-			MJPEG,
-			MPEG4,
-			H264
-		};
-
 		enum class CameraType
 		{
 			UNKNOWN = -1,
@@ -21,7 +13,7 @@ namespace vosvideo
 			WEBCAM
 		};
 
-		enum class CameraVideoRecording
+		enum class CameraRecordingMode
 		{
 			DISABLED,
 			PERMANENT,
@@ -32,21 +24,21 @@ namespace vosvideo
 		class CameraConfMsg final : public ReceivedData
 		{
 		public:
-			CameraConfMsg();
+			CameraConfMsg() {}
 			CameraConfMsg(const std::wstring& jsonStr);
-			CameraConfMsg(CameraType camType, CameraVideoFormat vf); 
-
+			CameraConfMsg(CameraType ct);
 			virtual ~CameraConfMsg();
 
-			CameraVideoFormat GetVideoFormat();
-
+			static CameraConfMsg CreateFromDto(const std::wstring& archPath, const web::json::value& camParmsDto);
 			CameraType GetCameraType();
 
-			void SetCameraIds(int cameraId, const std::wstring& cameraName);
-			void GetCameraIds(int& cameraId, std::wstring& cameraName) const;
+			void SetCameraId(int cameraId);
+			void SetCameraName(const std::wstring& cameraName);
+			int GetCameraId() const;
+			std::wstring GetCameraName() const;
 
-			void SetFileSinkParameters(const std::wstring& outFolder, uint32_t recordLen, CameraVideoRecording recordingType);
-			void GetFileSinkParameters(std::wstring& outFolder, uint32_t& recordLen, CameraVideoRecording& recordingType) const;
+			void SetFileSinkParameters(const std::wstring& outFolder, uint32_t recordLen, uint32_t maxFilesNum, CameraRecordingMode recordingMode);
+			void GetFileSinkParameters(std::wstring& outFolder, uint32_t& recordLen, CameraRecordingMode& recordingMode) const;
 
 			void SetUris(const std::wstring& audiouri, const std::wstring& videouri);
 			void GetUris(std::wstring& audiouri, std::wstring& videouri) const;
@@ -65,21 +57,24 @@ namespace vosvideo
 			virtual void FromJsonValue(const web::json::value& obj) override;
 			virtual std::wstring ToString() const;
 
+			static const int32_t _defaultRecordLen = 60;
+			static const int32_t _defaultMaxFilesNum = 10;
 		private:
 			void SetFields(const web::json::value& json);
-			bool isActive_ = false;
-			CameraType cameraType_;
-			CameraVideoFormat videoFormat_;
-			int cameraId_; 
-			std::wstring cameraName_;
-			std::wstring outFolder_;
-			int32_t recordLen_; 
+
+			int32_t _cameraId = -1;
+			bool _isActive = false;
+			int32_t _recordLen = _defaultRecordLen;
+			int32_t _maxFilesNum = _defaultMaxFilesNum;
+			CameraType _cameraType = CameraType::UNKNOWN;
 			// Camera can have multiple modes and conditions when recording to the file is started
-			CameraVideoRecording recordingType_; 
-			std::wstring videouri_;
-			std::wstring audiouri_;
-			std::wstring username_;
-			std::wstring pass_;
+			CameraRecordingMode _recordingMode = CameraRecordingMode::DISABLED;
+			std::wstring _cameraName;
+			std::wstring _outFolder;
+			std::wstring _videouri;
+			std::wstring _audiouri;
+			std::wstring _username;
+			std::wstring _pass;
 		};
 	}
 }

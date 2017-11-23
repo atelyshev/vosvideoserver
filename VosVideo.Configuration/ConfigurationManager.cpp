@@ -7,6 +7,7 @@
 #include <boost/property_tree/detail/xml_parser_error.hpp>
 #include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/format.hpp>
 
 #include "ConfigurationParserException.h"
 #include "ConfigurationManager.h"
@@ -99,9 +100,10 @@ wstring ConfigurationManager::GetConfigurationFilePath()
 
 	// RTBC only consumes that file, ask user to execute Dashboard first
 	if (!exists(configFilePath))
-	{
-		string errmsg = "Server configuration folder doesn't exists in ProgramData. Start Vos Video Dashboard first to create configuration.";
-		throw ConfigurationParserException(errmsg);
+	{		
+		throw ConfigurationParserException(
+			str(format("Server configuration folder %1% doesn't exists in ProgramData. Start Vos Video Dashboard first to create configuration.") 
+				% StringUtil::ToString(instDir_)));
 	}
 	return configFilePath.wstring();
 #else

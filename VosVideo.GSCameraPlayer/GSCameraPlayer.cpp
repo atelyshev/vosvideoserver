@@ -37,12 +37,13 @@ int32_t GSCameraPlayer::OpenURL(vosvideo::data::CameraConfMsg& cameraConf)
 	std::wstring recordingOutfolder;
 
 	uint32_t recordingLength;
-	vosvideo::data::CameraVideoRecording recordingType;
+	vosvideo::data::CameraRecordingMode recordingMode;
 
 	cameraConf.GetUris(waudioUri, wvideoUri);
-	cameraConf.GetCameraIds(this->_deviceId, this->_deviceName);
+	_deviceId = cameraConf.GetCameraId();
+	_deviceName = cameraConf.GetCameraName();
 	cameraConf.GetCredentials(username, password);
-	cameraConf.GetFileSinkParameters(recordingOutfolder, recordingLength, recordingType);
+	cameraConf.GetFileSinkParameters(recordingOutfolder, recordingLength, recordingMode);
 	cameraType_ = cameraConf.GetCameraType();
 
 	if (wvideoUri != L"webcamera")

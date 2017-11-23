@@ -65,7 +65,7 @@ namespace vosvideo
 			guint _busWatchId = 0;
 			GMainLoop *_mainLoop = nullptr;
 
-			webrtc::VideoType _rawVideoType;
+			webrtc::VideoType _rawVideoType = webrtc::VideoType::kUnknown;
 
 			boost::shared_mutex _mutex;
 			std::unordered_map<uint32_t, webrtc::VideoCaptureExternal*> _webRtcVideoCapturers;

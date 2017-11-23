@@ -13,7 +13,7 @@ using namespace vosvideo::communication;
 using namespace vosvideo::configuration;
 using namespace vosvideo::devicemanagement;
 
-std::wstring camJson = L"{\"DeviceList\":[{\"AccountId\":2,\"DeviceId\":8,\"DeviceName\":\"test\",\"IpAddress\":\"0.0.0.0\",\"DeviceUserName\":\"testuser\",\"DevicePassword\":\"testpass\",\"Port\":80,\"RecordingType\":1,\"IsActive\":true,\"UriType\":0,\"CustomUri\":\"\",\"ManufacturerId\":132,\"ManufacturerName\":\"Loftek\",\"SiteId\":1,\"SiteName\":\"SITE1\",\"ModelId\":963,\"ModelName\":\"CXS 2200\",\"MjpegUri\":\"/videostream.cgi?resolution=32\",\"HttpPort\":80,\"RtspPort\":554}]}";
+std::wstring camJson = L"{\"DeviceList\":[{\"AccountId\":2,\"DeviceId\":8,\"DeviceName\":\"test\",\"IpAddress\":\"0.0.0.0\",\"DeviceUserName\":\"testuser\",\"DevicePassword\":\"testpass\",\"Port\":80,\"RecordingMode\":1,\"IsActive\":true,\"UriType\":0,\"CustomUri\":\"\",\"ManufacturerId\":132,\"ManufacturerName\":\"Loftek\",\"SiteId\":1,\"SiteName\":\"SITE1\",\"ModelId\":963,\"ModelName\":\"CXS 2200\",\"MjpegUri\":\"/videostream.cgi?resolution=32\",\"HttpPort\":80,\"RtspPort\":554}]}";
 
 class TestDeviceConfigurationManager : public DeviceConfigurationManager
 {

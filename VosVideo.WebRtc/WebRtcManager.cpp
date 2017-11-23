@@ -102,7 +102,9 @@ void WebRtcManager::OnMessageReceived(std::shared_ptr<ReceivedData> receivedMess
 	if(dynamic_pointer_cast<CameraConfMsg>(receivedMessage))
 	{
 		shared_ptr<CameraConfMsg> cameraDto = dynamic_pointer_cast<CameraConfMsg>(receivedMessage);
-		cameraDto->GetCameraIds(activeDeviseId_, deviceName_);
+		activeDeviseId_ = cameraDto->GetCameraId();
+		deviceName_ = cameraDto->GetCameraName();
+
 		if(dynamic_pointer_cast<CameraConfMsg>(receivedMessage))
 		{
 			shared_ptr<CameraConfMsg> cameraConf = dynamic_pointer_cast<CameraConfMsg>(receivedMessage);			

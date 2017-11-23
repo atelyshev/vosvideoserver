@@ -3,8 +3,10 @@
 
 using vosvideo::cameraplayer::GSPipelineBase;
 
-GSPipelineBase::GSPipelineBase() : _rawVideoType(webrtc::VideoType::kUnknown)
+GSPipelineBase::GSPipelineBase()
 {
+//	__asm int 3;
+
 	_appThread = std::make_unique<std::thread>(std::thread([this]() { AppThreadStart(); }));
 	_appThread->detach();
 }
@@ -353,6 +355,7 @@ bool GSPipelineBase::CheckElements(GSPipelineBase* pipelineBase)
 		LOG_ERROR("GSPipelineBase error: Unable to create the pipeline");
 		return false;
 	}
+	return true;
 }
 
 void GSPipelineBase::PrintCaps(const GstCaps * caps, const gchar * pfx) 

@@ -45,7 +45,6 @@ namespace vosvideo
 			// This method adds camera into manager and immediately starts it according passed configuration
 			// Throws exception in case problem occurred
 			void AddIpCam(web::json::value& camParms);
-//			void RemoveIpCam(int camId);
 
 			virtual void OnMessageReceived(std::shared_ptr<vosvideo::data::ReceivedData> receivedMessage);
 
@@ -66,18 +65,15 @@ namespace vosvideo
 			std::shared_ptr<vosvideo::communication::PubSubService> pubSubService_;
 
 			virtual bool GetAudioDevices(bool input, std::vector<cricket::Device>* devs);
-//			virtual bool GetDefaultVideoCaptureDevice(cricket::Device* device);
 			// Shortcut for real notification
 			void NotifyAllUsers(const vosvideo::data::CameraConfMsg& conf, const CameraException& e);
 
 			// Signal reactions
 			void OnCameraUpdate(web::json::value& resp);
-//			void OnCameraStartTest(web::json::value& resp);
-//			void OnCameraStopTest(web::json::value& resp);
 
 			void DeletePlayerProcess(int devId);
 			void CreatePlayerProcess(vosvideo::data::CameraConfMsg& conf);
-			void CreateCameraConfFromJson(int& camId, vosvideo::data::CameraConfMsg& conf, const web::json::value& camParms);
+			vosvideo::data::CameraConfMsg CreateCameraConfFromJson(const web::json::value& camParms);
 			// Try to recreate camera id it has status stopped. It gives us chance dynamically add-remove cameras
 			void ReconnectCamera();
 			void PassMessage(web::json::value& json, const std::wstring& payload );

@@ -21,10 +21,9 @@ CameraPlayerProcess::~CameraPlayerProcess()
 
 void CameraPlayerProcess::Init()
 {
-	int cameraId; 
-	wstring cameraName;
-	conf_.GetCameraIds(cameraId, cameraName);
-	wstring wstrCamId = to_wstring(cameraId);
+	auto cameraId = conf_.GetCameraId();
+	auto cameraName = conf_.GetCameraName();
+	auto wstrCamId = to_wstring(cameraId);
 	LOG_TRACE("Create camera player process for camera: " << cameraId);
 
 	shared_ptr<InterprocessCommEngine> iqe(new InterprocessQueueEngine(pubSubService_, wstrCamId));

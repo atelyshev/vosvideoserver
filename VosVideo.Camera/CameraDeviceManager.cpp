@@ -1,5 +1,4 @@
 #include "stdafx.h"
-//#include <webrtc/media/devices/win32devicemanager.h>
 
 #include <atlbase.h>
 #include <dbt.h>
@@ -177,146 +176,14 @@ CameraDeviceManager::~CameraDeviceManager()
 
 void CameraDeviceManager::AddIpCam(web::json::value& camParms)
 {
-	int camId;
-	CameraConfMsg conf;
-	CreateCameraConfFromJson(camId, conf, camParms);
+	configMgr_->GetArchivePath();
+	auto conf = CameraConfMsg::CreateFromDto(configMgr_->GetArchivePath(), camParms);
 	CreatePlayerProcess(conf);
 }
 
 void CameraDeviceManager::GetDeviceIdFromJson(int& camId, const web::json::value& camParms)
 {
 	camId = camParms.at(U("DeviceId")).as_integer();
-}
-
-void CameraDeviceManager::CreateCameraConfFromJson(int& camId, CameraConfMsg& conf, const web::json::value& camParms)
-{
-	vector<wstring> strVideoUri(3);
-	wstring customUri;
-	bool    isActive = false;
-	int     camPort;
-	CameraType modelType = CameraType::UNKNOWN;
-	int     recordLen = 1; // default 1 min
-	wstring devName;
-	wstring audioUri;
-	wstring camIpAddr;
-	wstring camUsername;
-	wstring camPass;
-	CameraVideoFormat uriType = CameraVideoFormat::UNKNOWN;
-	CameraVideoRecording recordingType = CameraVideoRecording::DISABLED;
-	
-	if (camParms.has_field(U("DeviceName")))
-	{
-		auto deviceNameVal = camParms.at(U("DeviceName"));
-		if (deviceNameVal.is_string())
-			devName = deviceNameVal.as_string();
-	}
-
-	if (camParms.has_field(U("DeviceId")))
-	{
-		auto deviceIdVal = camParms.at(U("DeviceId"));
-		if (deviceIdVal.is_number())
-			camId = deviceIdVal.as_integer();
-	}
-
-	if (camParms.has_field(U("CustomUri")))
-	{
-		auto customUriVal = camParms.at(U("CustomUri"));
-		if (customUriVal.is_string())
-			customUri = customUriVal.as_string();
-	}
-
-	if (camParms.has_field(U("RecordingType")))
-	{
-		auto recordingTypeVal = camParms.at(U("RecordingType"));
-		if (recordingTypeVal.is_number())
-			recordingType = static_cast<CameraVideoRecording>(recordingTypeVal.as_integer());
-	}
-
-	if (camParms.has_field(U("RecordingLength")))
-	{
-		auto recordingLengthVal = camParms.at(U("RecordingLength"));
-		if (recordingLengthVal.is_number())
-			recordLen = recordingLengthVal.as_integer();
-	}
-
-	if (camParms.has_field(U("UriType")))
-	{
-		auto uriTypeVal = camParms.at(U("UriType"));
-		if (uriTypeVal.is_number())
-			uriType = static_cast<CameraVideoFormat>(uriTypeVal.as_integer());
-	}
-
-	if (camParms.has_field(U("AudioUri")))
-	{
-		auto audioUriVal = camParms.at(U("AudioUri"));
-		if (audioUriVal.is_string())
-			audioUri = audioUriVal.as_string();
-	}
-
-	if (camParms.has_field(U("IpAddress")))
-	{
-		auto ipAddressVal = camParms.at(U("IpAddress"));
-		if (ipAddressVal.is_string())
-			camIpAddr = ipAddressVal.as_string();
-	}
-
-	if (camParms.has_field(U("Port")))
-	{
-		auto portVal = camParms.at(U("Port"));
-		if (portVal.is_number())
-			camPort = portVal.as_integer();
-	}
-
-	if (camParms.has_field(U("DeviceUserName")))
-	{
-		auto deviceUserNameVal = camParms.at(U("DeviceUserName"));
-		if (deviceUserNameVal.is_string())
-			camUsername = deviceUserNameVal.as_string();
-	}
-
-	if (camParms.has_field(U("DevicePassword")))
-	{
-		auto devicePasswordVal = camParms.at(U("DevicePassword"));
-		if (devicePasswordVal.is_string())
-			camPass = devicePasswordVal.as_string();
-	}
-
-	if (camParms.has_field(U("IsActive")))
-	{
-		auto isActiveVal = camParms.at(U("IsActive"));
-		if (isActiveVal.is_boolean())
-			isActive = isActiveVal.as_bool();
-	}
-
-	if (camParms.has_field(U("ModelType")))
-	{
-		auto modelTypeVal = camParms.at(U("ModelType"));
-		if (modelTypeVal.is_number())
-			modelType = static_cast<CameraType>(modelTypeVal.as_integer());
-	}
-	// Custom URI has higher priority, respect it 
-	wstring videoUri = customUri;
-
-	if (modelType == CameraType::IPCAM)
-	{
-		// it is possible that URI has no '/' symbol at the beginning. Test for it and fix if problem is here 
-		if (videoUri.at(0) != L'/')
-		{
-			videoUri = L"/" + videoUri;
-		}
-		// VosVideo uses own uri schema for rtsp protocol which is MPEG4 and H264 cameras
-
-		//TODO: The Httpx and Rtspx correction should be done in MFCameraPlayer
-		// should be RTSPX instead RTSP, make needed correction
-		videoUri = str(wformat(L"%1%://%2%:%3%%4%") % (uriType == CameraVideoFormat::MJPEG ? L"http" : L"rtsp") % camIpAddr % camPort % videoUri);
-	}
-
-	conf = CameraConfMsg(modelType, uriType);
-	conf.SetIsActive(isActive);
-	conf.SetCameraIds(camId, devName);
-	conf.SetCredentials(camUsername, camPass);
-	conf.SetUris(audioUri, videoUri);
-	conf.SetFileSinkParameters(configMgr_->GetArchivePath(), recordLen, recordingType);
 }
 
 void CameraDeviceManager::OnCameraUpdate(web::json::value& camArr)
@@ -336,18 +203,15 @@ void CameraDeviceManager::OnCameraUpdate(web::json::value& camArr)
 
 	// STEP 2: Mark with actual status
 	for(const auto& a : arr)
-	{
-		int camId;
-		CameraConfMsg ipConf;
-		CreateCameraConfFromJson(camId, ipConf, a);
-		//
+	{	
 		// Here we implementing very simple algo
 		// All new cam conf has flag NEW
 		// Not changed NOCHANGE
 		// Changed CHANGED accordingly
 		// On next step all this flags get turned to PROCESSED
 		// Next time if processed flag found it means camera was removed
-		//
+		auto ipConf = CameraConfMsg::CreateFromDto(configMgr_->GetArchivePath(), a);
+		int camId = ipConf.GetCameraId();
 		auto iter = cameraConfs_.find(camId);
 
 		// Camera exists and no changes found, nothing to do
@@ -425,9 +289,7 @@ void CameraDeviceManager::OnCameraUpdate(web::json::value& camArr)
 // Shortcut
 void CameraDeviceManager::NotifyAllUsers(const CameraConfMsg& conf, const CameraException& e)
 {
-	int cameraId;
-	wstring cameraName;
-	conf.GetCameraIds(cameraId, cameraName);
+	auto cameraId = conf.GetCameraId();
 	string errMsg(e.what());
 	wstring werrMsg = StringUtil::ToWstring(errMsg);
 	shared_ptr<RtbcDeviceErrorOutMsg> camErr(new RtbcDeviceErrorOutMsg(cameraId, werrMsg));
@@ -436,18 +298,16 @@ void CameraDeviceManager::NotifyAllUsers(const CameraConfMsg& conf, const Camera
 
 void CameraDeviceManager::CreatePlayerProcess(CameraConfMsg& conf)
 {
-	int cameraId; 
-	wstring cameraName;
-	conf.GetCameraIds(cameraId, cameraName);
-
 	if (conf.GetIsActive() == false)
 	{
+		auto cameraName = conf.GetCameraName();
 		LOG_TRACE("Camera " << StringUtil::ToString(cameraName)<< " is not an active. Skipped creation.");
 		return;
 	}
 
 	std::shared_ptr<CameraPlayerProcess> cp(new CameraPlayerProcess(pubSubService_, conf, configMgr_->IsLoggerOn()));
-	cameraProcess_.insert(make_pair( cameraId, cp));
+	int cameraId = conf.GetCameraId();
+	cameraProcess_.insert(make_pair(cameraId, cp));
 }
 
 bool CameraDeviceManager::Init()
@@ -487,30 +347,6 @@ void CameraDeviceManager::DeletePlayerProcess(int devId)
 void CameraDeviceManager::Terminate()
 {
 }
-
-//bool CameraDeviceManager::GetDefaultVideoCaptureDevice(cricket::Device* device)
-//{
-//	bool ret = false;
-//	// If there are multiple capture devices, we want the first USB one.
-//	// This avoids issues with defaulting to virtual cameras or grabber cards.
-//	if (!cameraPlayers_.empty())
-//	{
-//		CameraPlayersMap::iterator iter = cameraPlayers_.begin();
-//		string camId;
-//		try
-//		{
-//			camId = lexical_cast<string>(iter->first); 
-//		}
-//		catch(bad_lexical_cast&)
-//		{
-//			LOG_ERROR("Couldn't cast camera id from number to string");
-//			return false;
-//		}
-//		device = new cricket::Device(camId, camId);
-//		ret = true;
-//	}
-//	return ret;
-//}
 
 bool CameraDeviceManager::GetAudioDevices(bool input, std::vector<cricket::Device>* devs)
 {
