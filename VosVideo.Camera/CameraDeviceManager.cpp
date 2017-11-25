@@ -96,11 +96,8 @@ CameraDeviceManager::CameraDeviceManager(std::shared_ptr<CommunicationManager> c
 
 void CameraDeviceManager::OnMessageReceived(const shared_ptr<ReceivedData> receivedMessage)
 {	
-	wstring srvPeer;
-	wstring clientPeer;
-	receivedMessage->GetFromPeer(clientPeer);
-	receivedMessage->GetToPeer(srvPeer);
-
+	auto srvPeer = receivedMessage->GetToPeer();
+	auto clientPeer = receivedMessage->GetFromPeer();	
 	wstring msgBody = receivedMessage->ToString();
 	int devId;
 
@@ -430,17 +427,7 @@ bool CameraDeviceManager::GetVideoCaptureDevice(int devId, cricket::Device& devi
 
 VideoCapturer* CameraDeviceManager::CreateVideoCapturer(const cricket::Device& device) const
 {
-	int camId = 0;
-	try
-	{
-		camId = lexical_cast<int>(device.id);	 
-	}
-	catch (bad_lexical_cast&)
-	{
-		LOG_ERROR("Couldn't cast camera id from string to number: " << device.id);
-		return nullptr;
-	}
-	
+	int camId = std::stoi(device.id);
 	CameraPlayersMap::const_iterator iter = cameraPlayers_.find(camId);
 	// Probably impossible but lets make sure
 	if (iter == cameraPlayers_.end())

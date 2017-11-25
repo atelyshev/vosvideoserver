@@ -88,10 +88,8 @@ void MediaWatcher::AddToCatalog(shared_ptr<VideoFile> videoFile)
 
 void MediaWatcher::OnMessageReceived(std::shared_ptr<vosvideo::data::ReceivedData> receivedMessage)
 {
-	wstring srvPeer;
-	wstring clientPeer;
-	receivedMessage->GetFromPeer(clientPeer);
-	receivedMessage->GetToPeer(srvPeer);
+	auto srvPeer = receivedMessage->GetToPeer();
+	auto clientPeer = receivedMessage->GetFromPeer();
 
 	if(dynamic_pointer_cast<ArchiveCatalogRequestMsg>(receivedMessage))
 	{

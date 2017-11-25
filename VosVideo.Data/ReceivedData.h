@@ -19,8 +19,8 @@ namespace vosvideo
 			// Takes whole message, for serialization and retransmit 
 			virtual std::wstring ToString() const;
 
-			virtual void GetFromPeer(std::wstring& fromPeer);
-			virtual void GetToPeer(std::wstring& toPeer);
+			virtual std::wstring GetFromPeer();
+			virtual std::wstring GetToPeer();
 
 		protected:
 			std::shared_ptr<WebSocketMessageParser> parser_;

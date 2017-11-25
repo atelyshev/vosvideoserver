@@ -57,15 +57,15 @@ namespace vosvideo
 			virtual void FromJsonValue(const web::json::value& obj) override;
 			virtual std::wstring ToString() const;
 
-			static const int32_t _defaultRecordLen = 60;
-			static const int32_t _defaultMaxFilesNum = 10;
+			static const int32_t DEFAULT_REC_LEN = 60;
+			static const int32_t DEFAULT_MAX_FILES_NUM = 10;
 		private:
 			void SetFields(const web::json::value& json);
 
 			int32_t _cameraId = -1;
 			bool _isActive = false;
-			int32_t _recordLen = _defaultRecordLen;
-			int32_t _maxFilesNum = _defaultMaxFilesNum;
+			int32_t _recordLen = DEFAULT_REC_LEN;
+			int32_t _maxFilesNum = DEFAULT_MAX_FILES_NUM;
 			CameraType _cameraType = CameraType::UNKNOWN;
 			// Camera can have multiple modes and conditions when recording to the file is started
 			CameraRecordingMode _recordingMode = CameraRecordingMode::DISABLED;

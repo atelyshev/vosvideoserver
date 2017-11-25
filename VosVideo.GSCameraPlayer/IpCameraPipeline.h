@@ -8,8 +8,12 @@ namespace vosvideo
 		class IpCameraPipeline : public GSPipelineBase
 		{
 		public:
-			IpCameraPipeline(const std::string& uri, const std::wstring& username, const std::wstring& password);
-			virtual ~IpCameraPipeline();
+			IpCameraPipeline(const std::string& uri, 
+				const std::wstring& username, 
+				const std::wstring& password,
+				vosvideo::data::CameraRecordingMode recordingMode,
+				const std::wstring& recordingFolder,
+				const std::wstring& camName);
 		protected:
 			GstElement* CreateSource();
 			gboolean LinkElements();

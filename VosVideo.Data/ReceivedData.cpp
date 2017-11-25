@@ -53,18 +53,12 @@ web::json::value ReceivedData::ToJsonValue() const
 	return jObj;
 }
 
-void ReceivedData::GetFromPeer(std::wstring& fromPeer)
+std::wstring ReceivedData::GetFromPeer()
 {
-	if(parser_)
-	{
-		fromPeer = parser_->GetFromPeer();
-	}
+	return (parser_ != nullptr ? parser_->GetFromPeer() : L"");
 }
 
-void ReceivedData::GetToPeer(std::wstring& toPeer)
+std::wstring ReceivedData::GetToPeer()
 {
-	if(parser_)
-	{
-		toPeer = parser_->GetToPeer();
-	}
+	return (parser_ != nullptr ? parser_->GetToPeer() : L"");
 }

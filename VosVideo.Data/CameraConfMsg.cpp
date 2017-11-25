@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include <cpprest/json.h>
-#include "CameraConfMsg.h"
+#include "VosVideo.Data/CameraConfMsg.h"
 
 using namespace std;
 using namespace vosvideo::data;
@@ -28,8 +28,8 @@ CameraConfMsg CameraConfMsg::CreateFromDto(const wstring& archPath, const web::j
 	int camId;
 	bool    isActive = false;
 	CameraType modelType = CameraType::UNKNOWN;
-	int     recordLen = CameraConfMsg::_defaultRecordLen; // default 60 min
-	int     maxFilesNum = CameraConfMsg::_defaultMaxFilesNum; // default 10 files
+	auto recordLen = CameraConfMsg::DEFAULT_REC_LEN; // default 60 min
+	auto maxFilesNum = CameraConfMsg::DEFAULT_MAX_FILES_NUM; // default 10 files
 	wstring devName;
 	wstring audioUri;
 	wstring camIpAddr;

@@ -1,12 +1,17 @@
 #include "stdafx.h"
+#include <boost/format.hpp>
 #include "GSPipelineBase.h"
 
+using namespace util;
 using vosvideo::cameraplayer::GSPipelineBase;
+using boost::wformat;
 
-GSPipelineBase::GSPipelineBase()
+GSPipelineBase::GSPipelineBase(vosvideo::data::CameraRecordingMode recordingMode, 
+	const std::wstring& recordingFolder, 
+	const std::wstring& camName):
+	_recordingMode(recordingMode), _recordingFolder(recordingFolder), _camName(camName)
 {
 //	__asm int 3;
-
 	_appThread = std::make_unique<std::thread>(std::thread([this]() { AppThreadStart(); }));
 	_appThread->detach();
 }
@@ -19,7 +24,7 @@ GSPipelineBase::~GSPipelineBase()
 
 	if (_pipeline)
 	{
-		DestroyGSStreamerPipeline();
+		DestroyPipeline();
 	}
 }
 
@@ -33,7 +38,11 @@ void GSPipelineBase::GetWebRtcCapability(webrtc::VideoCaptureCapability& webRtcC
 
 void GSPipelineBase::Create()
 {
-	g_main_context_invoke(nullptr, CreateGStreamerPipeline, this);
+	//Only create a new pipeline if one isn't created yet
+	if (!_pipeline)
+	{
+		g_main_context_invoke(nullptr, CreatePipeline, this);
+	}
 }
 
 void GSPipelineBase::Start()
@@ -42,14 +51,16 @@ void GSPipelineBase::Start()
 	{
 		LOG_ERROR("GSPipeline: Unable to set the pipeline to the playing state.");
 	}
+	LOG_ERROR("GSPipeline: started pipeline");
 }
 
 void GSPipelineBase::Stop()
 {
 	if (!GSPipelineBase::ChangeElementState(_pipeline, GST_STATE_NULL)) 
 	{
-		LOG_ERROR("GSPipeline: Unable to set the pipeline to the null state.");
+		LOG_ERROR("GSPipeline: Unable to STOP pipeline and set it to the NULL state.");
 	}
+	LOG_ERROR("GSPipeline: stopped pipeline");
 }
 
 void GSPipelineBase::AddExternalCapturer(webrtc::VideoCaptureExternal* externalCapturer)
@@ -57,12 +68,12 @@ void GSPipelineBase::AddExternalCapturer(webrtc::VideoCaptureExternal* externalC
 	{
 		boost::unique_lock<boost::shared_mutex> lock(_mutex);
 		_webRtcVideoCapturers.insert(std::make_pair(reinterpret_cast<uint32_t>(externalCapturer), externalCapturer));
-	}
-
-	//Only create a new pipeline if one isn't created yet
-	if (!_pipeline)
-	{
-		g_main_context_invoke(nullptr, CreateGStreamerPipeline, this);
+		//Start only once
+		if (_webRtcVideoCapturers.size() == 1)
+		{
+			Start();
+		}
+		LOG_TRACE("Added new capturer. Number of active video capturers: ", _webRtcVideoCapturers.size());
 	}
 }
 
@@ -73,11 +84,11 @@ void GSPipelineBase::RemoveExternalCapturer(webrtc::VideoCaptureExternal* extern
 		_webRtcVideoCapturers.erase(reinterpret_cast<uint32_t>(externalCapturer));
 	}
 	//If we don't have any more webrtc capturers we destroy the pipeline
-	//TODO: don't destroy it if recording is enabled
 	if (_webRtcVideoCapturers.size() == 0)
 	{
-		DestroyGSStreamerPipeline();
+		Stop();
 	}
+	LOG_TRACE("Removed capturer. Number of active video capturers: ", _webRtcVideoCapturers.size());
 }
 
 void GSPipelineBase::RemoveAllExternalCapturers()
@@ -86,7 +97,7 @@ void GSPipelineBase::RemoveAllExternalCapturers()
 		boost::unique_lock<boost::shared_mutex> lock(_mutex);
 		_webRtcVideoCapturers.clear();
 	}
-	DestroyGSStreamerPipeline();
+	DestroyPipeline();
 }
 
 
@@ -105,15 +116,16 @@ void GSPipelineBase::AppThreadStart()
 	g_main_loop_run(_mainLoop);
 }
 
-void GSPipelineBase::DestroyGSStreamerPipeline()
+void GSPipelineBase::DestroyPipeline()
 {
 	Stop();
 	gst_object_unref(_pipeline);
 	g_source_remove(_busWatchId);
 	_pipeline = nullptr;
+	LOG_TRACE("Pipeline destroyed");
 }
 
-gboolean GSPipelineBase::CreateGStreamerPipeline(gpointer data)
+gboolean GSPipelineBase::CreatePipeline(gpointer data)
 {			
 	GSPipelineBase *pipelineBase = (GSPipelineBase*)data;
 	//Testing	
@@ -121,29 +133,72 @@ gboolean GSPipelineBase::CreateGStreamerPipeline(gpointer data)
 	// Set pipeline
 	pipelineBase->_pipeline = gst_pipeline_new("pipeline");
 	// Create components
+	// generic part
 	pipelineBase->_sourceElement = pipelineBase->CreateSource();
-	pipelineBase->_videoScale = gst_element_factory_make("videoscale", "videoscale");
-	pipelineBase->_videoRate = gst_element_factory_make("videorate", "videorate");
-	pipelineBase->_videoScaleCapsFilter = gst_element_factory_make("capsfilter", "videoscalecapsfilter");
-	pipelineBase->_videoRateCapsFilter = gst_element_factory_make("capsfilter", "videoratecapsfilter");
+
 	pipelineBase->_videoConverter = gst_element_factory_make("videoconvert", "videoconverter");
 	pipelineBase->_appSinkQueue = gst_element_factory_make("queue", "appsinkqueue");
+
+	pipelineBase->_clockOverlay = gst_element_factory_make("clockoverlay", "clockoverlay");
+	g_object_set(pipelineBase->_clockOverlay, "time-format", "%Y-%m-%d %H:%M:%S", nullptr);
+
+	pipelineBase->_videoScale = gst_element_factory_make("videoscale", "videoscale");
+	pipelineBase->_videoScaleCapsFilter = gst_element_factory_make("capsfilter", "videoscalecapsfilter");
+
+	pipelineBase->_videoRate = gst_element_factory_make("videorate", "videorate");
+	pipelineBase->_videoRateCapsFilter = gst_element_factory_make("capsfilter", "videoratecapsfilter");
+
+	pipelineBase->_tee = gst_element_factory_make("tee", "tee");
+	// First branch: file writer
+	pipelineBase->_queueRecord = gst_element_factory_make("queue", "queue_record");
+	pipelineBase->_x264encoder = gst_element_factory_make("x264enc", "x264enc");
+	g_object_set(pipelineBase->_x264encoder, "key-int-max", 10, nullptr);
+
+	pipelineBase->_h264parser = gst_element_factory_make("h264parse", "h264parse");
+
+	pipelineBase->_fileSink = gst_element_factory_make("splitmuxsink", "filesink");
+	auto filePattern = boost::str(wformat(L"%1%\\%2%%3%.mp4") % pipelineBase->_recordingFolder % pipelineBase->_camName % L"%04d");
+	LOG_TRACE("Video file writer name pattern: ", filePattern);
+	g_object_set(pipelineBase->_fileSink, "location", StringUtil::ToString(filePattern), "max-size-time", 60000000000, "max-files", 10, nullptr);
+
 	pipelineBase->_appSink = gst_element_factory_make("appsink", "sink");
 
 	// Check if components properly built
 	if (!CheckElements(pipelineBase))
 		return false;
 
-	gst_bin_add_many(GST_BIN(pipelineBase->_pipeline),
-		pipelineBase->_sourceElement, 
-		pipelineBase->_videoRate, 
-		pipelineBase->_videoRateCapsFilter,
-		pipelineBase->_videoScale, 
-		pipelineBase->_videoScaleCapsFilter, 
-		pipelineBase->_videoConverter,
-		pipelineBase->_appSinkQueue, 
-		pipelineBase->_appSink, 
-		nullptr);
+	// Fill first branch, filewriter
+	if (pipelineBase->_recordingMode == vosvideo::data::CameraRecordingMode::DISABLED)
+	{
+		gst_bin_add_many(GST_BIN(pipelineBase->_pipeline),
+			pipelineBase->_sourceElement,
+			pipelineBase->_videoRate,
+			pipelineBase->_videoRateCapsFilter,
+			pipelineBase->_videoScale,
+			pipelineBase->_videoScaleCapsFilter,
+			pipelineBase->_videoConverter,
+			pipelineBase->_appSinkQueue,
+			pipelineBase->_appSink,
+			nullptr);
+	}
+	else
+	{
+		gst_bin_add_many(
+			GST_BIN(pipelineBase->_pipeline),
+			pipelineBase->_sourceElement,
+			pipelineBase->_videoConverter,
+			pipelineBase->_clockOverlay,
+			pipelineBase->_videoScale,
+			pipelineBase->_videoScaleCapsFilter,
+			pipelineBase->_videoRate,
+			pipelineBase->_videoRateCapsFilter,
+			pipelineBase->_tee,
+			pipelineBase->_queueRecord,
+			pipelineBase->_x264encoder,
+			pipelineBase->_h264parser,
+			pipelineBase->_fileSink,
+			nullptr);
+	}
 
 	if (!pipelineBase->LinkElements()) 
 	{
@@ -178,7 +233,7 @@ gboolean GSPipelineBase::CreateGStreamerPipeline(gpointer data)
 	//Connect to the new-buffer signal so we can retrieve samples without blocking
 	g_signal_connect(pipelineBase->_appSink, "new-sample", G_CALLBACK(pipelineBase->NewSampleHandler), pipelineBase);
 
-	if (!GSPipelineBase::ChangeElementState(pipelineBase->_pipeline, GST_STATE_PLAYING)) 
+	if (!GSPipelineBase::ChangeElementState(pipelineBase->_pipeline, GST_STATE_PAUSED)) 
 	{
 		LOG_ERROR("GSPipelineBase: Unable to set the pipeline to the playing state.");
 		return false;
@@ -193,15 +248,32 @@ gboolean GSPipelineBase::CreateGStreamerPipeline(gpointer data)
 
 gboolean GSPipelineBase::LinkElements()
 {
-	return gst_element_link_many(
-		_videoRate, 
-		_videoRateCapsFilter, 
-		_videoScale, 
-		_videoScaleCapsFilter, 
-		_videoConverter, 
-		_appSinkQueue, 
-		_appSink, 
-		nullptr);
+	if (_recordingMode == vosvideo::data::CameraRecordingMode::DISABLED)
+	{
+		return gst_element_link_many(
+			_sourceElement,
+			_videoRate,
+			_videoRateCapsFilter, 
+			_videoScale, 
+			_videoScaleCapsFilter, 
+			_videoConverter, 
+			_appSinkQueue, 
+			_appSink, 
+			nullptr);
+	}
+	else
+	{
+		return gst_element_link_many(
+			_sourceElement,
+			_videoConverter,
+			_clockOverlay,
+			_videoScale,
+			_videoScaleCapsFilter,
+			_videoRate,
+			_videoRateCapsFilter,
+			_tee,
+			nullptr);
+	}
 }
 
 bool GSPipelineBase::ChangeElementState(GstElement *element, GstState state)
@@ -302,6 +374,12 @@ webrtc::VideoType GSPipelineBase::GetRawVideoTypeFromGsVideoFormat(const GstVide
 
 bool GSPipelineBase::CheckElements(GSPipelineBase* pipelineBase)
 {
+	if (!pipelineBase->_pipeline)
+	{
+		LOG_ERROR("GSPipelineBase error: Unable to create the pipeline");
+		return false;
+	}
+
 	if (!pipelineBase->_sourceElement)
 	{
 		LOG_ERROR("GSPipelineBase error: Unable to create the source element");
@@ -314,15 +392,15 @@ bool GSPipelineBase::CheckElements(GSPipelineBase* pipelineBase)
 		return false;
 	}
 
-	if (!pipelineBase->_videoRate)
-	{
-		LOG_ERROR("GSPipelineBase error: Unable to create videorate element");
-		return false;
-	}
-
 	if (!pipelineBase->_videoScaleCapsFilter)
 	{
 		LOG_ERROR("GSPipelineBase error: Unable to create videoscalefilter element");
+		return false;
+	}
+
+	if (!pipelineBase->_videoRate)
+	{
+		LOG_ERROR("GSPipelineBase error: Unable to create videorate element");
 		return false;
 	}
 
@@ -332,9 +410,33 @@ bool GSPipelineBase::CheckElements(GSPipelineBase* pipelineBase)
 		return false;
 	}
 
+	if (!pipelineBase->_tee)
+	{
+		LOG_ERROR("GSPipelineBase error: Unable to create tee element");
+		return false;
+	}
+
 	if (!pipelineBase->_videoConverter)
 	{
-		LOG_ERROR("GSPipelineBase error: Unable to create ffmpegcolorspace element");
+		LOG_ERROR("GSPipelineBase error: Unable to create videoconverter element");
+		return false;
+	}
+
+	if (!pipelineBase->_clockOverlay)
+	{
+		LOG_ERROR("GSPipelineBase error: Unable to create clockoverlay element");
+		return false;
+	}
+
+	if (!pipelineBase->_x264encoder)
+	{
+		LOG_ERROR("GSPipelineBase error: Unable to create x264encoder element");
+		return false;
+	}
+
+	if (!pipelineBase->_h264parser)
+	{
+		LOG_ERROR("GSPipelineBase error: Unable to create h264parser element");
 		return false;
 	}
 
@@ -350,11 +452,12 @@ bool GSPipelineBase::CheckElements(GSPipelineBase* pipelineBase)
 		return false;
 	}
 
-	if (!pipelineBase->_pipeline)
+	if (!pipelineBase->_fileSink)
 	{
-		LOG_ERROR("GSPipelineBase error: Unable to create the pipeline");
+		LOG_ERROR("GSPipelineBase error: Unable to create filesink element");
 		return false;
 	}
+
 	return true;
 }
 

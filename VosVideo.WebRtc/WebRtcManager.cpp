@@ -83,11 +83,9 @@ void WebRtcManager::OnMessageReceived(std::shared_ptr<ReceivedData> receivedMess
 	{
 		return;
 	}
-
-	wstring srvPeer;
-	wstring clientPeer;
-	receivedMessage->GetFromPeer(clientPeer);
-	receivedMessage->GetToPeer(srvPeer);
+	
+	auto clientPeer = receivedMessage->GetFromPeer();
+	auto srvPeer = receivedMessage->GetToPeer();
 	// We cant make sure that SDP comes first, just create entry and then init is 
 	// once something comes (SDP or ICE). Generally speaking SDP is not interesting for us
 	lock_guard<std::mutex> lock(mutex_);
@@ -191,8 +189,7 @@ void WebRtcManager::OnMessageReceived(std::shared_ptr<ReceivedData> receivedMess
 	}
 	else if(dynamic_pointer_cast<DeletePeerConnectionRequestMsg>(receivedMessage))
 	{
-		wstring fromPeer;
-		receivedMessage->GetFromPeer(fromPeer);
+		auto fromPeer = receivedMessage->GetFromPeer();
 		DeletePeerConnection(fromPeer);
 	}
 }

@@ -72,11 +72,9 @@ void DeviceConfigurationManager::RunDeviceDiscoveryAsync(const shared_ptr<vosvid
 	}
 
 	devDiscoveryInProgress_ = true;
-
-	wstring srvPeer;
-	wstring clientPeer;
-	msg->GetFromPeer(clientPeer);
-	msg->GetToPeer(srvPeer);
+	auto srvPeer = msg->GetToPeer();
+	auto clientPeer = msg->GetFromPeer();
+	
 	concurrency::task<void> devDiscoveryTask
 	(
 		[this, clientPeer, srvPeer]() 

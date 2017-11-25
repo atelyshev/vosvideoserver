@@ -132,8 +132,7 @@ void UserManager::OnMessageReceived(const shared_ptr<vosvideo::data::ReceivedDat
 	logInInProgress_ = false;
 	set<wstring> clientPeers;
 
-	wstring fromPeer;
-	receivedMessage->GetFromPeer(fromPeer);
+	auto fromPeer = receivedMessage->GetFromPeer();
 	//If we can't find a peer sender of the message we will ignore it
 	if (fromPeer == L"")
 		return;

@@ -30,31 +30,34 @@ int32_t GSCameraPlayer::OpenURL(vosvideo::data::CameraConfMsg& cameraConf)
 		return -1;
 	}
 
+
 	std::wstring waudioUri;
 	std::wstring wvideoUri;
-	std::wstring username;
-	std::wstring password;
-	std::wstring recordingOutfolder;
-
-	uint32_t recordingLength;
-	vosvideo::data::CameraRecordingMode recordingMode;
-
 	cameraConf.GetUris(waudioUri, wvideoUri);
+
 	_deviceId = cameraConf.GetCameraId();
 	_deviceName = cameraConf.GetCameraName();
+
+	std::wstring username;
+	std::wstring password;
 	cameraConf.GetCredentials(username, password);
-	cameraConf.GetFileSinkParameters(recordingOutfolder, recordingLength, recordingMode);
+
+	std::wstring recordingFolder;
+	uint32_t recordingLength;
+	vosvideo::data::CameraRecordingMode recordingMode;
+	cameraConf.GetFileSinkParameters(recordingFolder, recordingLength, recordingMode);
 	cameraType_ = cameraConf.GetCameraType();
 
 	if (wvideoUri != L"webcamera")
 	{
-		_pipeline = new IpCameraPipeline(util::StringUtil::ToString(wvideoUri), username, password);
+		_pipeline = new IpCameraPipeline(util::StringUtil::ToString(wvideoUri), username, password, recordingMode, recordingFolder, _deviceName);
 	}
 	else
 	{
-		_pipeline = new WebCameraPipeline();
+		_pipeline = new WebCameraPipeline(recordingMode, recordingFolder, _deviceName);
 	}
 
+	_pipeline->Create();
 	//
 	////Need to convert to std::string due to LOG_TRACE not working with std::wstring
 	//this->_deviceVideoUri = std::string(wvideoUri.begin(), wvideoUri.end());
@@ -132,5 +135,5 @@ void GSCameraPlayer::RemoveExternalCapturer(webrtc::VideoCaptureExternal* captur
 uint32_t GSCameraPlayer::GetDeviceId() const
 {
 	LOG_TRACE("GSCameraPlayer GetDeviceId called");
-	return this->_deviceId;
+	return _deviceId;
 }

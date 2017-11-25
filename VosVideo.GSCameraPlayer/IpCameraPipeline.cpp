@@ -3,12 +3,17 @@
 
 using namespace vosvideo::cameraplayer;
 
-IpCameraPipeline::IpCameraPipeline(const std::string& uri, const std::wstring& username, const std::wstring& password):
-_uri(uri), _username(username), _password(password)
-{
-}
-
-IpCameraPipeline::~IpCameraPipeline()
+IpCameraPipeline::IpCameraPipeline(
+	const std::string& uri, 
+	const std::wstring& username, 
+	const std::wstring& password,
+	vosvideo::data::CameraRecordingMode recordingMode,
+	const std::wstring& recordingFolder,
+	const std::wstring& camName) :
+	GSPipelineBase(recordingMode, recordingFolder, camName),
+	_uri(uri), 
+	_username(username), 
+	_password(password)
 {
 }
 

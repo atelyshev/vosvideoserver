@@ -9,7 +9,6 @@ namespace vosvideo
 		class JsonObjectBase
 		{
 		public:
-			JsonObjectBase(){};
 			virtual ~JsonObjectBase(){};
 			virtual web::json::value ToJsonValue() const = 0;
 			virtual void FromJsonValue(const web::json::value& obj) = 0;

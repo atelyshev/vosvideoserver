@@ -3,11 +3,10 @@
 
 using namespace vosvideo::cameraplayer;
 
-WebCameraPipeline::WebCameraPipeline()
-{
-}
-
-WebCameraPipeline::~WebCameraPipeline()
+WebCameraPipeline::WebCameraPipeline(vosvideo::data::CameraRecordingMode recordingMode, 
+	const std::wstring& recordingFolder, 
+	const std::wstring& camName) :
+	GSPipelineBase(recordingMode, recordingFolder, camName)
 {
 }
 
@@ -20,10 +19,6 @@ GstElement* WebCameraPipeline::CreateSource()
 gboolean WebCameraPipeline::LinkElements()
 {
 	if (!GSPipelineBase::LinkElements())
-	{
-		return false;
-	}
-	if (!gst_element_link_many(_sourceElement, _videoRate, nullptr))
 	{
 		return false;
 	}

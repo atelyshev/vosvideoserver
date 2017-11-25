@@ -4,6 +4,7 @@
 #include <gst/gst.h>
 #include <gst/video/video.h>
 #include <webrtc/modules/video_capture/video_capture_defines.h>
+#include "VosVideo.Data/CameraConfMsg.h"
 
 namespace vosvideo
 {
@@ -12,7 +13,8 @@ namespace vosvideo
 		class GSPipelineBase
 		{
 		public:
-			GSPipelineBase();
+			GSPipelineBase(vosvideo::data::CameraRecordingMode recordingMode, 
+				const std::wstring& recordingFolder, const std::wstring& camName);
 			~GSPipelineBase();
 
 			void Create();
@@ -30,16 +32,26 @@ namespace vosvideo
 			static void PrintCaps(const GstCaps * caps, const gchar * pfx);
 			static gboolean PrintField(GQuark field, const GValue * value, gpointer pfx);
 
+			GstElement *_pipeline = nullptr;
 			GstElement *_sourceElement = nullptr;
 			GstElement *_videoRate = nullptr;
-			GstElement *_videoConverter = nullptr;
+			GstElement *_videoRateCapsFilter = nullptr;
 			GstElement *_videoScale = nullptr;
 			GstElement *_videoScaleCapsFilter = nullptr;
-			GstElement *_videoRateCapsFilter = nullptr;
+			GstElement *_videoConverter = nullptr;
+			GstElement* _tee = nullptr; // tee
+			GstElement* _queueRecord = nullptr; // x264enc
+			GstElement* _x264encoder = nullptr; // x264enc
+			GstElement* _h264parser = nullptr; // h264parser
 			GstElement *_autoVideoSink = nullptr;
+			GstElement* _clockOverlay = nullptr;
 			GstElement *_appSinkQueue = nullptr;
 			GstElement *_appSink = nullptr;
-			GstElement *_pipeline = nullptr;
+			GstElement *_fileSink = nullptr;
+
+			vosvideo::data::CameraRecordingMode _recordingMode;
+			std::wstring _recordingFolder;
+			std::wstring _camName;
 
 			static const int FRAME_WIDTH = 528;
 			static const int FRAME_HEIGHT = 384;
@@ -49,9 +61,9 @@ namespace vosvideo
 		private:
 			void AppThreadStart();
 
-			void DestroyGSStreamerPipeline();
+			void DestroyPipeline();
 
-			static gboolean CreateGStreamerPipeline(gpointer data);
+			static gboolean CreatePipeline(gpointer data);
 			static bool ChangeElementState(GstElement *element, GstState state);
 			static GstFlowReturn NewSampleHandler(GstElement *sink, GSPipelineBase *cameraPlayer);
 			static gboolean BusWatchHandler(GstBus *bus, GstMessage *msg, gpointer data);
