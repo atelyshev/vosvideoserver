@@ -16,16 +16,16 @@ ReceivedData::~ReceivedData()
 
 void ReceivedData::Init(std::shared_ptr<WebSocketMessageParser> parser)
 {
-	parser_ = parser;
+	_parser = parser;
 }
 
 wstring ReceivedData::GetPayload()
 {
 	wstring payload;
 
-	if(parser_)
+	if(_parser)
 	{
-		parser_->GetPayload(payload);
+		_parser->GetPayload(payload);
 	}
 
 	return payload;
@@ -35,9 +35,9 @@ wstring ReceivedData::ToString() const
 {
 	wstring msg;
 
-	if(parser_)
+	if(_parser)
 	{
-		msg = parser_->GetMessage();
+		msg = _parser->GetMessage();
 	}
 
 	return msg;
@@ -46,19 +46,19 @@ wstring ReceivedData::ToString() const
 web::json::value ReceivedData::ToJsonValue() const
 {
 	web::json::value jObj;
-	if(parser_)
+	if(_parser)
 	{
-		parser_->GetPayload(jObj);
+		_parser->GetPayload(jObj);
 	}
 	return jObj;
 }
 
 std::wstring ReceivedData::GetFromPeer()
 {
-	return (parser_ != nullptr ? parser_->GetFromPeer() : L"");
+	return (_parser != nullptr ? _parser->GetFromPeer() : L"");
 }
 
 std::wstring ReceivedData::GetToPeer()
 {
-	return (parser_ != nullptr ? parser_->GetToPeer() : L"");
+	return (_parser != nullptr ? _parser->GetToPeer() : L"");
 }

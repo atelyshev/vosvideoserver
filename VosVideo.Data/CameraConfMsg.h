@@ -15,7 +15,6 @@ namespace vosvideo
 
 		enum class CameraRecordingMode
 		{
-			DISABLED,
 			PERMANENT,
 			ONMOTION,
 			ONSCHEDULER
@@ -27,7 +26,6 @@ namespace vosvideo
 			CameraConfMsg() {}
 			CameraConfMsg(const std::wstring& jsonStr);
 			CameraConfMsg(CameraType ct);
-			virtual ~CameraConfMsg();
 
 			static CameraConfMsg CreateFromDto(const std::wstring& archPath, const web::json::value& camParmsDto);
 			CameraType GetCameraType();
@@ -37,8 +35,13 @@ namespace vosvideo
 			int GetCameraId() const;
 			std::wstring GetCameraName() const;
 
-			void SetFileSinkParameters(const std::wstring& outFolder, uint32_t recordLen, uint32_t maxFilesNum, CameraRecordingMode recordingMode);
-			void GetFileSinkParameters(std::wstring& outFolder, uint32_t& recordLen, CameraRecordingMode& recordingMode) const;
+			void SetFileSinkParameters(const std::wstring& archivePath, uint32_t recordLen, uint32_t maxFilesNum, CameraRecordingMode recordingMode);
+			void GetFileSinkParameters(
+				bool& isRecordingEnabled, 
+				std::wstring& archivePath,
+				uint32_t& recordLen, 
+				uint32_t& maxFilesNum,
+				CameraRecordingMode& recordingMode) const;
 
 			void SetUris(const std::wstring& audiouri, const std::wstring& videouri);
 			void GetUris(std::wstring& audiouri, std::wstring& videouri) const;
@@ -64,13 +67,14 @@ namespace vosvideo
 
 			int32_t _cameraId = -1;
 			bool _isActive = false;
+			bool _isRecordingEnabled = false;
 			int32_t _recordLen = DEFAULT_REC_LEN;
 			int32_t _maxFilesNum = DEFAULT_MAX_FILES_NUM;
 			CameraType _cameraType = CameraType::UNKNOWN;
 			// Camera can have multiple modes and conditions when recording to the file is started
-			CameraRecordingMode _recordingMode = CameraRecordingMode::DISABLED;
+			CameraRecordingMode _recordingMode = CameraRecordingMode::PERMANENT;
 			std::wstring _cameraName;
-			std::wstring _outFolder;
+			std::wstring _archivePath;
 			std::wstring _videouri;
 			std::wstring _audiouri;
 			std::wstring _username;

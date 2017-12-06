@@ -23,7 +23,7 @@ namespace vosvideo
 			virtual std::wstring GetToPeer();
 
 		protected:
-			std::shared_ptr<WebSocketMessageParser> parser_;
+			std::shared_ptr<WebSocketMessageParser> _parser;
 		};
 	}
 }

@@ -1,4 +1,7 @@
 #include "stdafx.h"
+#include <thread>
+#include <chrono> 
+#include <gst/base/gstbaseparse.h>
 #include <boost/format.hpp>
 #include "GSPipelineBase.h"
 
@@ -6,14 +9,43 @@ using namespace util;
 using vosvideo::cameraplayer::GSPipelineBase;
 using boost::wformat;
 
-GSPipelineBase::GSPipelineBase(vosvideo::data::CameraRecordingMode recordingMode, 
+GSPipelineBase* _this;
+
+BOOL WINAPI EndProcessHandler(int32_t type)
+{
+	_this->StopPipeline();
+	return true;
+}
+
+// Need it only to finalize file recording. Called on app close only
+void GSPipelineBase::StopPipeline()
+{
+	GstPad *filesink = gst_element_get_static_pad(_queueRecord, "sink");
+	gst_pad_unlink(_teeFilePad, filesink);
+	gst_object_unref(filesink);
+	gst_element_send_event(_x264encoder, gst_event_new_eos());
+	std::this_thread::sleep_for(std::chrono::seconds(10));
+}
+
+GSPipelineBase::GSPipelineBase(
+	bool isRecordingEnabled,
+	vosvideo::data::CameraRecordingMode recordingMode, 
 	const std::wstring& recordingFolder, 
+	uint32_t recordingLength,
+	uint32_t maxFilesNum,
 	const std::wstring& camName):
-	_recordingMode(recordingMode), _recordingFolder(recordingFolder), _camName(camName)
+	_isRecordingEnabled(isRecordingEnabled),
+	_recordingMode(recordingMode), 
+	_recordingFolder(recordingFolder),
+	_recordingLength(recordingLength),
+	_maxFilesNum(maxFilesNum),
+	_camName(camName)
 {
 //	__asm int 3;
 	_appThread = std::make_unique<std::thread>(std::thread([this]() { AppThreadStart(); }));
 	_appThread->detach();
+	_this = this;
+	SetConsoleCtrlHandler((PHANDLER_ROUTINE)EndProcessHandler, TRUE);
 }
 
 GSPipelineBase::~GSPipelineBase()
@@ -45,22 +77,92 @@ void GSPipelineBase::Create()
 	}
 }
 
-void GSPipelineBase::Start()
+GstPadProbeReturn GSPipelineBase::CbUnlinkPad(GstPad *pad, GstPadProbeInfo *info, gpointer data)
 {
-	if (!GSPipelineBase::ChangeElementState(_pipeline, GST_STATE_PLAYING)) 
-	{
-		LOG_ERROR("GSPipeline: Unable to set the pipeline to the playing state.");
-	}
-	LOG_ERROR("GSPipeline: started pipeline");
+	g_print("Unlinking...");
+	GSPipelineBase *pipelineBase = (GSPipelineBase*)data;
+	GstPad *sinkpad = gst_element_get_static_pad(pipelineBase->_appSinkQueue, "sink");
+	gst_pad_unlink(pipelineBase->_teeVideoPad, sinkpad);
+	gst_object_unref(sinkpad);
+	gst_element_send_event(pipelineBase->_appSink, gst_event_new_eos());
+	// Finalize real-time branch
+	gst_element_set_state(pipelineBase->_appSinkQueue, GST_STATE_NULL);
+	gst_element_set_state(pipelineBase->_appSink, GST_STATE_NULL);
+
+	gst_bin_remove(GST_BIN(pipelineBase->_pipeline), pipelineBase->_appSinkQueue);
+	gst_bin_remove(GST_BIN(pipelineBase->_pipeline), pipelineBase->_appSink);
+
+	gst_object_unref(pipelineBase->_appSinkQueue);
+	gst_object_unref(pipelineBase->_appSink);
+
+	gst_element_release_request_pad(pipelineBase->_tee, pipelineBase->_teeVideoPad);
+	gst_object_unref(pipelineBase->_teeVideoPad);
+
+	return GST_PAD_PROBE_REMOVE;
 }
 
-void GSPipelineBase::Stop()
+void GSPipelineBase::StartVideo()
 {
-	if (!GSPipelineBase::ChangeElementState(_pipeline, GST_STATE_NULL)) 
+	LOG_TRACE("Start real-time video was requested");
+	// Create new pad
+	GstPadTemplate* templ = gst_element_class_get_pad_template(GST_ELEMENT_GET_CLASS(_tee), "src_%u");
+	_teeVideoPad = gst_element_request_pad(_tee, templ, nullptr, nullptr);
+	// Create second branch for real-time video
+	_appSinkQueue = gst_element_factory_make("queue", "appsinkqueue");
+	_appSink = gst_element_factory_make("appsink", "sink");
+
+	if (!CheckRealTimeElements())
 	{
-		LOG_ERROR("GSPipeline: Unable to STOP pipeline and set it to the NULL state.");
+		return;
 	}
-	LOG_ERROR("GSPipeline: stopped pipeline");
+	//Connect to the new-buffer signal so we can retrieve samples without blocking
+	if (!g_signal_connect(_appSink, "new-sample", G_CALLBACK(CbNewSampleHandler), this))
+	{
+		LOG_ERROR("Failed to add sample handler");
+	}
+	// Configure the appsink element
+	GstCaps *appSinkCaps = gst_caps_from_string("video/x-raw");
+	g_object_set(_appSink, "emit-signals", TRUE, "caps", appSinkCaps, nullptr);
+	gst_caps_unref(appSinkCaps);
+
+	gst_bin_add_many(GST_BIN(_pipeline), _appSinkQueue, _appSink, nullptr);
+
+	if (!gst_element_link_many(_appSinkQueue, _appSink, nullptr))
+	{
+		LOG_ERROR("Failed to link real-time video elements");
+		return;
+	}
+	gst_element_sync_state_with_parent(_appSinkQueue);
+	gst_element_sync_state_with_parent(_appSink);
+
+	GstPad *sinkpad = gst_element_get_static_pad(_appSinkQueue, "sink");
+	gst_pad_link(_teeVideoPad, sinkpad);
+	gst_object_unref(sinkpad);
+
+	if (!_isRecordingEnabled) // In other mode pipeline is always playing
+	{
+		if (!GSPipelineBase::ChangeElementState(_pipeline, GST_STATE_PLAYING))
+		{
+			LOG_ERROR("GSPipeline: Unable to set the pipeline to the playing state.");
+		}
+	}
+	GST_DEBUG_BIN_TO_DOT_FILE(GST_BIN(_pipeline), GST_DEBUG_GRAPH_SHOW_ALL, "full_pipeline");
+	LOG_TRACE("GSPipeline: started video pipeline");
+}
+
+void GSPipelineBase::StopVideo()
+{
+	LOG_TRACE("Stop real-time video was requested");
+	if (!_isRecordingEnabled)
+	{
+		if (!GSPipelineBase::ChangeElementState(_pipeline, GST_STATE_NULL))
+		{
+			LOG_ERROR("GSPipeline: Unable to STOP pipeline and set it to the NULL state.");
+		}
+	}
+	gst_pad_add_probe(_teeVideoPad, GST_PAD_PROBE_TYPE_IDLE, CbUnlinkPad, this, nullptr);
+	GST_DEBUG_BIN_TO_DOT_FILE(GST_BIN(_pipeline), GST_DEBUG_GRAPH_SHOW_ALL, "tee_unlinked");
+	LOG_TRACE("GSPipeline: stopped pipeline");
 }
 
 void GSPipelineBase::AddExternalCapturer(webrtc::VideoCaptureExternal* externalCapturer)
@@ -68,12 +170,13 @@ void GSPipelineBase::AddExternalCapturer(webrtc::VideoCaptureExternal* externalC
 	{
 		boost::unique_lock<boost::shared_mutex> lock(_mutex);
 		_webRtcVideoCapturers.insert(std::make_pair(reinterpret_cast<uint32_t>(externalCapturer), externalCapturer));
-		//Start only once
+
+		//Start only for first request, second request will get same frames
 		if (_webRtcVideoCapturers.size() == 1)
 		{
-			Start();
+			StartVideo();
 		}
-		LOG_TRACE("Added new capturer. Number of active video capturers: ", _webRtcVideoCapturers.size());
+		LOG_TRACE("Added new capturer. Number of active video capturers: " << _webRtcVideoCapturers.size());
 	}
 }
 
@@ -86,9 +189,9 @@ void GSPipelineBase::RemoveExternalCapturer(webrtc::VideoCaptureExternal* extern
 	//If we don't have any more webrtc capturers we destroy the pipeline
 	if (_webRtcVideoCapturers.size() == 0)
 	{
-		Stop();
+		StopVideo();
 	}
-	LOG_TRACE("Removed capturer. Number of active video capturers: ", _webRtcVideoCapturers.size());
+	LOG_TRACE("Removed capturer. Number of active video capturers: " << _webRtcVideoCapturers.size());
 }
 
 void GSPipelineBase::RemoveAllExternalCapturers()
@@ -97,7 +200,7 @@ void GSPipelineBase::RemoveAllExternalCapturers()
 		boost::unique_lock<boost::shared_mutex> lock(_mutex);
 		_webRtcVideoCapturers.clear();
 	}
-	DestroyPipeline();
+	StopVideo();
 }
 
 
@@ -118,26 +221,45 @@ void GSPipelineBase::AppThreadStart()
 
 void GSPipelineBase::DestroyPipeline()
 {
-	Stop();
-	gst_object_unref(_pipeline);
+	StopVideo();
 	g_source_remove(_busWatchId);
+	gst_object_unref(_pipeline);
+	gst_object_unref(_sourceElement);
+	gst_object_unref(_videoRate);
+	gst_object_unref(_videoRateCapsFilter);
+	gst_object_unref(_videoScale);
+	gst_object_unref(_videoScaleCapsFilter);
+	gst_object_unref(_videoConverter);
+	gst_object_unref(_tee); 
+	gst_object_unref(_queueRecord);
+	gst_object_unref(_x264encoder);
+	gst_object_unref(_h264parser);
+	gst_object_unref(_autoVideoSink);
+	gst_object_unref(_clockOverlay);
+	gst_object_unref(_appSinkQueue);
+	gst_object_unref(_appSink);
+	gst_object_unref(_fileSink);
 	_pipeline = nullptr;
 	LOG_TRACE("Pipeline destroyed");
+}
+
+void GSPipelineBase::CbNewTeePadAdded(GstElement *element, GstPad* pad, gpointer data)
+{
+	GSPipelineBase *pipelineBase = (GSPipelineBase*)data;
+	pipelineBase->_teeFilePad = pad;
 }
 
 gboolean GSPipelineBase::CreatePipeline(gpointer data)
 {			
 	GSPipelineBase *pipelineBase = (GSPipelineBase*)data;
-	//Testing	
-	//pipelineBase->_autoVideoSink = gst_element_factory_make("autovideosink", "testvideosink");
 	// Set pipeline
 	pipelineBase->_pipeline = gst_pipeline_new("pipeline");
-	// Create components
-	// generic part
-	pipelineBase->_sourceElement = pipelineBase->CreateSource();
+	pipelineBase->_clock = gst_pipeline_get_clock(GST_PIPELINE(pipelineBase->_pipeline));
 
+	// Create components
+	// Common part
+	pipelineBase->_sourceElement = pipelineBase->CreateSource();
 	pipelineBase->_videoConverter = gst_element_factory_make("videoconvert", "videoconverter");
-	pipelineBase->_appSinkQueue = gst_element_factory_make("queue", "appsinkqueue");
 
 	pipelineBase->_clockOverlay = gst_element_factory_make("clockoverlay", "clockoverlay");
 	g_object_set(pipelineBase->_clockOverlay, "time-format", "%Y-%m-%d %H:%M:%S", nullptr);
@@ -149,40 +271,36 @@ gboolean GSPipelineBase::CreatePipeline(gpointer data)
 	pipelineBase->_videoRateCapsFilter = gst_element_factory_make("capsfilter", "videoratecapsfilter");
 
 	pipelineBase->_tee = gst_element_factory_make("tee", "tee");
+	g_signal_connect(pipelineBase->_tee, "pad-added", G_CALLBACK(pipelineBase->CbNewTeePadAdded), pipelineBase);
 	// First branch: file writer
 	pipelineBase->_queueRecord = gst_element_factory_make("queue", "queue_record");
 	pipelineBase->_x264encoder = gst_element_factory_make("x264enc", "x264enc");
 	g_object_set(pipelineBase->_x264encoder, "key-int-max", 10, nullptr);
+	g_object_set(pipelineBase->_x264encoder, "tune", 0x00000004, nullptr);
 
 	pipelineBase->_h264parser = gst_element_factory_make("h264parse", "h264parse");
+	gst_base_parse_set_pts_interpolation((GstBaseParse*)pipelineBase->_h264parser, true);
+	gst_base_parse_set_infer_ts((GstBaseParse*)pipelineBase->_h264parser, true);
 
+	// Configure file sink
 	pipelineBase->_fileSink = gst_element_factory_make("splitmuxsink", "filesink");
 	auto filePattern = boost::str(wformat(L"%1%\\%2%%3%.mp4") % pipelineBase->_recordingFolder % pipelineBase->_camName % L"%04d");
-	LOG_TRACE("Video file writer name pattern: ", filePattern);
-	g_object_set(pipelineBase->_fileSink, "location", StringUtil::ToString(filePattern), "max-size-time", 60000000000, "max-files", 10, nullptr);
-
-	pipelineBase->_appSink = gst_element_factory_make("appsink", "sink");
+	LOG_TRACE("Video file writer name pattern: " << filePattern);
+	g_object_set(pipelineBase->_fileSink, 
+		"location", StringUtil::ToString(filePattern).c_str(), 
+		"max-size-time", pipelineBase->_recordingLength * 60000000000, 
+		"max-files", pipelineBase->_maxFilesNum, nullptr);
 
 	// Check if components properly built
-	if (!CheckElements(pipelineBase))
+	if (!CheckFileWriterElements(pipelineBase))
 		return false;
 
-	// Fill first branch, filewriter
-	if (pipelineBase->_recordingMode == vosvideo::data::CameraRecordingMode::DISABLED)
+	pipelineBase->ConfigureCaps();
+
+	// Make simple streamming pipeline
+	if (pipelineBase->_isRecordingEnabled)
 	{
-		gst_bin_add_many(GST_BIN(pipelineBase->_pipeline),
-			pipelineBase->_sourceElement,
-			pipelineBase->_videoRate,
-			pipelineBase->_videoRateCapsFilter,
-			pipelineBase->_videoScale,
-			pipelineBase->_videoScaleCapsFilter,
-			pipelineBase->_videoConverter,
-			pipelineBase->_appSinkQueue,
-			pipelineBase->_appSink,
-			nullptr);
-	}
-	else
-	{
+		// Make complex dual pipeline with filewriter and real time stream
 		gst_bin_add_many(
 			GST_BIN(pipelineBase->_pipeline),
 			pipelineBase->_sourceElement,
@@ -199,6 +317,10 @@ gboolean GSPipelineBase::CreatePipeline(gpointer data)
 			pipelineBase->_fileSink,
 			nullptr);
 	}
+	else
+	{  
+		pipelineBase->ConfigureVideoBin();
+	}
 
 	if (!pipelineBase->LinkElements()) 
 	{
@@ -206,64 +328,142 @@ gboolean GSPipelineBase::CreatePipeline(gpointer data)
 		return false;
 	}
 
-	//Sets relevant properties for the elements in the pipeline
-	//Set the caps filter to DCIF size. This will force the videoscale element to scale the video to DCIF size.
-	GstCaps *rawVideoScaleCaps = gst_caps_new_simple(
-		"video/x-raw",
-		"width", G_TYPE_INT, GSPipelineBase::FRAME_WIDTH, 
-		"height", G_TYPE_INT, GSPipelineBase::FRAME_HEIGHT, 
-		nullptr);
-	g_object_set(pipelineBase->_videoScaleCapsFilter, "caps", rawVideoScaleCaps, nullptr);
-	gst_caps_unref(rawVideoScaleCaps);
-
-	GstCaps *rawVideoRateCaps = gst_caps_new_simple(
-		"video/x-raw",
-		"framerate", GST_TYPE_FRACTION, 
-		GSPipelineBase::FRAMERATE_NUMERATOR, 
-		GSPipelineBase::FRAMERATE_DENOMINATOR, 
-		nullptr);
-	g_object_set(pipelineBase->_videoRateCapsFilter, "caps", rawVideoRateCaps, nullptr);
-	gst_caps_unref(rawVideoRateCaps);
-
-	//Configure the appsink element
-	GstCaps *appSinkCaps = gst_caps_from_string("video/x-raw");
-	g_object_set(pipelineBase->_appSink, "emit-signals", TRUE, "caps", appSinkCaps, nullptr);
-	gst_caps_unref(appSinkCaps);
-
-	//Connect to the new-buffer signal so we can retrieve samples without blocking
-	g_signal_connect(pipelineBase->_appSink, "new-sample", G_CALLBACK(pipelineBase->NewSampleHandler), pipelineBase);
-
-	if (!GSPipelineBase::ChangeElementState(pipelineBase->_pipeline, GST_STATE_PAUSED)) 
+	if (pipelineBase->_isRecordingEnabled)
 	{
-		LOG_ERROR("GSPipelineBase: Unable to set the pipeline to the playing state.");
-		return false;
+		if (!pipelineBase->ChangeElementState(pipelineBase->_pipeline, GST_STATE_PLAYING))
+		{
+			LOG_ERROR("GSPipelineBase: Unable to set the pipeline to the PLAYING state.");
+			return false;
+		}
+	}
+	else
+	{
+		if (!pipelineBase->ChangeElementState(pipelineBase->_pipeline, GST_STATE_NULL))
+		{
+			LOG_ERROR("GSPipelineBase: Unable to set the pipeline to the PAUSED state.");
+			return false;
+		}
 	}
 
 	GstBus *bus = gst_pipeline_get_bus(GST_PIPELINE(pipelineBase->_pipeline));
-	pipelineBase->_busWatchId = gst_bus_add_watch(bus, BusWatchHandler, pipelineBase);
-	gst_object_unref(bus);	
+	pipelineBase->_busWatchId = gst_bus_add_watch(bus, CbBusWatchHandler, pipelineBase);
+	gst_object_unref(bus);
 
 	return false;
 }
 
-gboolean GSPipelineBase::LinkElements()
+void GSPipelineBase::ConfigureVideoBin()
 {
-	if (_recordingMode == vosvideo::data::CameraRecordingMode::DISABLED)
+	_appSinkQueue = gst_element_factory_make("queue", "appsinkqueue");
+	_appSink = gst_element_factory_make("appsink", "sink");
+	//Connect to the new-buffer signal so we can retrieve samples without blocking
+	g_signal_connect(_appSink, "new-sample", G_CALLBACK(CbNewSampleHandler), this);
+
+	gst_bin_add_many(GST_BIN(_pipeline),
+		_sourceElement,
+		_videoConverter,
+		_videoRate,
+		_videoRateCapsFilter,
+		_videoScale,
+		_videoScaleCapsFilter,
+		_tee,
+		nullptr);
+}
+
+gboolean GSPipelineBase::CbBusWatchHandler(GstBus *bus, GstMessage *msg, gpointer data)
+{
+	GSPipelineBase* pipelineBase = (GSPipelineBase*)data;
+
+	switch (GST_MESSAGE_TYPE(msg))
 	{
-		return gst_element_link_many(
-			_sourceElement,
-			_videoRate,
-			_videoRateCapsFilter, 
-			_videoScale, 
-			_videoScaleCapsFilter, 
-			_videoConverter, 
-			_appSinkQueue, 
-			_appSink, 
-			nullptr);
+	case GST_MESSAGE_ERROR:
+	{
+		//_asm int 3;
+		GError *err;
+		gchar *debug_info;
+		gst_message_parse_error(msg, &err, &debug_info);
+		g_printerr("GSPipelineBase: Error received from element %s: %s\n", GST_OBJECT_NAME(msg->src), err->message);
+		g_printerr("GSPipelineBase: Additional debugging information: %s\n", debug_info ? debug_info : "none");
+		g_clear_error(&err);
+		g_free(debug_info);
+		break;
 	}
-	else
+	case GST_MESSAGE_WARNING:
 	{
-		return gst_element_link_many(
+		GError *err = nullptr;
+		gchar *debug = nullptr;
+
+		gst_message_parse_warning(msg, &err, &debug);
+
+		g_printerr("ERROR: from element %s: %s\n", GST_OBJECT_NAME(msg->src), err->message);
+		if (debug != nullptr)
+			g_printerr("Additional debug info:\n%s\n", debug);
+
+		g_error_free(err);
+		g_free(debug);
+		break;
+	}
+	case GST_MESSAGE_EOS:
+	{
+		//_asm int 3;
+		g_print("End-Of-Stream reached.");
+		break;
+	}
+	case GST_MESSAGE_STATE_CHANGED:
+	{
+		gchar* messageSourceName = gst_element_get_name(GST_MESSAGE_SRC(msg));
+		GstState old_state, new_state, pending_state;
+		gst_message_parse_state_changed(msg, &old_state, &new_state, &pending_state);
+		if (GST_MESSAGE_SRC(msg) == GST_OBJECT(pipelineBase->_pipeline))
+		{
+			g_print("GSPipelineBase %s state changed from %s to %s:\n",
+				messageSourceName, gst_element_state_get_name(old_state), gst_element_state_get_name(new_state));
+
+			if (new_state == GstState::GST_STATE_PLAYING)
+			{
+				//We need to set the webrtc raw video type that appsink will receive. This will be used later as frames are coming in to the appsink.
+				pipelineBase->SetWebRtcRawVideoType();
+			}
+		}
+
+		g_free(messageSourceName);
+		break;
+	}
+	default:
+		break;
+	}
+	return true;
+}
+
+void GSPipelineBase::ConfigureCaps()
+{
+	//Sets relevant properties for the elements in the pipeline
+	//Set the caps filter to DCIF size. This will force the videoscale element to scale the video to DCIF size.
+	GstCaps *videoScaleCaps = gst_caps_new_simple(
+		"video/x-raw",
+		"format", G_TYPE_STRING, "I420",
+		"width", G_TYPE_INT, GSPipelineBase::FRAME_WIDTH,
+		"height", G_TYPE_INT, GSPipelineBase::FRAME_HEIGHT,
+		nullptr);
+	g_object_set(_videoScaleCapsFilter, "caps", videoScaleCaps, nullptr);
+	gst_caps_unref(videoScaleCaps);
+
+	GstCaps *videoRateCaps = gst_caps_new_simple(
+		"video/x-raw",
+		"framerate", GST_TYPE_FRACTION,
+		GSPipelineBase::FRAMERATE_NUMERATOR,
+		GSPipelineBase::FRAMERATE_DENOMINATOR,
+		nullptr);
+	g_object_set(_videoRateCapsFilter, "caps", videoRateCaps, nullptr);
+	gst_caps_unref(videoRateCaps);
+}
+
+bool GSPipelineBase::LinkElements()
+{
+	// Simple case real time pipeline
+	if (_isRecordingEnabled)
+	{   // Dual way, link up to tee element
+		if(!gst_element_link_many(
 			_sourceElement,
 			_videoConverter,
 			_clockOverlay,
@@ -272,14 +472,43 @@ gboolean GSPipelineBase::LinkElements()
 			_videoRate,
 			_videoRateCapsFilter,
 			_tee,
+			nullptr))
+		{
+			LOG_ERROR("Failed to link elements before tee");
+			return false;
+		}
+
+		if (!gst_element_link_many(
+			_tee,
+			_queueRecord,
+			_x264encoder,
+			_h264parser,
+			_fileSink,
+			nullptr))
+		{
+			LOG_ERROR("Failed to link elements after tee");
+			return false;
+		}
+		g_object_set(GST_BIN(_pipeline), "message-forward", TRUE, nullptr);
+		return true;
+	}
+	else
+	{
+		return gst_element_link_many(
+			_sourceElement,
+			_videoConverter,
+			_videoRate,
+			_videoRateCapsFilter,
+			_videoScale,
+			_videoScaleCapsFilter,
+			_tee,
 			nullptr);
 	}
 }
 
 bool GSPipelineBase::ChangeElementState(GstElement *element, GstState state)
 {
-	GstStateChangeReturn stateChangeReturn;
-	stateChangeReturn = gst_element_set_state(element, state);
+	GstStateChangeReturn stateChangeReturn = gst_element_set_state(element, state);
 	if (stateChangeReturn == GST_STATE_CHANGE_FAILURE)
 	{
 		LOG_ERROR("GSCameraPlayer: Unable to set the element state to " << state);
@@ -288,31 +517,35 @@ bool GSPipelineBase::ChangeElementState(GstElement *element, GstState state)
 	return true;
 }
 
-GstFlowReturn GSPipelineBase::NewSampleHandler(GstElement *sink, GSPipelineBase *pipelineBase)
+GstFlowReturn GSPipelineBase::CbNewSampleHandler(GstElement *sink, GSPipelineBase *pipelineBase)
 {
-	GstSample *sample = nullptr;
-	guint8 *data = nullptr;
-	guint size = 0;
-
-	//g_print("*");
+#ifdef _DEBUG
+	g_print("*");
+#endif
 	//Retrieve the buffer
 	if (pipelineBase->_rawVideoType == webrtc::VideoType::kUnknown)
 	{
 		pipelineBase->SetWebRtcRawVideoType();
 	}
+	if (pipelineBase->_rawVideoType == webrtc::VideoType::kUnknown)
+	{
+		return GST_FLOW_OK;
+	}
 
+	GstSample *sample;
 	g_signal_emit_by_name(sink, "pull-sample", &sample);
 	if (sample)
 	{
 		GstMapInfo info;
 		GstBuffer* buffer = gst_sample_get_buffer(sample);
-		if (gst_buffer_map(buffer, &info, GST_MAP_READ)) 
+		if (!gst_buffer_map(buffer, &info, GST_MAP_READ)) 
 		{
-			data = info.data;
-			size = info.size;
-			gst_buffer_unmap(buffer, &info);
+			return GST_FLOW_ERROR;
 		}
 
+		guint8* data = info.data;
+		guint size = info.size;
+		gst_buffer_unmap(buffer, &info);
 		//PrintCaps(caps, " ");
 		webrtc::VideoCaptureCapability webRtcCap;
 		webRtcCap.width = GSPipelineBase::FRAME_WIDTH;
@@ -335,19 +568,19 @@ GstFlowReturn GSPipelineBase::NewSampleHandler(GstElement *sink, GSPipelineBase 
 
 GstVideoFormat GSPipelineBase::GetGstVideoFormatFromCaps(GstCaps* caps)
 {
-	GstStructure *capsStructure;
-	const GValue *formatTypeGValue;
-	const gchar *videoFormatStr;
-	guint32 fourCCFormat;
-	GstVideoFormat gstVideoFormat;
-
-	capsStructure = gst_caps_get_structure(caps, 0);
-	formatTypeGValue = gst_structure_get_value(capsStructure, "format");
-	videoFormatStr = gst_value_serialize(formatTypeGValue);
-	fourCCFormat = GST_STR_FOURCC(videoFormatStr);
-	gstVideoFormat = gst_video_format_from_fourcc(fourCCFormat);
-
-	return gstVideoFormat;
+	GstStructure* capsStructure = gst_caps_get_structure(caps, 0);
+	const GValue* formatTypeGValue = gst_structure_get_value(capsStructure, "format");
+	const gchar *videoFormatStr = gst_value_serialize(formatTypeGValue);
+	if (videoFormatStr != nullptr)
+	{
+		guint32 fourCCFormat = GST_STR_FOURCC(videoFormatStr);
+		GstVideoFormat gstVideoFormat = gst_video_format_from_fourcc(fourCCFormat);
+		return gstVideoFormat;
+	}
+	else
+	{
+		return GST_VIDEO_FORMAT_UNKNOWN;
+	}
 }
 
 webrtc::VideoType GSPipelineBase::GetRawVideoTypeFromGsVideoFormat(const GstVideoFormat& videoFormat)
@@ -372,7 +605,7 @@ webrtc::VideoType GSPipelineBase::GetRawVideoTypeFromGsVideoFormat(const GstVide
 	return webrtc::VideoType::kUnknown;
 }
 
-bool GSPipelineBase::CheckElements(GSPipelineBase* pipelineBase)
+bool GSPipelineBase::CheckFileWriterElements(GSPipelineBase* pipelineBase)
 {
 	if (!pipelineBase->_pipeline)
 	{
@@ -440,24 +673,28 @@ bool GSPipelineBase::CheckElements(GSPipelineBase* pipelineBase)
 		return false;
 	}
 
-	if (!pipelineBase->_appSinkQueue)
-	{
-		LOG_ERROR("GSPipelineBase error: Unable to create appsink queue element");
-		return false;
-	}
-
-	if (!pipelineBase->_appSink)
-	{
-		LOG_ERROR("GSPipelineBase error: Unable to create appsink element");
-		return false;
-	}
-
 	if (!pipelineBase->_fileSink)
 	{
 		LOG_ERROR("GSPipelineBase error: Unable to create filesink element");
 		return false;
 	}
 
+	return true;
+}
+
+bool GSPipelineBase::CheckRealTimeElements()
+{
+	if (!_appSinkQueue)
+	{
+		LOG_ERROR("GSPipelineBase error: Unable to create appsink queue element");
+		return false;
+	}
+
+	if (!_appSink)
+	{
+		LOG_ERROR("GSPipelineBase error: Unable to create appsink element");
+		return false;
+	}
 	return true;
 }
 
@@ -494,65 +731,22 @@ gboolean GSPipelineBase::PrintField(GQuark field, const GValue * value, gpointer
 	return true;
 }
 
-
-gboolean GSPipelineBase::BusWatchHandler(GstBus *bus, GstMessage *msg, gpointer data)
-{
-	GError *err;
-	gchar *debug_info;
-
-	switch (GST_MESSAGE_TYPE(msg)) 
-	{
-	case GST_MESSAGE_ERROR:
-		//_asm int 3;
-		gst_message_parse_error(msg, &err, &debug_info);
-		g_printerr("GSPipelineBase: Error received from element %s: %s\n", GST_OBJECT_NAME(msg->src), err->message);
-		g_printerr("GSPipelineBase: Debugging information: %s\n", debug_info ? debug_info : "none");
-		g_clear_error(&err);
-		g_free(debug_info);
-		break;
-	case GST_MESSAGE_EOS:
-		//_asm int 3;
-		g_print("End-Of-Stream reached.\n");
-		break;
-	case GST_MESSAGE_STATE_CHANGED:
-		///* We are only interested in state-changed messages from the pipeline */
-		//if (GST_MESSAGE_SRC (msg) == GST_OBJECT (cameraPlayer)) {
-		gchar* messageSourceName = gst_element_get_name(GST_MESSAGE_SRC(msg));
-		GstState old_state, new_state, pending_state;
-		gst_message_parse_state_changed(msg, &old_state, &new_state, &pending_state);
-		GSPipelineBase* pipelineBase = (GSPipelineBase*)data;
-		if (GST_MESSAGE_SRC(msg) == GST_OBJECT(pipelineBase->_pipeline))
-		{
-			g_print("GSPipelineBase %s state changed from %s to %s:\n",
-				messageSourceName, gst_element_state_get_name(old_state), gst_element_state_get_name(new_state));
-
-			if (new_state == GstState::GST_STATE_PLAYING)
-			{
-				//We need to set the webrtc raw video type that appsink will receive. This will be used later as frames are coming in to the appsink.
-				pipelineBase->SetWebRtcRawVideoType();
-			}
-		}
-
-		g_free(messageSourceName);
-		break;
-	}
-
-	return true;
-}
-
 void GSPipelineBase::SetWebRtcRawVideoType()
 {
-	GstPad* pad = gst_element_get_static_pad(_appSink, "sink");
-	GstCaps* caps = gst_pad_get_current_caps(pad);
-	if (!caps)
+	if (_appSink)
 	{
-		caps = gst_pad_query_caps(pad, nullptr);
-		gst_caps_make_writable(caps);
+		GstPad* pad = gst_element_get_static_pad(_appSink, "sink");
+		GstCaps* caps = gst_pad_get_current_caps(pad);
+		if (!caps)
+		{
+			caps = gst_pad_query_caps(pad, nullptr);
+			gst_caps_make_writable(caps);
+		}
+
+		_rawVideoType = GSPipelineBase::GetRawVideoTypeFromGsVideoFormat(GSPipelineBase::GetGstVideoFormatFromCaps(caps));
+
+		gst_caps_unref(caps);
+		gst_object_unref(pad);
 	}
-
-	_rawVideoType = GSPipelineBase::GetRawVideoTypeFromGsVideoFormat(GSPipelineBase::GetGstVideoFormatFromCaps(caps));
-
-	gst_caps_unref(caps);
-	gst_object_unref(pad);
 }
 

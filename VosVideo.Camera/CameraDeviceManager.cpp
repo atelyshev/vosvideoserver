@@ -173,7 +173,6 @@ CameraDeviceManager::~CameraDeviceManager()
 
 void CameraDeviceManager::AddIpCam(web::json::value& camParms)
 {
-	configMgr_->GetArchivePath();
 	auto conf = CameraConfMsg::CreateFromDto(configMgr_->GetArchivePath(), camParms);
 	CreatePlayerProcess(conf);
 }

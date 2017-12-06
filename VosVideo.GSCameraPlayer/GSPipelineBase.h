@@ -13,14 +13,19 @@ namespace vosvideo
 		class GSPipelineBase
 		{
 		public:
-			GSPipelineBase(vosvideo::data::CameraRecordingMode recordingMode, 
-				const std::wstring& recordingFolder, const std::wstring& camName);
+			GSPipelineBase(bool isRecordingEnabled, 
+				vosvideo::data::CameraRecordingMode recordingMode,
+				const std::wstring& recordingFolder, 
+				uint32_t recordingLength,
+				uint32_t maxFilesNum,
+				const std::wstring& camName);
 			~GSPipelineBase();
 
-			void Create();
-			void Start();
-			void Stop();
+			virtual void Create();
+			virtual void StartVideo();
+			virtual void StopVideo();
 
+			void StopPipeline();
 			void GetWebRtcCapability(webrtc::VideoCaptureCapability& webRtcCapability);
 			void AddExternalCapturer(webrtc::VideoCaptureExternal* externalCapturer);
 			void RemoveExternalCapturer(webrtc::VideoCaptureExternal* externalCapturer);
@@ -28,9 +33,14 @@ namespace vosvideo
 
 		protected:
 			virtual GstElement* CreateSource() = 0;
-			virtual gboolean LinkElements();
+			virtual bool LinkElements();
+			virtual void ConfigureVideoBin();
+			bool ChangeElementState(GstElement *element, GstState state);
+			void DestroyPipeline();
+
 			static void PrintCaps(const GstCaps * caps, const gchar * pfx);
 			static gboolean PrintField(GQuark field, const GValue * value, gpointer pfx);
+			static GstFlowReturn CbNewSampleHandler(GstElement *sink, GSPipelineBase *pipeline);
 
 			GstElement *_pipeline = nullptr;
 			GstElement *_sourceElement = nullptr;
@@ -40,7 +50,7 @@ namespace vosvideo
 			GstElement *_videoScaleCapsFilter = nullptr;
 			GstElement *_videoConverter = nullptr;
 			GstElement* _tee = nullptr; // tee
-			GstElement* _queueRecord = nullptr; // x264enc
+			GstElement* _queueRecord = nullptr; // queue
 			GstElement* _x264encoder = nullptr; // x264enc
 			GstElement* _h264parser = nullptr; // h264parser
 			GstElement *_autoVideoSink = nullptr;
@@ -49,9 +59,17 @@ namespace vosvideo
 			GstElement *_appSink = nullptr;
 			GstElement *_fileSink = nullptr;
 
-			vosvideo::data::CameraRecordingMode _recordingMode;
+			GstPad* _teeFilePad = nullptr;
+			GstPad* _teeVideoPad = nullptr;
+
+			GstClock *_clock;
+
+			bool _isRecordingEnabled = false;;
+			vosvideo::data::CameraRecordingMode _recordingMode = vosvideo::data::CameraRecordingMode::PERMANENT;
 			std::wstring _recordingFolder;
 			std::wstring _camName;
+			uint32_t _recordingLength;
+			uint32_t _maxFilesNum;
 
 			static const int FRAME_WIDTH = 528;
 			static const int FRAME_HEIGHT = 384;
@@ -60,16 +78,18 @@ namespace vosvideo
 
 		private:
 			void AppThreadStart();
+			void ConfigureCaps();
 
-			void DestroyPipeline();
-
+			// Static callbacks
+			static GstPadProbeReturn CbUnlinkPad(GstPad *pad, GstPadProbeInfo *info, gpointer data);
+			static void CbNewTeePadAdded(GstElement *element, GstPad* pad, gpointer data);
 			static gboolean CreatePipeline(gpointer data);
-			static bool ChangeElementState(GstElement *element, GstState state);
-			static GstFlowReturn NewSampleHandler(GstElement *sink, GSPipelineBase *cameraPlayer);
-			static gboolean BusWatchHandler(GstBus *bus, GstMessage *msg, gpointer data);
+			static gboolean CbBusWatchHandler(GstBus *bus, GstMessage *msg, gpointer data);
 			static GstVideoFormat GetGstVideoFormatFromCaps(GstCaps* caps);
 			static webrtc::VideoType GetRawVideoTypeFromGsVideoFormat(const GstVideoFormat& videoFormat);
-			static bool CheckElements(GSPipelineBase* pipelineBase);
+			static bool CheckFileWriterElements(GSPipelineBase* pipelineBase);
+			// But this one called from object scope
+			bool CheckRealTimeElements();
 			void SetWebRtcRawVideoType();
 
 			std::unique_ptr<std::thread> _appThread;

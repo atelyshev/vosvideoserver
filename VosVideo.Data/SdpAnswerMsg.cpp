@@ -35,7 +35,7 @@ wstring SdpAnswerMsg::ToString() const
 {
 	if (jObj_.is_null())
 	{
-		return parser_->GetMessage();
+		return _parser->GetMessage();
 	}
 	return jObj_.serialize();
 }

@@ -17,145 +17,119 @@ CameraConfMsg::CameraConfMsg(const std::wstring& jsonStr)
 	SetFields(jObj);
 }
 
-CameraConfMsg::~CameraConfMsg()
+CameraConfMsg CameraConfMsg::CreateFromDto(const wstring& archivePath, const web::json::value& camParms)
 {
-}
+	CameraConfMsg conf = CameraConfMsg();
 
-CameraConfMsg CameraConfMsg::CreateFromDto(const wstring& archPath, const web::json::value& camParms)
-{
-	vector<wstring> strVideoUri(3);
-	wstring customUri;
-	int camId;
-	bool    isActive = false;
-	CameraType modelType = CameraType::UNKNOWN;
-	auto recordLen = CameraConfMsg::DEFAULT_REC_LEN; // default 60 min
-	auto maxFilesNum = CameraConfMsg::DEFAULT_MAX_FILES_NUM; // default 10 files
-	wstring devName;
-	wstring audioUri;
-	wstring camIpAddr;
-	wstring camUsername;
-	wstring camPass;
-	CameraRecordingMode recordingMode = CameraRecordingMode::DISABLED;
+	conf._archivePath = archivePath;
+
+	if (camParms.has_field(U("ModelType")))
+	{
+		if (camParms.at(U("ModelType")).is_number())
+			conf._cameraType = static_cast<CameraType>(camParms.at(U("ModelType")).as_integer());
+	}
 
 	if (camParms.has_field(U("DeviceName")))
 	{
-		auto deviceNameVal = camParms.at(U("DeviceName"));
-		if (deviceNameVal.is_string())
-			devName = deviceNameVal.as_string();
+		if (camParms.at(U("DeviceName")).is_string())
+			conf._cameraName = camParms.at(U("DeviceName")).as_string();
 	}
 
 	if (camParms.has_field(U("DeviceId")))
 	{
-		auto deviceIdVal = camParms.at(U("DeviceId"));
-		if (deviceIdVal.is_number())
-			camId = deviceIdVal.as_integer();
+		if (camParms.at(U("DeviceId")).is_number())
+			conf._cameraId = camParms.at(U("DeviceId")).as_integer();
 	}
 
 	if (camParms.has_field(U("CustomUri")))
 	{
-		auto customUriVal = camParms.at(U("CustomUri"));
-		if (customUriVal.is_string())
-			customUri = customUriVal.as_string();
+		if (camParms.at(U("CustomUri")).is_string())
+			conf._videouri = camParms.at(U("CustomUri")).as_string();
+	}
+
+	if (camParms.has_field(U("IsRecordingEnabled")))
+	{
+		if (camParms.at(U("IsRecordingEnabled")).is_boolean())
+			conf._isRecordingEnabled = camParms.at(U("IsRecordingEnabled")).as_bool();
 	}
 
 	if (camParms.has_field(U("RecordingLength")))
 	{
-		auto recordingLengthVal = camParms.at(U("RecordingLength"));
-		if (recordingLengthVal.is_number())
-			recordLen = recordingLengthVal.as_integer();
+		if (camParms.at(U("RecordingLength")).is_number())
+			conf._recordLen = camParms.at(U("RecordingLength")).as_integer();
 	}
 
 	if (camParms.has_field(U("MaxFilesNum")))
 	{
-		auto maxFilesNumVal = camParms.at(U("MaxFilesNum"));
-		if (maxFilesNumVal.is_number())
-			maxFilesNum = maxFilesNumVal.as_integer();
+		if (camParms.at(U("MaxFilesNum")).is_number())
+			conf._maxFilesNum = camParms.at(U("MaxFilesNum")).as_integer();
 	}
 
 	if (camParms.has_field(U("AudioUri")))
 	{
-		auto audioUriVal = camParms.at(U("AudioUri"));
-		if (audioUriVal.is_string())
-			audioUri = audioUriVal.as_string();
+		if (camParms.at(U("AudioUri")).is_string())
+			conf._audiouri = camParms.at(U("AudioUri")).as_string();
 	}
 
 	if (camParms.has_field(U("DeviceUserName")))
 	{
-		auto deviceUserNameVal = camParms.at(U("DeviceUserName"));
-		if (deviceUserNameVal.is_string())
-			camUsername = deviceUserNameVal.as_string();
+		if (camParms.at(U("DeviceUserName")).is_string())
+			conf._username = camParms.at(U("DeviceUserName")).as_string();
 	}
 
 	if (camParms.has_field(U("DevicePassword")))
 	{
-		auto devicePasswordVal = camParms.at(U("DevicePassword"));
-		if (devicePasswordVal.is_string())
-			camPass = devicePasswordVal.as_string();
+		if (camParms.at(U("DevicePassword")).is_string())
+			conf._pass = camParms.at(U("DevicePassword")).as_string();
 	}
 
 	if (camParms.has_field(U("IsActive")))
 	{
-		auto isActiveVal = camParms.at(U("IsActive"));
-		if (isActiveVal.is_boolean())
-			isActive = isActiveVal.as_bool();
+		if (camParms.at(U("IsActive")).is_boolean())
+			conf._isActive = camParms.at(U("IsActive")).as_bool();
 	}
 
-	if (camParms.has_field(U("ModelType")))
-	{
-		auto modelTypeVal = camParms.at(U("ModelType"));
-		if (modelTypeVal.is_number())
-			modelType = static_cast<CameraType>(modelTypeVal.as_integer());
-	}
-	CameraConfMsg conf = CameraConfMsg(modelType);
-	conf.SetIsActive(isActive);
-	conf.SetCameraId(camId);
-	conf.SetCameraName(devName);
-	conf.SetCredentials(camUsername, camPass);
-	conf.SetUris(audioUri, customUri);
-	conf.SetFileSinkParameters(archPath, recordLen, maxFilesNum, recordingMode);
 	return conf;
 }
 
-void CameraConfMsg::SetFields(const web::json::value& json){
-	auto activeVal = json.at(U("isActive"));
-	if (activeVal.is_string())
-		_isActive = activeVal.as_bool();
+void CameraConfMsg::SetFields(const web::json::value& json)
+{
+	auto tmp = json.serialize();
+	if (json.at(U("isActive")).is_boolean())
+		_isActive = json.at(U("isActive")).as_bool();
 
-	auto cameraTypeVal = json.at(U("cameraType"));
-	if (cameraTypeVal.is_number())
-		_cameraType = static_cast<CameraType>(cameraTypeVal.as_integer());
+	if (json.at(U("cameraType")).is_number())
+		_cameraType = static_cast<CameraType>(json.at(U("cameraType")).as_integer());
 
-	auto cameraIdVal = json.at(U("cameraId"));
-	if (cameraIdVal.is_number())
-		_cameraId = cameraIdVal.as_integer();
+	if (json.at(U("cameraId")).is_number())
+		_cameraId = json.at(U("cameraId")).as_integer();
 
-	auto cameraNameVal = json.at(U("cameraName"));
-	if (cameraNameVal.is_string())
-		_cameraName = cameraNameVal.as_string();
+	if (json.at(U("cameraName")).is_string())
+		_cameraName = json.at(U("cameraName")).as_string();
 
-	auto outFolderVal = json.at(U("outFolder"));
-	if (outFolderVal.is_string())
-		_outFolder = outFolderVal.as_string();
+	if (json.at(U("archivePath")).is_string())
+		_archivePath = json.at(U("archivePath")).as_string();
 
-	auto recordLenVal = json.at(U("recordLen"));
-	if (recordLenVal.is_number())
-		_recordLen = recordLenVal.as_integer();
+	if (json.at(U("isRecordingEnabled")).is_boolean())
+		_isRecordingEnabled = json.at(U("isRecordingEnabled")).as_bool();
 
-	auto videoUriVal = json.at(U("videouri"));
-	if (videoUriVal.is_string())
-		_videouri = videoUriVal.as_string();
+	if (json.at(U("recordLen")).is_number())
+		_recordLen = json.at(U("recordLen")).as_integer();
 
-	auto audioUriVal = json.at(U("audiouri"));
-	if (audioUriVal.is_string())
-		_audiouri = audioUriVal.as_string();
+	if (json.at(U("recordLen")).is_number())
+		_recordLen = json.at(U("recordLen")).as_integer();
 
-	auto usernameVal = json.at(U("username"));
-	if (usernameVal.is_string())
-		_username = usernameVal.as_string();
+	if (json.at(U("videouri")).is_string())
+		_videouri = json.at(U("videouri")).as_string();
 
-	auto passVal = json.at(U("pass"));
-	if (passVal.is_string())
-		_pass = passVal.as_string();
+	if (json.at(U("audiouri")).is_string())
+		_audiouri = json.at(U("audiouri")).as_string();
+
+	if (json.at(U("username")).is_string())
+		_username = json.at(U("username")).as_string();
+
+	if (json.at(U("pass")).is_string())
+		_pass = json.at(U("pass")).as_string();
 }
 
 void CameraConfMsg::Init(std::shared_ptr<WebSocketMessageParser> parser)
@@ -191,21 +165,28 @@ std::wstring CameraConfMsg::GetCameraName() const
 }
 
 void CameraConfMsg::SetFileSinkParameters(
-	const wstring& outFolder, 
+	const wstring& archivePath,
 	uint32_t recordLen, 
 	uint32_t maxFilesNum, 
 	CameraRecordingMode recordingMode)
 {
-	_outFolder = outFolder;
+	_archivePath = archivePath;
 	_recordLen = recordLen;
 	_maxFilesNum = maxFilesNum;
 	_recordingMode = recordingMode;
 }
 
-void CameraConfMsg::GetFileSinkParameters(wstring& outFolder, uint32_t& recordLen, CameraRecordingMode& recordingMode) const
+void CameraConfMsg::GetFileSinkParameters(
+	bool& isRecordingEnabled, 
+	wstring& archivePath,
+	uint32_t& recordLen, 
+	uint32_t& maxFilesNum,
+	CameraRecordingMode& recordingMode) const
 {
-	outFolder = _outFolder;
+	isRecordingEnabled = _isRecordingEnabled;
+	archivePath = _archivePath;
 	recordLen = _recordLen;
+	maxFilesNum = _maxFilesNum;
 	recordingMode = _recordingMode;
 }
 
@@ -251,9 +232,10 @@ web::json::value CameraConfMsg::ToJsonValue() const
 	jObj[L"cameraType"] = web::json::value::number(static_cast<int>(_cameraType));
 	jObj[L"cameraId"] = web::json::value::number(_cameraId);
 	jObj[L"cameraName"] = web::json::value::string(_cameraName);
-	jObj[L"outFolder"] = web::json::value::string(_outFolder);
+	jObj[L"archivePath"] = web::json::value::string(_archivePath);
 	jObj[L"recordLen"] = web::json::value::number(_recordLen);
 	jObj[L"maxFilesNum"] = web::json::value::number(_maxFilesNum);
+	jObj[L"isRecordingEnabled"] = web::json::value::boolean(_isRecordingEnabled);
 	jObj[L"recordingMode"] = web::json::value::number(static_cast<int>(_recordingMode));
 	jObj[L"videouri"] = web::json::value::string(_videouri);
 	jObj[L"audiouri"] = web::json::value::string(_audiouri);
@@ -280,8 +262,9 @@ bool CameraConfMsg::operator==(const CameraConfMsg &other) const
 		_cameraType == other._cameraType   &&
 		_cameraId == other._cameraId       &&
 		_cameraName == other._cameraName   &&
-		_outFolder == other._outFolder     &&
+		_archivePath == other._archivePath     &&
 		_recordLen == other._recordLen     &&
+		_isRecordingEnabled == other._isRecordingEnabled &&
 		_maxFilesNum == other._maxFilesNum &&
 		_recordingMode == other._recordingMode &&
 		_videouri == other._videouri &&
@@ -303,7 +286,8 @@ CameraConfMsg& CameraConfMsg::operator=(const CameraConfMsg& other)
 		_cameraType  = other._cameraType;
 		_cameraId    = other._cameraId;
 		_cameraName  = other._cameraName;
-		_outFolder   = other._outFolder;
+		_archivePath = other._archivePath;
+		_isRecordingEnabled = other._isRecordingEnabled;
 		_recordLen   = other._recordLen;
 		_maxFilesNum = other._maxFilesNum;
 		_recordingMode = other._recordingMode;

@@ -42,23 +42,40 @@ int32_t GSCameraPlayer::OpenURL(vosvideo::data::CameraConfMsg& cameraConf)
 	std::wstring password;
 	cameraConf.GetCredentials(username, password);
 
+	bool isRecordingEnabled = false;
 	std::wstring recordingFolder;
-	uint32_t recordingLength;
+	uint32_t recordingLength = 0;
+	uint32_t maxFilesNum = 0;
 	vosvideo::data::CameraRecordingMode recordingMode;
-	cameraConf.GetFileSinkParameters(recordingFolder, recordingLength, recordingMode);
+	cameraConf.GetFileSinkParameters(isRecordingEnabled, recordingFolder, recordingLength, maxFilesNum, recordingMode);
 	cameraType_ = cameraConf.GetCameraType();
 
 	if (wvideoUri != L"webcamera")
 	{
-		_pipeline = new IpCameraPipeline(util::StringUtil::ToString(wvideoUri), username, password, recordingMode, recordingFolder, _deviceName);
+		_pipeline = new IpCameraPipeline(
+			util::StringUtil::ToString(wvideoUri), 
+			username, 
+			password, 
+			isRecordingEnabled,
+			recordingMode,
+			recordingFolder, 
+			recordingLength, 
+			maxFilesNum,
+			_deviceName);
 	}
 	else
 	{
-		_pipeline = new WebCameraPipeline(recordingMode, recordingFolder, _deviceName);
+		_pipeline = new WebCameraPipeline(
+			isRecordingEnabled, 
+			recordingMode, 
+			recordingFolder, 
+			recordingLength, 
+			maxFilesNum, 
+			_deviceName);
 	}
 
 	_pipeline->Create();
-	//
+
 	////Need to convert to std::string due to LOG_TRACE not working with std::wstring
 	//this->_deviceVideoUri = std::string(wvideoUri.begin(), wvideoUri.end());
 	//std::string audioUri(waudioUri.begin(), waudioUri.end());

@@ -8,12 +8,14 @@ namespace vosvideo
 		class WebCameraPipeline : public GSPipelineBase
 		{
 		public:
-			WebCameraPipeline(vosvideo::data::CameraRecordingMode recordingMode, 
+			WebCameraPipeline(bool isRecordingEnabled,
+				vosvideo::data::CameraRecordingMode recordingMode,
 				const std::wstring& recordingFolder,
+				uint32_t recordingLength, 
+				uint32_t maxFilesNum,
 				const std::wstring& camName);
 		protected:
 			GstElement* CreateSource();
-			gboolean LinkElements();
 		};
 	}
 }

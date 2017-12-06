@@ -9,9 +9,8 @@ using namespace vosvideo::data;
 WebSocketMessageParser::WebSocketMessageParser(const string& msg)
 {
 	// Now it is time to use json parser
-	wstring wmsg = StringUtil::ToWstring(msg);	
-	originalMsg_ = wmsg;
-	web::json::value jpayload = web::json::value::parse(wmsg);
+	originalMsg_ = StringUtil::ToWstring(msg);
+	web::json::value jpayload = web::json::value::parse(originalMsg_);
 	messageType_ = GetMessageType(jpayload);
 
 	if(messageType_  != MsgType::CameraConfMsg && 

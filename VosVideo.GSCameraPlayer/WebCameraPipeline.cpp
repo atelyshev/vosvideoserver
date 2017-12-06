@@ -3,10 +3,20 @@
 
 using namespace vosvideo::cameraplayer;
 
-WebCameraPipeline::WebCameraPipeline(vosvideo::data::CameraRecordingMode recordingMode, 
+WebCameraPipeline::WebCameraPipeline(
+	bool isRecordingEnabled,
+	vosvideo::data::CameraRecordingMode recordingMode, 
 	const std::wstring& recordingFolder, 
+	uint32_t recordingLength,
+	uint32_t maxFilesNum,
 	const std::wstring& camName) :
-	GSPipelineBase(recordingMode, recordingFolder, camName)
+	GSPipelineBase(
+		isRecordingEnabled, 
+		recordingMode, 
+		recordingFolder, 
+		recordingLength,
+		maxFilesNum,
+		camName)
 {
 }
 
@@ -16,13 +26,3 @@ GstElement* WebCameraPipeline::CreateSource()
 	return source;
 }
 
-gboolean WebCameraPipeline::LinkElements()
-{
-	if (!GSPipelineBase::LinkElements())
-	{
-		return false;
-	}
-	GST_DEBUG_BIN_TO_DOT_FILE(GST_BIN(_pipeline), GST_DEBUG_GRAPH_SHOW_ALL, "webcam.dot");
-
-	return true;
-}

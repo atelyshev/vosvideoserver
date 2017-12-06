@@ -23,10 +23,9 @@ void CameraPlayerProcess::Init()
 {
 	auto cameraId = conf_.GetCameraId();
 	auto cameraName = conf_.GetCameraName();
-	auto wstrCamId = to_wstring(cameraId);
 	LOG_TRACE("Create camera player process for camera: " << cameraId);
 
-	shared_ptr<InterprocessCommEngine> iqe(new InterprocessQueueEngine(pubSubService_, wstrCamId));
+	shared_ptr<InterprocessCommEngine> iqe(new InterprocessQueueEngine(pubSubService_, to_wstring(cameraId)));
 	duplexChannel_.reset(new InterprocessComm(iqe));
 	duplexChannel_->OpenAsParent();
 	// Pass first message, configuration
