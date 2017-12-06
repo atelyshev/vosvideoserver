@@ -5,11 +5,10 @@ Little bit of history. This project was born to fill the gap between commercial 
 In general it has no limitation in number of attched cameras, it is matter of media servers you are running this moment. Just install server, register under web profile on http://vosvideo.com and assign next camera to that server.
 
 Future plans:
-* Write video on disk
 * Show recorded video on Web console (vosvideo.com)
 * Implement DASH for recorded video
 * General improvements for Web part, use GRPC instead servicestack, use OAuth instead custom authentication, improve DB schema.
-* Rebuild under LInux. Server itself has very small number of Windows dependent code. Only for maintainig service mode. It can be easily removed. Other codeis C++14 standard STD
+* Rebuild under Linux. Server itself has very small number of Windows dependent code. Only for maintaining service mode. It can be easily removed. Other code is C++14 standard STD
 
 How to start.
 1. You need to build needed libraries
