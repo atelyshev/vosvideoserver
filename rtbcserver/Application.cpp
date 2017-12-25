@@ -222,7 +222,7 @@ bool Application::Main()
 	// Activate logger 
 	if (configManager->IsLoggerOn())
 	{
-		log_.reset(new SeverityLogger(L".", L"rtbc"));
+		log_.reset(new SeverityLogger(L".", L"rtbc", L"rtbc"));
 	}
 	
 	std::wstring restServiceUri = configManager->GetRestServiceUri();

@@ -12,9 +12,11 @@ namespace loggers
 		// fPrefix - log file prefix for instance events, general
 		// nLogFileSizeInMb - max log file in Mb, when this size reached old one should be closed and new one will be created
 		// nMaxRollBackFileLimit - Maximum number of files before which the Frist most created file is deleted.
-		SeverityLogger(const std::wstring &logFolder, 
-			          const std::wstring &fPrefix, 
-					  int nLogFileSizeInMb = 50, 
-					  int nMaxRollBackFileLimit = 50);
+		SeverityLogger(
+			const std::wstring &wlogPath,
+			const std::wstring& wlogDir,
+			const std::wstring& wlogPrefix,
+			int nLogFileSizeInMb = 50, 
+			int nMaxRollBackFileLimit = 50);
 	};
 }

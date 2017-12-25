@@ -6,20 +6,18 @@
 #include "StringUtil.h"
 
 using namespace std;
-using boost::shared_ptr;
 using namespace loggers;
 using namespace util;
 
-SeverityLogger::SeverityLogger(const wstring& wlogPath, 
-								const wstring& wfPrefix, 
-								int nLogFileSizeInMb /* 50 */, 
-								int nMaxRollBackFileLimit /* 50 */) : 
-								LoggersCommon(wlogPath)
+SeverityLogger::SeverityLogger(
+	const wstring& wlogPath, 
+	const wstring& wlogDir,
+	const wstring& wlogPrefix,
+	int nLogFileSizeInMb /* 50 */, 
+	int nMaxRollBackFileLimit /* 50 */) : 
+	LoggersCommon(wlogPath, wlogDir, wlogPrefix)
 {	
-	string logPath = StringUtil::ToString(wlogPath);
-	string fPrefix= StringUtil::ToString(wfPrefix);
-
-	string logFile = CreateLogFileName(logPath, fPrefix);
+	string logFile = CreateLogFileName();
 	auto backend = boost::make_shared< sinks::text_file_backend >(keywords::file_name = logFile,
 		keywords::rotation_size = nLogFileSizeInMb * 1024 * 1024);
 	_pSink.reset(new text_sink(backend));
@@ -27,7 +25,7 @@ SeverityLogger::SeverityLogger(const wstring& wlogPath,
 	// Set up the file collector
 	backend->set_file_collector(sinks::file::make_collector(
 		// rotated logs will be moved here
-		keywords::target = logPath,
+		keywords::target = _logPath,
 		// oldest log files will be removed if the total size reaches 100 MB...
 		keywords::max_size = nLogFileSizeInMb * nMaxRollBackFileLimit * 1024 * 1024,
 		// ...or the free space in the target directory comes down to 50 MB

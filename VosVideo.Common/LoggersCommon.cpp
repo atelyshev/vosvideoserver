@@ -8,15 +8,17 @@ using namespace std;
 using namespace loggers;
 using namespace util;
 
-//const string LoggersCommon::_fNamePattern = "_%Y-%m-%d_%H-%M-%S.txt";
-//const string LoggersCommon::_loggerSeparator = ";";
-
-LoggersCommon::LoggersCommon(const wstring& wlogPath)
+LoggersCommon::LoggersCommon(const std::wstring &wlogPath, const std::wstring& wlogDir, const std::wstring &wlogPrefix)
 {
 	// Workaround for boost log v1.0, if file path created loggers will not throw fisrt chance exception
 	// which is quite annoying
-	string logPath = StringUtil::ToString(wlogPath);
-	boost::filesystem::create_directory(logPath);
+	_logPath = StringUtil::ToString(wlogPath);
+	_logDir = StringUtil::ToString(wlogDir);
+	_logPrefix = StringUtil::ToString(wlogPrefix);
+
+	boost::filesystem::path p(_logPath);
+	p /= _logDir;
+	boost::filesystem::create_directory(p);
 }
 
 LoggersCommon::~LoggersCommon()
@@ -28,9 +30,8 @@ LoggersCommon::~LoggersCommon()
 	}
 }
 
-string LoggersCommon::CreateLogFileName(const string& logPath, const string& logPrefix)
+string LoggersCommon::CreateLogFileName()
 {
-	string name = str(boost::format("%1%\\%2%\\%3%") % logPath % logPrefix % _fNamePattern);
-	return name;
+	return boost::str(boost::format("%1%\\%2%\\%3%%4%.txt") % _logPath % _logDir % _logPrefix % _fNamePattern);
 }
 

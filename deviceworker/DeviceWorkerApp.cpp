@@ -4,7 +4,6 @@
 #include "VosVideo.Communication/PubSubService.h"
 #include "VosVideo.Communication.InterprocessQueue/InterprocessQueueEngine.h"
 #include "VosVideo.Camera/CameraPlayerFactory.h"
-
 #include "DeviceWorkerApp.h"
 
 using namespace std;
@@ -19,7 +18,8 @@ DeviceWorkerApp::DeviceWorkerApp(const wstring& wqueueName, bool isLogging)
 	if (isLogging)
 	{
 		wstring prefix = L"deviceworker_" + wqueueName;
-		log_.reset(new SeverityLogger(L".", prefix));
+		_log = std::make_shared<SeverityLogger>(L".", prefix, L"dw");
+		_stdlog = std::make_unique<StdLogger>(L".", prefix, L"std");
 	}
 
 	std::shared_ptr<PubSubService> communicationPubSub(new PubSubService());

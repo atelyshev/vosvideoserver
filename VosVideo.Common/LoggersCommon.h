@@ -60,16 +60,20 @@ namespace loggers
 	class LoggersCommon
 	{
 	public:
-		LoggersCommon(const std::wstring& wlogPath);
+		LoggersCommon(const std::wstring &wlogPath, const std::wstring& wlogDir, const std::wstring &wlogPrefix);
 		virtual ~LoggersCommon();
+		virtual std::string CreateLogFileName();
 
-		std::string CreateLogFileName(const std::string &logPath, const std::string &logPrefix);
 	protected:
+		std::string _logPath;
+		std::string _logDir;
+		std::string _logPrefix;
+
 		static const int _minFreeSpaceSize = 50;
 		using text_sink = sinks::asynchronous_sink< sinks::text_file_backend >;
 		boost::shared_ptr< text_sink > _pSink;
 		const std::string _loggerSeparator = ";";
-		const std::string _fNamePattern = "%Y-%m-%d_%H-%M-%S.txt";
+		const std::string _fNamePattern = "%Y-%m-%d_%H-%M-%S";
 	};
 }
 

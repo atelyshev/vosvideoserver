@@ -1,4 +1,5 @@
 #pragma once
+#include "VosVideo.Common/StdLogger.h"
 #include "VosVideo.Communication/InterprocessComm.h"
 #include "VosVideo.WebRtc/WebRtcManager.h"
 
@@ -13,7 +14,8 @@ public:
 private:
 
 	std::shared_ptr<vosvideo::communication::InterprocessComm> interprocCommManager_;
-	std::shared_ptr<loggers::SeverityLogger> log_;
+	std::shared_ptr<loggers::SeverityLogger> _log;
+	std::unique_ptr<loggers::StdLogger> _stdlog;
 	std::string queueName_;
 	std::shared_ptr<vosvideo::vvwebrtc::WebRtcManager> devBroker_;
 };

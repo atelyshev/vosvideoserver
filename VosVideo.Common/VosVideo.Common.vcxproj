@@ -91,6 +91,7 @@
     <ClInclude Include="SeverityLogger.h" />
     <ClInclude Include="SeverityLoggerMacros.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="StdLogger.h" />
     <ClInclude Include="StringUtil.h" />
     <ClInclude Include="SystemUtil.h" />
     <ClInclude Include="targetver.h" />
@@ -105,6 +106,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="StdLogger.cpp" />
     <ClCompile Include="StringUtil.cpp" />
     <ClCompile Include="SystemUtil.cpp" />
   </ItemGroup>
