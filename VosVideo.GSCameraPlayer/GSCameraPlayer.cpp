@@ -126,7 +126,6 @@ PlayerState GSCameraPlayer::GetState(std::shared_ptr<vosvideo::data::SendData>& 
 
 PlayerState GSCameraPlayer::GetState() const
 {
-	LOG_TRACE("GSCameraPlayer GetState called");
 	return _state;
 }
 
