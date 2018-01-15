@@ -79,7 +79,8 @@ void GSPipelineBase::Create()
 
 GstPadProbeReturn GSPipelineBase::CbUnlinkPad(GstPad *pad, GstPadProbeInfo *info, gpointer data)
 {
-	g_print("Unlinking...");
+	LOG_TRACE("Unlink app sink pad");
+	g_print("Unlinking app sink pad");
 	GSPipelineBase *pipelineBase = (GSPipelineBase*)data;
 	GstPad *sinkpad = gst_element_get_static_pad(pipelineBase->_appSinkQueue, "sink");
 	gst_pad_unlink(pipelineBase->_teeVideoPad, sinkpad);
@@ -98,6 +99,7 @@ GstPadProbeReturn GSPipelineBase::CbUnlinkPad(GstPad *pad, GstPadProbeInfo *info
 	gst_element_release_request_pad(pipelineBase->_tee, pipelineBase->_teeVideoPad);
 	gst_object_unref(pipelineBase->_teeVideoPad);
 
+	LOG_TRACE("Sink pad was unlinked and will be removed");
 	return GST_PAD_PROBE_REMOVE;
 }
 
@@ -143,11 +145,11 @@ void GSPipelineBase::StartVideo()
 	{
 		if (!GSPipelineBase::ChangeElementState(_pipeline, GST_STATE_PLAYING))
 		{
-			LOG_ERROR("GSPipeline: Unable to set the pipeline to the playing state.");
+			LOG_ERROR("Unable to set the pipeline to the playing state.");
 		}
 	}
 	GST_DEBUG_BIN_TO_DOT_FILE(GST_BIN(_pipeline), GST_DEBUG_GRAPH_SHOW_ALL, "full_pipeline");
-	LOG_TRACE("GSPipeline: started video pipeline");
+	LOG_TRACE("Started video pipeline");
 }
 
 void GSPipelineBase::StopVideo()
@@ -157,12 +159,12 @@ void GSPipelineBase::StopVideo()
 	{
 		if (!GSPipelineBase::ChangeElementState(_pipeline, GST_STATE_NULL))
 		{
-			LOG_ERROR("GSPipeline: Unable to STOP pipeline and set it to the NULL state.");
+			LOG_ERROR("Unable to STOP pipeline and set it to the NULL state.");
 		}
 	}
 	gst_pad_add_probe(_teeVideoPad, GST_PAD_PROBE_TYPE_IDLE, CbUnlinkPad, this, nullptr);
 	GST_DEBUG_BIN_TO_DOT_FILE(GST_BIN(_pipeline), GST_DEBUG_GRAPH_SHOW_ALL, "tee_unlinked");
-	LOG_TRACE("GSPipeline: stopped pipeline");
+	LOG_TRACE("Stopped video pipeline");
 }
 
 void GSPipelineBase::AddExternalCapturer(webrtc::VideoCaptureExternal* externalCapturer)
@@ -211,7 +213,7 @@ void GSPipelineBase::AppThreadStart()
 	_mainLoop = g_main_loop_new(nullptr, FALSE);
 	if (!_mainLoop)
 	{
-		LOG_ERROR("GSPipeline error: Unable to create main loop");
+		LOG_ERROR("Unable to create main loop");
 		return;
 	}
 
@@ -324,7 +326,7 @@ gboolean GSPipelineBase::CreatePipeline(gpointer data)
 
 	if (!pipelineBase->LinkElements()) 
 	{
-		LOG_ERROR("GSPipelineBase error: Unable to link all elements");
+		LOG_ERROR("Unable to link all elements");
 		return false;
 	}
 
@@ -332,7 +334,7 @@ gboolean GSPipelineBase::CreatePipeline(gpointer data)
 	{
 		if (!pipelineBase->ChangeElementState(pipelineBase->_pipeline, GST_STATE_PLAYING))
 		{
-			LOG_ERROR("GSPipelineBase: Unable to set the pipeline to the PLAYING state.");
+			LOG_ERROR("Unable to set the pipeline to the PLAYING state.");
 			return false;
 		}
 	}
@@ -340,7 +342,7 @@ gboolean GSPipelineBase::CreatePipeline(gpointer data)
 	{
 		if (!pipelineBase->ChangeElementState(pipelineBase->_pipeline, GST_STATE_NULL))
 		{
-			LOG_ERROR("GSPipelineBase: Unable to set the pipeline to the PAUSED state.");
+			LOG_ERROR("Unable to set the pipeline to the PAUSED state.");
 			return false;
 		}
 	}
@@ -382,8 +384,8 @@ gboolean GSPipelineBase::CbBusWatchHandler(GstBus *bus, GstMessage *msg, gpointe
 		GError *err;
 		gchar *debug_info;
 		gst_message_parse_error(msg, &err, &debug_info);
-		g_printerr("GSPipelineBase: Error received from element %s: %s\n", GST_OBJECT_NAME(msg->src), err->message);
-		g_printerr("GSPipelineBase: Additional debugging information: %s\n", debug_info ? debug_info : "none");
+		g_printerr("Error received from element %s: %s\n", GST_OBJECT_NAME(msg->src), err->message);
+		g_printerr("Additional debugging information: %s\n", debug_info ? debug_info : "none");
 		g_clear_error(&err);
 		g_free(debug_info);
 		break;
@@ -421,6 +423,7 @@ gboolean GSPipelineBase::CbBusWatchHandler(GstBus *bus, GstMessage *msg, gpointe
 
 			if (new_state == GstState::GST_STATE_PLAYING)
 			{
+				LOG_TRACE("Camera is in PLAYING state, you should see the video");
 				//We need to set the webrtc raw video type that appsink will receive. This will be used later as frames are coming in to the appsink.
 				pipelineBase->SetWebRtcRawVideoType();
 			}
@@ -511,7 +514,7 @@ bool GSPipelineBase::ChangeElementState(GstElement *element, GstState state)
 	GstStateChangeReturn stateChangeReturn = gst_element_set_state(element, state);
 	if (stateChangeReturn == GST_STATE_CHANGE_FAILURE)
 	{
-		LOG_ERROR("GSCameraPlayer: Unable to set the element state to " << state);
+		LOG_ERROR("Unable to set the element state to " << state);
 		return false;
 	}
 	return true;
@@ -609,73 +612,73 @@ bool GSPipelineBase::CheckFileWriterElements(GSPipelineBase* pipelineBase)
 {
 	if (!pipelineBase->_pipeline)
 	{
-		LOG_ERROR("GSPipelineBase error: Unable to create the pipeline");
+		LOG_ERROR("Unable to create the pipeline");
 		return false;
 	}
 
 	if (!pipelineBase->_sourceElement)
 	{
-		LOG_ERROR("GSPipelineBase error: Unable to create the source element");
+		LOG_ERROR("Unable to create the source element");
 		return false;
 	}
 
 	if (!pipelineBase->_videoScale)
 	{
-		LOG_ERROR("GSPipelineBase error: Unable to create videoscale element");
+		LOG_ERROR("Unable to create videoscale element");
 		return false;
 	}
 
 	if (!pipelineBase->_videoScaleCapsFilter)
 	{
-		LOG_ERROR("GSPipelineBase error: Unable to create videoscalefilter element");
+		LOG_ERROR("Unable to create videoscalefilter element");
 		return false;
 	}
 
 	if (!pipelineBase->_videoRate)
 	{
-		LOG_ERROR("GSPipelineBase error: Unable to create videorate element");
+		LOG_ERROR("Unable to create videorate element");
 		return false;
 	}
 
 	if (!pipelineBase->_videoRateCapsFilter)
 	{
-		LOG_ERROR("GSPipelineBase error: Unable to create videoratesfilter element");
+		LOG_ERROR("Unable to create videoratesfilter element");
 		return false;
 	}
 
 	if (!pipelineBase->_tee)
 	{
-		LOG_ERROR("GSPipelineBase error: Unable to create tee element");
+		LOG_ERROR("Unable to create tee element");
 		return false;
 	}
 
 	if (!pipelineBase->_videoConverter)
 	{
-		LOG_ERROR("GSPipelineBase error: Unable to create videoconverter element");
+		LOG_ERROR("Unable to create videoconverter element");
 		return false;
 	}
 
 	if (!pipelineBase->_clockOverlay)
 	{
-		LOG_ERROR("GSPipelineBase error: Unable to create clockoverlay element");
+		LOG_ERROR("Unable to create clockoverlay element");
 		return false;
 	}
 
 	if (!pipelineBase->_x264encoder)
 	{
-		LOG_ERROR("GSPipelineBase error: Unable to create x264encoder element");
+		LOG_ERROR("Unable to create x264encoder element");
 		return false;
 	}
 
 	if (!pipelineBase->_h264parser)
 	{
-		LOG_ERROR("GSPipelineBase error: Unable to create h264parser element");
+		LOG_ERROR("Unable to create h264parser element");
 		return false;
 	}
 
 	if (!pipelineBase->_fileSink)
 	{
-		LOG_ERROR("GSPipelineBase error: Unable to create filesink element");
+		LOG_ERROR("Unable to create filesink element");
 		return false;
 	}
 
@@ -686,13 +689,13 @@ bool GSPipelineBase::CheckRealTimeElements()
 {
 	if (!_appSinkQueue)
 	{
-		LOG_ERROR("GSPipelineBase error: Unable to create appsink queue element");
+		LOG_ERROR("Unable to create appsink queue element");
 		return false;
 	}
 
 	if (!_appSink)
 	{
-		LOG_ERROR("GSPipelineBase error: Unable to create appsink element");
+		LOG_ERROR("Unable to create appsink element");
 		return false;
 	}
 	return true;

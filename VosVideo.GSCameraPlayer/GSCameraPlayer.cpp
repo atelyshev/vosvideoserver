@@ -91,36 +91,36 @@ int32_t GSCameraPlayer::OpenURL(vosvideo::data::CameraConfMsg& cameraConf)
 
 void GSCameraPlayer::GetWebRtcCapability(webrtc::VideoCaptureCapability& webRtcCapability)
 {
-	LOG_TRACE("GSCameraPlayer GetWebRtcCapability called");
+	LOG_TRACE("GetWebRtcCapability called");
 	_pipeline->GetWebRtcCapability(webRtcCapability);
 }
 
 int32_t GSCameraPlayer::Play(){
-	LOG_TRACE("GSCameraPlayer Play called");
+	LOG_TRACE("Play called");
 	return -1;
 }
 
 int32_t GSCameraPlayer::Pause()
 {
-	LOG_TRACE("GSCameraPlayer Paused called");
+	LOG_TRACE("Paused called");
 	return -1;
 }
 
 int32_t GSCameraPlayer::Stop()
 {
-	LOG_TRACE("GSCameraPlayer Stop called");
+	LOG_TRACE("Stop called");
 	return -1;
 }
 
 int32_t GSCameraPlayer::Shutdown()
 {
-	LOG_TRACE("GSCameraPlayer Shutdown called");
+	LOG_TRACE("Shutdown called");
 	return -1;
 }
 
 PlayerState GSCameraPlayer::GetState(std::shared_ptr<vosvideo::data::SendData>& lastErrMsg) const
 {
-	LOG_TRACE("GSCameraPlayer GetState(shared_ptr) called");
+	LOG_TRACE("GetState(shared_ptr) called");
 	return _state;
 }
 
@@ -132,24 +132,24 @@ PlayerState GSCameraPlayer::GetState() const
 // Probably most important method, through it camera communicates to WebRTC
 void GSCameraPlayer::SetExternalCapturer(webrtc::VideoCaptureExternal* captureObserver)
 {
-	LOG_TRACE("GSCameraPlayer SetExternalCapturer called");
+	LOG_TRACE("SetExternalCapturer called");
 	_pipeline->AddExternalCapturer(captureObserver);
 }
 
 void GSCameraPlayer::RemoveExternalCapturers()
 {
-	LOG_TRACE("GSCameraPlayer RemoveExternalCapturers called");	
+	LOG_TRACE("RemoveExternalCapturers called");	
 	_pipeline->RemoveAllExternalCapturers();
 }
 
 void GSCameraPlayer::RemoveExternalCapturer(webrtc::VideoCaptureExternal* captureObserver)
 {
-	LOG_TRACE("GSCameraPlayer RemoveExternalCapturer called");
+	LOG_TRACE("RemoveExternalCapturer called");
 	_pipeline->RemoveExternalCapturer(captureObserver);
 }
 
 uint32_t GSCameraPlayer::GetDeviceId() const
 {
-	LOG_TRACE("GSCameraPlayer GetDeviceId called");
+	LOG_TRACE("GetDeviceId called");
 	return _deviceId;
 }
