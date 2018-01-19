@@ -136,18 +136,18 @@ void InterprocessQueueEngine::Receive()
 		smsg.resize(maxMsgSize_);
 		uint32_t msgRealSize;
 		uint32_t prio;
-
+		std::string sender;
 		try
 		{
 			if (openAsParent_)
 			{
 				mqToParent_->receive(&smsg[0], smsg.size(), msgRealSize, prio);
-				LOG_TRACE("Received message from child process.");
+				sender = "child";
 			}
 			else
 			{
 				mqFromParent_->receive(&smsg[0], smsg.size(), msgRealSize, prio);
-				LOG_TRACE("Received message from parent process.");
+				sender = "parent";
 			}
 		}
 		catch(interprocess_exception &ex)
@@ -155,8 +155,7 @@ void InterprocessQueueEngine::Receive()
 			LOG_CRITICAL(ex.what());
 		}
 		smsg.resize(msgRealSize);
-		LOG_TRACE("Received message size: " << msgRealSize);
-		LOG_TRACE("Received message body: " << smsg);
+		LOG_TRACE("Message from " << sender << " process: " << smsg << " size: " << msgRealSize);
 
 		// Check for STOP
 		if (smsg == stopMsg_)
@@ -169,7 +168,6 @@ void InterprocessQueueEngine::Receive()
 		auto dto = dtoFactory.Create(msgParser->GetMessageType());
 		dto->Init(msgParser);
 
-		LOG_TRACE("Publishing received message.");
 		pubSubService_->Publish(dto);
 	}
 	LOG_TRACE("Finished to receive messages from " << queueToParentName_ << ", " << queueFromParentName_);

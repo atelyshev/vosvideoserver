@@ -32,7 +32,7 @@ namespace vosvideo
 			void CreatePeerConnectionFactory();
 			void DeleteAllPeerConnections();
 			void DeletePeerConnection(const std::wstring& fromPeer);
-			int CheckFinishingPeerConnections();
+			int RemoveFinishedPeerConnections();
 			void Shutdown();
 
 			std::shared_ptr<vosvideo::communication::PubSubService> pubSubService_;

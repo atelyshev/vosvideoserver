@@ -2,6 +2,7 @@
 #include "IpCameraPipeline.h"
 
 using namespace vosvideo::cameraplayer;
+using namespace util;
 
 IpCameraPipeline::IpCameraPipeline(
 	const std::string& uri, 
@@ -39,6 +40,7 @@ GstElement* IpCameraPipeline::CreateSource()
 
 	// Dunno what is this for
 	g_signal_connect(source, "drained", G_CALLBACK(CbDrainedHandler), this);
+	LOG_TRACE("Created video source uridecodebin");
 	return source;
 }
 
@@ -89,6 +91,7 @@ bool IpCameraPipeline::LinkElements()
 			_appSink,
 			nullptr);
 	}
+	LOG_TRACE("Linked video pipeline elements");
 } 
 
 void IpCameraPipeline::ConfigureVideoBin()
@@ -110,6 +113,7 @@ void IpCameraPipeline::ConfigureVideoBin()
 		_appSinkQueue,
 		_appSink,
 		nullptr);
+	LOG_TRACE("Configured video bin");
 }
 
 GstPadProbeReturn IpCameraPipeline::CbHaveSample(GstPad* pad, GstPadProbeInfo* info, IpCameraPipeline* ipCameraPipeline)
@@ -144,7 +148,7 @@ GstPadProbeReturn IpCameraPipeline::CbHaveSample(GstPad* pad, GstPadProbeInfo* i
 void IpCameraPipeline::CbPadAddedHandler(GstElement *src, GstPad *new_pad, IpCameraPipeline *ipCameraPipeline)
 {
 	//We will attempt to connect the source pad of the source element to the sink pad of the next element downstream		
-	LOG_TRACE("GSPipelineBase Received new pad " << GST_PAD_NAME(new_pad) << " from " << GST_ELEMENT_NAME(src));
+	LOG_DEBUG("GSPipelineBase Received new pad " << GST_PAD_NAME(new_pad) << " from " << GST_ELEMENT_NAME(src));
 	GstPad* downstreamSinkPad = gst_element_get_static_pad(ipCameraPipeline->_videoConverter, "sink");
 
 	// Only works if contigious play
@@ -157,7 +161,7 @@ void IpCameraPipeline::CbPadAddedHandler(GstElement *src, GstPad *new_pad, IpCam
 	//If the downstream sink pad is already linked, we have nothing to do here
 	if (gst_pad_is_linked(downstreamSinkPad)) 
 	{
-		LOG_TRACE("IpCameraPipeline We are already linked. Ignoring");
+		LOG_DEBUG("IpCameraPipeline We are already linked. Ignoring");
 		gst_object_unref(downstreamSinkPad);
 		return;
 	}
@@ -170,7 +174,7 @@ void IpCameraPipeline::CbPadAddedHandler(GstElement *src, GstPad *new_pad, IpCam
 	//If the capabilities of the newly created source pad is anything other than raw video, we will ignore it
 	if (!g_str_has_prefix(newPadType, "video/x-raw")) 
 	{
-		LOG_TRACE("IpCameraPipeline It has type " << newPadType << " which is not raw audio or video. Ignoring");
+		LOG_DEBUG("IpCameraPipeline It has type " << newPadType << " which is not raw audio or video. Ignoring");
 		if (!newPadCaps)
 			gst_caps_unref(newPadCaps);
 		return;
@@ -185,12 +189,13 @@ void IpCameraPipeline::CbPadAddedHandler(GstElement *src, GstPad *new_pad, IpCam
 		LOG_ERROR("GSCameraPlayer Type is " << newPadType << " but link failed");
 	}
 	GST_DEBUG_BIN_TO_DOT_FILE(GST_BIN(ipCameraPipeline->_pipeline), GST_DEBUG_GRAPH_SHOW_ALL, "uptotee");
+	LOG_TRACE("Video pad added");
 }
 
 void IpCameraPipeline::CbSourceSetupHandler(GstElement *element, GstElement *source, IpCameraPipeline *ipCameraPipeline)
 {
-	using namespace util;
 	g_object_set(source, "user-id", StringUtil::ToString(ipCameraPipeline->_username).c_str(), "user-pw", StringUtil::ToString(ipCameraPipeline->_password).c_str(), nullptr);
+	LOG_TRACE("Configured source. Set username and password if provided");
 }
 
 void IpCameraPipeline::CbDrainedHandler(GstElement *element, IpCameraPipeline *ipCameraPipeline)

@@ -1,4 +1,4 @@
-#define HG_REVISION               46562777425643101202121137
+#define HG_REVISION               433192353018914399245733
 #define HG_LOCAL_MODIFICATIONS    0
 #define HG_CHANGESET              "Vos Video RTBC media server"
-#define HG_CHANGESET_SHORT        "46b56dee2d77a7425cbe64f31012a021211fdf37"
+#define HG_CHANGESET_SHORT        "d4331a92353ebbdf0189fa14aba399bf24a5d733"

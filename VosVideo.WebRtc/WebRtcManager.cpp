@@ -204,7 +204,7 @@ void WebRtcManager::Shutdown()
 	for (int i = 0; i < 10; i++)
 	{
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-		if (CheckFinishingPeerConnections() == 0)
+		if (RemoveFinishedPeerConnections() == 0)
 		{
 			break;
 		}
@@ -238,7 +238,7 @@ void WebRtcManager::DeleteAllPeerConnections()
 
 void WebRtcManager::DeletePeerConnection(const wstring& fromPeer)
 {
-	LOG_TRACE("Query for deletion peer connections from peer id:" << fromPeer);
+	LOG_TRACE("Delete peer connections from peer id:" << fromPeer);
 	WebRtcPeerConnectionMap::iterator iter = peer_connections_.lower_bound(fromPeer);
 
 	while (iter != peer_connections_.end())
@@ -247,7 +247,7 @@ void WebRtcManager::DeletePeerConnection(const wstring& fromPeer)
 		{
 			// command close active streams and remove from collection after
 			iter->second->Close();
-			LOG_TRACE("Query for deletion peer connection with key:" << StringUtil::ToString(iter->first));
+			LOG_TRACE("Close streams for peer connection with key:" << StringUtil::ToString(iter->first) << " and move to finishing stage");
 			finishing_peer_connections_.push_back(iter->second);
 			iter = peer_connections_.erase(iter);
 		}
@@ -258,10 +258,10 @@ void WebRtcManager::DeletePeerConnection(const wstring& fromPeer)
 	}
 
 	// Periodically check for garbage
-	CheckFinishingPeerConnections();
+	RemoveFinishedPeerConnections();
 }
 
-int WebRtcManager::CheckFinishingPeerConnections()
+int WebRtcManager::RemoveFinishedPeerConnections()
 {
 	WebRtcPeerConnectionVector::iterator iter = finishing_peer_connections_.begin();
 

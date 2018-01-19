@@ -22,6 +22,7 @@ namespace vosvideo
 		private:
 			using factory = boost::function<ReceivedData*()>;
 			std::unordered_map<MsgType, factory> factories_;
+			MsgTypeAsText _msgType;
 		};
 	}
 }

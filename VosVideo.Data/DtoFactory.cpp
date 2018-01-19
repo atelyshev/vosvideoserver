@@ -43,7 +43,7 @@ namespace vosvideo
 
 		std::shared_ptr<ReceivedData> DtoFactory::Create(MsgType dtoType)
 		{
-			LOG_TRACE("Requested to create DTO with type: " << (int)dtoType);
+			LOG_TRACE("Requested to create DTO with type: " << _msgType.AsText(dtoType));
 			return std::shared_ptr<ReceivedData>(factories_[dtoType]());
 		}
 	}
