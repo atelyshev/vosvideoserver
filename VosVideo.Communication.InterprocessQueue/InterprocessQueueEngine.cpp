@@ -74,16 +74,14 @@ void InterprocessQueueEngine::Send(const std::string& smsg)
 	lock_guard<std::mutex> lock(mutex_);
 	try
 	{
-		LOG_TRACE("Pass message with size: " << smsg.size() << " and body: " << smsg);
-
 		if (openAsParent_)
 		{
-			LOG_TRACE("Send message from parent process to child.");
+			LOG_TRACE("Send message from parent process to child, size: " << smsg.size() << " body: " << smsg);
 			mqFromParent_->send(smsg.data(), smsg.size(), 0);
 		}
 		else
 		{
-			LOG_TRACE("Send message from child process to parent.");
+			LOG_TRACE("Send message from child process to parent, size: " << smsg.size() << " body: " << smsg);
 			mqToParent_->send(smsg.data(), smsg.size(), 0);
 		}
 	}
@@ -115,12 +113,12 @@ void InterprocessQueueEngine::StopReceive()
 {
 	if (openAsParent_)
 	{
-		LOG_TRACE("Send Stop Receive message from child process to parent.");
+		LOG_TRACE("Send 'Stop Receive' message from child process to parent.");
 		mqToParent_->send(stopMsg_.data(), stopMsg_.size(), 0);
 	}
 	else
 	{
-		LOG_TRACE("Send Stop Receive message from parent process to child.");
+		LOG_TRACE("Send 'Stop Receive' message from parent process to child.");
 		mqFromParent_->send(stopMsg_.data(), stopMsg_.size(), 0);
 	}
 }
@@ -136,26 +134,26 @@ void InterprocessQueueEngine::Receive()
 		smsg.resize(maxMsgSize_);
 		uint32_t msgRealSize;
 		uint32_t prio;
-		std::string sender;
+
 		try
 		{
 			if (openAsParent_)
 			{
 				mqToParent_->receive(&smsg[0], smsg.size(), msgRealSize, prio);
-				sender = "child";
+				LOG_TRACE("Got message from child process: " << smsg << " size: " << msgRealSize);
 			}
 			else
 			{
 				mqFromParent_->receive(&smsg[0], smsg.size(), msgRealSize, prio);
-				sender = "parent";
+				LOG_TRACE("Got message from parent process: " << smsg << " size: " << msgRealSize);
 			}
+			smsg.resize(msgRealSize);
 		}
 		catch(interprocess_exception &ex)
 		{
 			LOG_CRITICAL(ex.what());
+			break;
 		}
-		smsg.resize(msgRealSize);
-		LOG_TRACE("Message from " << sender << " process: " << smsg << " size: " << msgRealSize);
 
 		// Check for STOP
 		if (smsg == stopMsg_)
@@ -167,7 +165,6 @@ void InterprocessQueueEngine::Receive()
 		std::shared_ptr<WebSocketMessageParser> msgParser(new WebSocketMessageParser(smsg));
 		auto dto = dtoFactory.Create(msgParser->GetMessageType());
 		dto->Init(msgParser);
-
 		pubSubService_->Publish(dto);
 	}
 	LOG_TRACE("Finished to receive messages from " << queueToParentName_ << ", " << queueFromParentName_);
