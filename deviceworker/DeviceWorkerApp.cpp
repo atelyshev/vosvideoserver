@@ -21,14 +21,12 @@ DeviceWorkerApp::DeviceWorkerApp(const wstring& wqueueName, bool isLogging)
 		_log = std::make_shared<SeverityLogger>(L".", prefix, L"dw");
 		_stdlog = std::make_unique<StdLogger>(L".", prefix, L"std");
 	}
-
 	std::shared_ptr<PubSubService> communicationPubSub(new PubSubService());
 	std::shared_ptr<InterprocessQueueEngine> queueEngine(new InterprocessQueueEngine(communicationPubSub, wqueueName));
 	devBroker_.reset(new WebRtcManager(communicationPubSub, queueEngine));
 	interprocCommManager_.reset(new InterprocessComm(queueEngine));
 
-	HRESULT hr = S_OK;
-	if (hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED) != S_OK)
+	if (HRESULT hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED) != S_OK)
 	{
 		string errMsg = "DeviceWorker server failed to start, CoInitializeEx returned: " + hr;
 		LOG_CRITICAL(errMsg);

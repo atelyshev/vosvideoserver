@@ -87,8 +87,6 @@ bool IpCameraPipeline::LinkElements()
 			_videoScale,
 			_videoScaleCapsFilter,
 			_tee,
-			_appSinkQueue,
-			_appSink,
 			nullptr);
 	}
 	LOG_TRACE("Linked video pipeline elements");
@@ -97,21 +95,19 @@ bool IpCameraPipeline::LinkElements()
 void IpCameraPipeline::ConfigureVideoBin()
 {
 	// Configure the appsink element
-	GstCaps *appSinkCaps = gst_caps_from_string("video/x-raw");
-	g_object_set(_appSink, "emit-signals", TRUE, "caps", appSinkCaps, nullptr);
-	gst_caps_unref(appSinkCaps);
+	//GstCaps *appSinkCaps = gst_caps_from_string("video/x-raw");
+	//g_object_set(_appSink, "emit-signals", TRUE, "caps", appSinkCaps, nullptr);
+	//gst_caps_unref(appSinkCaps);
 
 	gst_bin_add_many(GST_BIN(_pipeline),
 		_sourceElement,
 		_videoConverter,
-//This element is good to have but fo IP Camera makes problems related with timestamp
+//This element is good to have but for IP Camera makes problems related with timestamp
 //		_videoRate,
 //		_videoRateCapsFilter,
 		_videoScale,
 		_videoScaleCapsFilter,
 		_tee,
-		_appSinkQueue,
-		_appSink,
 		nullptr);
 	LOG_TRACE("Configured video bin");
 }

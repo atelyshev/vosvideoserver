@@ -134,20 +134,22 @@ void InterprocessQueueEngine::Receive()
 		smsg.resize(maxMsgSize_);
 		uint32_t msgRealSize;
 		uint32_t prio;
+		string sender;
 
 		try
 		{
 			if (openAsParent_)
 			{
 				mqToParent_->receive(&smsg[0], smsg.size(), msgRealSize, prio);
-				LOG_TRACE("Got message from child process: " << smsg << " size: " << msgRealSize);
+				sender = "child";
 			}
 			else
 			{
 				mqFromParent_->receive(&smsg[0], smsg.size(), msgRealSize, prio);
-				LOG_TRACE("Got message from parent process: " << smsg << " size: " << msgRealSize);
+				sender = "parent";
 			}
 			smsg.resize(msgRealSize);
+			LOG_TRACE("Got message from " << sender <<" process: " << smsg << " size: " << msgRealSize);
 		}
 		catch(interprocess_exception &ex)
 		{
