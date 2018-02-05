@@ -93,9 +93,6 @@ GstPadProbeReturn GSPipelineBase::CbUnlinkPad(GstPad *pad, GstPadProbeInfo *info
 	gst_bin_remove(GST_BIN(pipelineBase->_pipeline), pipelineBase->_appSinkQueue);
 	gst_bin_remove(GST_BIN(pipelineBase->_pipeline), pipelineBase->_appSink);
 
-	gst_object_unref(pipelineBase->_appSinkQueue);
-	gst_object_unref(pipelineBase->_appSink);
-
 	gst_element_release_request_pad(pipelineBase->_tee, pipelineBase->_teeVideoPad);
 	gst_object_unref(pipelineBase->_teeVideoPad);
 
