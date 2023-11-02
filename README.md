@@ -100,5 +100,5 @@ Build libraries. To properly build the server you have to do next steps:
 11. Finally Take latest gstreamer https://gstreamer.freedesktop.org/data/pkg/windows/
   
 Questions ? 
-atelyshev@vosvideo.com
+aleksey.telyshev@gmail.com
     
